@@ -10,7 +10,13 @@
 - 使用命令行选择/修改配置
 # 使用
 
+## 源代码运行
 下载[toolkit](https://github.com/infstellar/python-git-program-launcher/releases/download/v1.0.0/toolkit.7z)放在Launcher.exe同级目录下。
+
+运行Launcher.bat或Launcher.exe。
+
+## 直接运行
+下载最新的Release。
 
 运行Launcher.bat或Launcher.exe。
 

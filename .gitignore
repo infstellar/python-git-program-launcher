@@ -6,4 +6,6 @@ toolkit/python/
 Logs/
 configs/*
 !configs/.gitkeep
+!configs/SRC.json
+!configs/GIA_China.json
 launcher_config_name.txt
