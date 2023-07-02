@@ -1,5 +1,5 @@
 # python-git-program-launcher
-一个python程序，旨在以简单的方式自动安装并启动基于git管理的python程序。
+自动安装并启动基于git管理的python程序。
 
 # 特点
 - 一键启动python程序
@@ -9,6 +9,8 @@
 - 丰富的的自定义配置
 - 使用命令行选择/修改配置
 # 使用
+
+下载[toolkit](https://github.com/infstellar/python-git-program-launcher/releases/download/v1.0.0/toolkit.7z)放在Launcher.exe同级目录下。
 
 运行Launcher.bat或Launcher.exe。
 
@@ -31,10 +33,12 @@
 |Tag|tag，有tag时优先使用tag，否则使用branch。||
 |PythonVersion|python版本，必须为有效版本|3.10.10|
 
-# 仓库位置
+# 文件位置
+
+## 仓库位置
 ./repositories
 
-# python位置
+## python位置
 ./toolkit/python  
 你可能需要通过控制面板卸载。
 
