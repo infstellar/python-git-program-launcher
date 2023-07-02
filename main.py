@@ -211,13 +211,14 @@ class PythonManager(Command):
             if os.path.exists(file_name):
                 os.remove(file_name)
             self.download_url(url, file_name)
+            os.rename(file_name, file_name2)
 
         logger.hr("Successful Download")
 
         # with zipfile.ZipFile(file_name, 'r') as zip_ref:
         #     zip_ref.extractall(self.python_folder)
 
-        os.rename(file_name, file_name2)
+
         file_name = file_name2
 
         os.chdir(self.python_folder)
@@ -246,6 +247,13 @@ class PythonManager(Command):
 
         if not os.path.exists(self.python_path):
             logger.hr(f"Downloading Python Version: {self.python_version} into {self.python_folder}")
+            logger.warning("确认python版本：")
+            logger.warning("你的电脑每种大版本的python只能安装过一种。如果你已预先安装了，必须先手动卸载。")
+            logger.warning("例1：目标版本3.7.6，而你的电脑安装了3.7.8，则必须先卸载3.7.8版本的python再使用。")
+            logger.warning("例2：目标版本3.10.10，而你的电脑安装了3.10.10，则必须先卸载3.10.10版本的python再使用。")
+            logger.warning("Anaconda等独立包管理器不受此影响。")
+            logger.warning("python-git-program-launcher不会添加python到环境变量；不会添加到所有用户；不会添加python launcher程序。但放弃使用时，仍需到控制面板卸载python。")
+            input("按下回车以确认。")
             self.download_python()
 
         # if not os.path.exists(os.path.join(self.python_folder, "Lib")):
