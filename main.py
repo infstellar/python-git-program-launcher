@@ -1,4 +1,5 @@
 import os.path
+import sys
 from urllib.parse import urlparse
 
 from utils import *
@@ -110,7 +111,7 @@ class PipManager(Command):
         self.PypiMirror = installer_config["PypiMirror"]
         if self.PypiMirror == "AUTO":
             self.PypiMirror = {
-                "zh_CN": "https://pypi.tuna.tsinghua.edu.cn/simple",
+                "zh_CN": "http://mirrors.aliyun.com/pypi/simple",
                 "en_US": "https://pypi.org/simple"
             }[GLOBAL_LANG]
 
@@ -147,6 +148,8 @@ class PipManager(Command):
         # Don't update pip, just leave it.
         logger.hr('Update pip', 1)
         self.execute(f'{self.pip()} install --upgrade pip{arg}')
+        self.execute(f'{self.pip()} install --upgrade setuptools{arg}')
+        # self.execute(f'pip install progressbar2{arg}')
 
         logger.hr('Update Dependencies', 1)
 
@@ -168,19 +171,21 @@ class PythonManager(Command):
                 "en_US": "https://www.python.org/ftp/python"
             }[GLOBAL_LANG]
         # https://registry.npmmirror.com/-/binary/python/3.10.1/python-3.10.1-amd64.exe
-        # paths = ''
-        # for i in os.environ['PATH'].split(';'):
-        #     if "Scripts" not in i and "Anaconda" not in i:
-        #         paths += os.pathsep + i
-        #
-        # paths = paths[1:]
-        #
-        # os.environ['PATH'] = paths
+        paths = ''
+        for i in os.environ['PATH'].split(';'):
+            if "Scripts" not in i and "Anaconda" not in i:
+                paths += os.pathsep + i
+        
+        paths = paths[1:]
+        
+        os.environ['PATH'] = paths
 
         os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder)
         os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder, "Scripts")
         os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder, "Lib")
         os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder, "Lib", "site-packages")
+        progress_path = os.path.join(ROOT_PATH, "toolkit", "python_site_packages")
+        sys.path.insert(0, progress_path)
 
     def download_url(self, url, dst):
         from tqdm import tqdm
@@ -198,7 +203,41 @@ class PythonManager(Command):
                     pbar.update(1024)
         pbar.close()
 
-    def download_python(self):
+    def download_python_zip(self):
+        import zipfile
+        ver = self.python_version
+        url = fr"{self.python_mirror}/{ver}/python-{ver}-embed-amd64.zip"
+        logger.info(f'url: {url}')
+        file_name = os.path.join(ROOT_PATH, 'toolkit', 'python', str(self.python_version), f'python-{ver}-amd64.zip')
+        self.download_url(url, file_name)
+        logger.hr("Successful Download")
+        with zipfile.ZipFile(file_name, 'r') as zip_ref:
+            zip_ref.extractall(self.python_folder)
+        # install pip
+        self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}')
+        
+        ver2 = ver.split(".")[0]+ver.split(".")[1]
+        # https://blog.csdn.net/liangma/article/details/120022530
+        with open(os.path.join(self.python_folder, fr"python{ver2}._pth"), 'r+') as f:
+            f.seek(0)
+            file_str = f.read()
+            file_str = file_str.replace('# import site', 'import site')
+            file_str = file_str.replace('#import site', 'import site')
+            f.seek(0)
+            f.write(file_str)
+        
+        # self.execute(f'pip')
+    
+    def download_python_installer(self):
+        # 3.7 only
+        logger.warning("确认python版本：")
+        logger.warning("你的电脑每种大版本的python只能安装过一种。如果你已预先安装了，必须先手动卸载。")
+        logger.warning("例1：目标版本3.7.6，而你的电脑安装了3.7.8，则必须先卸载3.7.8版本的python再使用。")
+        logger.warning("例2：目标版本3.10.10，而你的电脑安装了3.10.10，则必须先卸载3.10.10版本的python再使用。")
+        logger.warning("Anaconda等独立包管理器不受此影响。")
+        logger.warning("python-git-program-launcher不会添加python到环境变量；不会添加到所有用户；不会添加python launcher程序。但放弃使用时，仍需到控制面板卸载python。")
+        input("按下回车以确认。")
+        # self.download_python_installer()
         ver = self.python_version
         url = fr"{self.python_mirror}/{ver}/python-{ver}-amd64.exe"
         # url = fr"https://www.python.org/ftp/python/{ver}/python-{ver}-amd64.exe"
@@ -213,7 +252,7 @@ class PythonManager(Command):
             self.download_url(url, file_name)
             os.rename(file_name, file_name2)
 
-        logger.hr("Successful Download")
+        logger.hr("Download Successfully")
 
         # with zipfile.ZipFile(file_name, 'r') as zip_ref:
         #     zip_ref.extractall(self.python_folder)
@@ -236,25 +275,19 @@ class PythonManager(Command):
         time.sleep(1)
         logger.hr("Python is installed.")
 
-    # def install_pip(self):
-    #     # self.execute(f'curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
-    #     # self.execute(f'"set PATH=%path%;{os.path.join(self.python_folder, "Scripts")}"')
-    #     self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}')
-    #     # self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py --force-reinstall")}')
+    def install_pip(self):
+        # self.execute(f'curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
+        # self.execute(f'"set PATH=%path%;{os.path.join(self.python_folder, "Scripts")}"')
+        self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}')
+        # self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py --force-reinstall")}')
 
     def run(self):
         verify_path(self.python_folder)
-
+        
         if not os.path.exists(self.python_path):
             logger.hr(f"Downloading Python Version: {self.python_version} into {self.python_folder}")
-            logger.warning("确认python版本：")
-            logger.warning("你的电脑每种大版本的python只能安装过一种。如果你已预先安装了，必须先手动卸载。")
-            logger.warning("例1：目标版本3.7.6，而你的电脑安装了3.7.8，则必须先卸载3.7.8版本的python再使用。")
-            logger.warning("例2：目标版本3.10.10，而你的电脑安装了3.10.10，则必须先卸载3.10.10版本的python再使用。")
-            logger.warning("Anaconda等独立包管理器不受此影响。")
-            logger.warning("python-git-program-launcher不会添加python到环境变量；不会添加到所有用户；不会添加python launcher程序。但放弃使用时，仍需到控制面板卸载python。")
-            input("按下回车以确认。")
-            self.download_python()
+            
+            self.download_python_zip()
 
         # if not os.path.exists(os.path.join(self.python_folder, "Lib")):
         #     logger.hr(f"Installing pip")
@@ -402,9 +435,14 @@ if __name__ == "__main__":
     REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
     verify_path(REPO_PATH)
     os.chdir(REPO_PATH)
+    
     logger.hr("Launching...")
     GitManager(launching_config).git_install()
     PipManager(launching_config).pip_install()
+    
+    sys.path[0] = REPO_PATH
+    os.environ['PATH'] = REPO_PATH + os.environ['PATH'] + os.pathsep
+    
     logger.hr("successfully install. Activating GIA", 0)
     print(f'"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
 

@@ -2,7 +2,7 @@
 .idea/
 .vscode/
 repositories/
-toolkit/python/
+toolkit/
 Logs/
 configs/*
 !configs/.gitkeep
