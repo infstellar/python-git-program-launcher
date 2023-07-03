@@ -147,6 +147,7 @@ class PipManager(Command):
         arg = ' ' + ' '.join(arg) if arg else ''
         # Don't update pip, just leave it.
         logger.hr('Update pip', 1)
+        
         self.execute(f'{self.pip()} install --upgrade pip{arg}')
         self.execute(f'{self.pip()} install --upgrade setuptools{arg}')
         # self.execute(f'pip install progressbar2{arg}')
@@ -162,7 +163,8 @@ class PythonManager(Command):
     @logger.catch()
     def __init__(self, installer_config):
         self.python_version = installer_config['PythonVersion']
-        self.python_folder = os.path.join(ROOT_PATH, 'toolkit', 'python', str(self.python_version))
+        n = installer_config['Repository'].split('/')[-1]
+        self.python_folder = os.path.join(ROOT_PATH, 'toolkit', f'python', f"{self.python_version}_{n}")
         self.python_path = os.path.join(self.python_folder, "python.exe")
         self.python_mirror = installer_config['PythonMirror']
         if self.python_mirror == "AUTO":
@@ -184,8 +186,8 @@ class PythonManager(Command):
         os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder, "Scripts")
         os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder, "Lib")
         os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder, "Lib", "site-packages")
-        progress_path = os.path.join(ROOT_PATH, "toolkit", "python_site_packages")
-        sys.path.insert(0, progress_path)
+        site_packages_path = os.path.join(ROOT_PATH, "toolkit", "python_site_packages")
+        sys.path.insert(0, site_packages_path)
 
     def download_url(self, url, dst):
         from tqdm import tqdm
@@ -225,6 +227,12 @@ class PythonManager(Command):
             file_str = file_str.replace('#import site', 'import site')
             f.seek(0)
             f.write(file_str)
+        # add program path to sys.path
+        site_packages_path = os.path.join(ROOT_PATH, "toolkit", "python_site_packages")
+        with open(os.path.join(self.python_folder, 'Lib', 'site-packages', 'pgpl_sp.pth'), 'w') as f:
+            f.write(site_packages_path)
+        
+        self.execute(f'"{self.python_path}" -m pip install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
         
         # self.execute(f'pip')
     
