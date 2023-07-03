@@ -171,14 +171,14 @@ class PythonManager(Command):
                 "en_US": "https://www.python.org/ftp/python"
             }[GLOBAL_LANG]
         # https://registry.npmmirror.com/-/binary/python/3.10.1/python-3.10.1-amd64.exe
-        paths = ''
-        for i in os.environ['PATH'].split(';'):
-            if "Scripts" not in i and "Anaconda" not in i:
-                paths += os.pathsep + i
+        # paths = ''
+        # for i in os.environ['PATH'].split(';'):
+        #     if "Scripts" not in i and "Anaconda" not in i:
+        #         paths += os.pathsep + i
         
-        paths = paths[1:]
+        # paths = paths[1:]
         
-        os.environ['PATH'] = paths
+        # os.environ['PATH'] = paths
 
         os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder)
         os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder, "Scripts")
@@ -440,10 +440,11 @@ if __name__ == "__main__":
     GitManager(launching_config).git_install()
     PipManager(launching_config).pip_install()
     
-    sys.path[0] = REPO_PATH
-    os.environ['PATH'] = REPO_PATH + os.environ['PATH'] + os.pathsep
+    # add program path to sys.path
+    with open(os.path.join(os.path.dirname(PROGRAM_PYTHON_PATH), 'pgpl.pth'), 'w') as f:
+        f.write(REPO_PATH)
     
-    logger.hr("successfully install. Activating GIA", 0)
+    logger.hr(f"Successfully install. Activating {PROGRAM_NAME}", 0)
     print(f'"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
 
     # os.system("color 07")
