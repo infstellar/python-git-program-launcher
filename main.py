@@ -3,6 +3,7 @@ import sys
 from urllib.parse import urlparse
 
 from utils import *
+from pgpl_pth import generate_pgplpth
 
 LAUNCHER_PYTHON_PATH = PYTHON_EXE_PATH
 PROGRAM_PYTHON_PATH = LAUNCHER_PYTHON_PATH
@@ -182,12 +183,19 @@ class PythonManager(Command):
         
         # os.environ['PATH'] = paths
 
-        os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder)
-        os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder, "Scripts")
-        os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder, "Lib")
-        os.environ['PATH'] += os.pathsep + os.path.join(self.python_folder, "Lib", "site-packages")
+        def add_environ(x):
+            os.environ['PATH'] = x + os.pathsep + os.environ['PATH']
+        
+        add_environ(os.path.join(self.python_folder, "Lib", "site-packages"))
+        add_environ(os.path.join(self.python_folder, "Lib"))
+        add_environ(os.path.join(self.python_folder, "Scripts"))
+        add_environ(self.python_folder)
         site_packages_path = os.path.join(ROOT_PATH, "toolkit", "python_site_packages")
         sys.path.insert(0, site_packages_path)
+        
+        # DEBUG
+        # self.execute('set path')
+        # self.execute(f'"{self.python_path}" -m pip install --no-cache-dir -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
 
     def download_url(self, url, dst):
         from tqdm import tqdm
@@ -208,17 +216,21 @@ class PythonManager(Command):
     def download_python_zip(self):
         import zipfile
         ver = self.python_version
+        ver2 = ver.split(".")[0]+ver.split(".")[1]
         url = fr"{self.python_mirror}/{ver}/python-{ver}-embed-amd64.zip"
         logger.info(f'url: {url}')
-        file_name = os.path.join(ROOT_PATH, 'toolkit', 'python', str(self.python_version), f'python-{ver}-amd64.zip')
+        file_name = os.path.join(self.python_folder, f'python-{ver}-amd64.zip')
         self.download_url(url, file_name)
-        logger.hr("Successful Download")
+        logger.hr("Download python successfully, extract zip")
         with zipfile.ZipFile(file_name, 'r') as zip_ref:
             zip_ref.extractall(self.python_folder)
+        with zipfile.ZipFile(file_name.replace(f'python-{ver}-amd64.zip', f'python{ver2}.zip'), 'r') as zip_ref:
+            zip_ref.extractall(self.python_folder)
         # install pip
+        logger.hr("Installing pip")
         self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}')
         
-        ver2 = ver.split(".")[0]+ver.split(".")[1]
+        
         # https://blog.csdn.net/liangma/article/details/120022530
         with open(os.path.join(self.python_folder, fr"python{ver2}._pth"), 'r+') as f:
             f.seek(0)
@@ -227,16 +239,16 @@ class PythonManager(Command):
             file_str = file_str.replace('#import site', 'import site')
             f.seek(0)
             f.write(file_str)
-        # add program path to sys.path
-        site_packages_path = os.path.join(ROOT_PATH, "toolkit", "python_site_packages")
-        with open(os.path.join(self.python_folder, 'Lib', 'site-packages', 'pgpl_sp.pth'), 'w') as f:
-            f.write(site_packages_path)
+        
+        logger.hr("Generate PGPL.pth")
+        generate_pgplpth(self.python_folder)
         
         self.execute(f'"{self.python_path}" -m pip install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
         
         # self.execute(f'pip')
     
     def download_python_installer(self):
+        # 这个没bug，但是要安装，因此暂时弃用
         # 3.7 only
         logger.warning("确认python版本：")
         logger.warning("你的电脑每种大版本的python只能安装过一种。如果你已预先安装了，必须先手动卸载。")
