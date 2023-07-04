@@ -4,6 +4,7 @@ import json
 import time
 from logger import logger
 import locale
+from i18n import t2t
 
 PROGRAM_NAME = "Python-Git-Program-Launcher"
 

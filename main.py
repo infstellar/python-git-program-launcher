@@ -34,14 +34,14 @@ class GitManager(Command):
             logger.info(f'File not found: {file}')
 
     def git_repository_init(self, repo, source='origin', branch='master', proxy=False, keep_changes=False):
-        logger.hr('Git Init')
+        logger.hr(t2t('Git Init'))
         if not self.execute(f'"{self.git}" init', allow_failure=True):
             self.remove('./.git/config')
             self.remove('./.git/index')
             self.remove('./.git/HEAD')
             self.execute(f'"{self.git}" init')
 
-        logger.hr('Set Git Proxy', 1)
+        logger.hr(t2t('Set Git Proxy'), 1)
         if proxy:
             self.execute(f'"{self.git}" config --local http.proxy {proxy}')
             self.execute(f'"{self.git}" config --local https.proxy {proxy}')
@@ -49,15 +49,15 @@ class GitManager(Command):
             self.execute(f'"{self.git}" config --local --unset http.proxy', allow_failure=True)
             self.execute(f'"{self.git}" config --local --unset https.proxy', allow_failure=True)
 
-        logger.hr('Set Git Repository', 1)
+        logger.hr(t2t('Set Git Repository'), 1)
         if not self.execute(f'"{self.git}" remote set-url {source} {repo}', allow_failure=True):
             self.execute(f'"{self.git}" remote add {source} {repo}')
 
-        logger.hr('Fetch Repository Branch', 1)
+        logger.hr(t2t('Fetch Repository Branch'), 1)
         # logger.hr('For cn user: 重要: 如果你正在使用Github地址，确保你已经启动Watt Toolkit或其他加速器')
         self.execute(f'"{self.git}" fetch {source} {branch}')
 
-        logger.hr('Pull Repository Branch', 1)
+        logger.hr(t2t('Pull Repository Branch'), 1)
         # Remove git lock
         lock_file = './.git/index.lock'
         if os.path.exists(lock_file):
@@ -70,9 +70,9 @@ class GitManager(Command):
                     pass
                 else:
                     # No local changes to existing files, untracked files not included
-                    logger.info('Stash pop failed, there seems to be no local changes, skip instead')
+                    logger.info(t2t('Stash pop failed, there seems to be no local changes, skip instead'))
             else:
-                logger.info('Stash failed, this may be the first installation, drop changes instead')
+                logger.info(t2t('Stash failed, this may be the first installation, drop changes instead'))
                 self.execute(f'"{self.git}" reset --hard {source}/{branch}')
                 self.execute(f'"{self.git}" pull --ff-only {source} {branch}')
         else:
@@ -82,14 +82,14 @@ class GitManager(Command):
         if self.tag != 'lastest' and self.tag != '':
             self.execute(f'"{self.git}" checkout {self.tag}')
 
-        logger.hr('Show Version', 1)
+        logger.hr(t2t('Show Version'), 1)
         self.execute(f'"{self.git}" log --no-merges -1')
 
     def git_install(self):
         logger.hr(f'Update {PROGRAM_NAME}', 0)
 
         if not self.AutoUpdate:
-            logger.info('AutoUpdate is disabled, skip')
+            logger.info(t2t('AutoUpdate is disabled, skip'))
             return
 
         os.environ['PATH'] += os.pathsep + self.git
@@ -129,13 +129,13 @@ class PipManager(Command):
         # return 'pip'
 
     def pip_install(self):
-        logger.info('Update Dependencies')
+        logger.info(t2t('Update Dependencies'))
 
         if not self.InstallDependencies:
-            logger.info('InstallDependencies is disabled, skip')
+            logger.info(t2t('InstallDependencies is disabled, skip'))
             return
 
-        logger.info('Check Python')
+        logger.info(t2t('Check Python'))
         self.execute(f'"{self.python}" --version')
 
         arg = []
@@ -148,13 +148,13 @@ class PipManager(Command):
         # arg += ['--disable-pip-version-check']
         arg = ' ' + ' '.join(arg) if arg else ''
         # Don't update pip, just leave it.
-        logger.hr('Update pip', 1)
+        logger.hr(t2t('Update pip'), 1)
         
         self.execute(f'{self.pip()} install --upgrade pip{arg}')
         self.execute(f'{self.pip()} install --upgrade setuptools{arg}')
         # self.execute(f'pip install progressbar2{arg}')
 
-        logger.hr('Update Dependencies', 1)
+        logger.hr(t2t('Update Dependencies'), 1)
 
         # self.execute((f'{self.pip()} install pycocotools-windows{arg}'))
         self.execute(f'{self.pip()} install -r {self.requirements_file()}{arg}')
@@ -222,7 +222,7 @@ class PythonManager(Command):
         logger.info(f'url: {url}')
         file_name = os.path.join(self.python_folder, f'python-{ver}-amd64.zip')
         self.download_url(url, file_name)
-        logger.hr("Download python successfully, extract zip")
+        logger.hr(t2t("Download python successfully, extract zip"))
         with zipfile.ZipFile(file_name, 'r') as zip_ref:
             zip_ref.extractall(self.python_folder)
         with zipfile.ZipFile(file_name.replace(f'python-{ver}-amd64.zip', f'python{ver2}.zip'), 'r') as zip_ref:
@@ -241,7 +241,7 @@ class PythonManager(Command):
             f.seek(0)
             f.write(file_str)
         
-        logger.hr("Generate PGPL.pth")
+        logger.hr(t2t("Generate PGPL.pth"))
         generate_pgplpth(self.python_folder)
         
         self.execute(f'"{self.python_path}" -m pip install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
@@ -273,7 +273,7 @@ class PythonManager(Command):
             self.download_url(url, file_name)
             os.rename(file_name, file_name2)
 
-        logger.hr("Download Successfully")
+        logger.hr(t2t("Download Successfully"))
 
         # with zipfile.ZipFile(file_name, 'r') as zip_ref:
         #     zip_ref.extractall(self.python_folder)
@@ -286,15 +286,15 @@ class PythonManager(Command):
             f'python_{ver}.exe Include_launcher=0 InstallAllUsers=0 Include_test=0 SimpleInstall=1 /passive TargetDir={self.python_folder}',
             is_format=False)
         os.chdir(ROOT_PATH)
-        logger.hr("Please waiting, python is installing. It may cost a few minutes.")
+        logger.hr(t2t("Please waiting, python is installing. It may cost a few minutes."))
 
         while 1:
             time.sleep(1)
             if os.path.exists(self.python_path):
                 break
-        logger.hr("Python installed successfully. Cleaning.")
+        logger.hr(t2t("Python installed successfully. Cleaning."))
         time.sleep(1)
-        logger.hr("Python is installed.")
+        logger.hr(t2t("Python is installed."))
 
     def install_pip(self):
         # self.execute(f'curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
@@ -323,11 +323,11 @@ class ConfigEditor():
     def __init__(self):
         pass
 
-    def _input(self, info={'zh_CN':'输入','en_US':'Input'}[GLOBAL_LANG], possible_answer: list = None, ignore_case: bool = False, input_type: object = str,
+    def _input(self, info=t2t('Input'), possible_answer: list = None, ignore_case: bool = False, input_type: object = str,
                allow_empty=True):
         note = info
         if possible_answer is not None:
-            x = {'zh_CN':'选项','en_US':'Options'}[GLOBAL_LANG]
+            x = t2t('Options')
             note += f" {x}: " + str(possible_answer)
         logger.info(f"{note}")
         r = input()
@@ -335,7 +335,7 @@ class ConfigEditor():
             r = r.lower()
         if possible_answer is not None:
             if r not in possible_answer:
-                logger.error("Illegal parameters")
+                logger.error(t2t("Illegal parameters"))
                 return self._input(info, possible_answer, ignore_case, input_type, allow_empty)
 
         if allow_empty:
@@ -343,13 +343,13 @@ class ConfigEditor():
                 return ''
         else:
             if r == '':
-                logger.error("Illegal parameters: Empty")
+                logger.error(t2t("Illegal parameters: Empty"))
                 return self._input(info, possible_answer, ignore_case, input_type, allow_empty)
 
         try:
             r = input_type(r)
         except Exception as e:
-            logger.error("Illegal parameter type")
+            logger.errort2t(("Illegal parameter type"))
             return self._input(info, possible_answer, ignore_case, input_type, allow_empty)
         return r
 
@@ -367,10 +367,10 @@ class ConfigEditor():
         with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'r') as f:
             launching_config = str(f.read())
             f.close()
-        logger.info({'zh_CN':'当前配置','en_US':'Config'}[GLOBAL_LANG]+f": {launching_config}")
-        logger.info('Do you want to edit settings or select other settings?')
+        logger.info(t2t('Current Config')+f": {launching_config}")
+        logger.info(t2t('Do you want to edit settings or select other settings?'))
         try:
-            c = inputimeout(prompt=f"After 3 seconds without input, PGPL will automatically start. select: {['y', 'n', '']}\n", timeout=3)
+            c = inputimeout(prompt=t2t("After 3 seconds without input, PGPL will automatically start. select: ") + f"{['y', 'n', '']}\n", timeout=3)
         except TimeoutOccurred:
             c = ''
 
@@ -378,38 +378,31 @@ class ConfigEditor():
         is_edit = bool(c)
 
         if launching_config == '':
-            logger.info({'zh_CN':'未选择配置文件。必须选择配置文件。','en_US':'No config selected. A config must be selected.'}[GLOBAL_LANG])
+            logger.info(t2t('No config selected. A config must be selected.'))
             is_edit = True
         if is_edit:
             possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
             possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
             r = self._input_bool(info='Do you want to edit or add config? If you do not need to edit or add config, just select other config, please enter n')
             if r:
-                if GLOBAL_LANG == 'en_US':
-                    logger.hr(f"possible configs")
-                elif GLOBAL_LANG == 'zh_CN':
-                    logger.hr(f"可能的config名")
+                logger.hr(t2t("possible configs"))
 
                 for i in possible_configs:
                     logger.info(i)
-                if GLOBAL_LANG == 'en_US':
-                    logger.info("Please enter the config name.")
-                    logger.info("Config will be created automatically if the file does not exist.")
-                elif GLOBAL_LANG == 'zh_CN':
-                    logger.info("请输入Config名。")
-                    logger.info("如果该文件不存在，将自动创建配置。")
+                    
+                logger.info(t2t("Please enter the config name."))
+                logger.info(t2t("Config will be created automatically if the file does not exist."))
+
                 # logger.info("If the repository has pre-configured files, you can also download the configuration file by entering the repository address directly.")
 
                 inp_conf_name = self._input(allow_empty=False)
                 # if 'http' in r:
                 #     pass
 
-                logger.info({'zh_CN': '如果你不想改变设置，直接在选项上按回车键。',
-                            'en_US': 'If you do not want to change the settings, press enter directly on the option.'}[GLOBAL_LANG])
+                logger.info(t2t('If you do not want to change the settings, press enter directly on the option.'))
                 self.edit_config(inp_conf_name)
                 
-            logger.info({'zh_CN': '请输入启动配置文件名。',
-                         'en_US': 'Please enter the launching config name.'}[GLOBAL_LANG])
+            logger.info(t2t('Please enter the launching config name.'))
             launching_config = self._input(allow_empty=False, possible_answer=possible_configs)
             possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
             possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
@@ -451,12 +444,12 @@ class ConfigEditor():
                 config[k] = r
 
         save_json(config, config_name)
-        logger.hr(f"Successfully edit config.")
+        logger.hr(t2t("Successfully edit config."))
 
 
 if __name__ == "__main__":
     logger.hr(f"Welcome to {PROGRAM_NAME}", 0)
-    logger.hr("The program is free and open source on github")
+    logger.hr(t2t("The program is free and open source on github"))
     # logger.hr("Make sure you have read README.md and configured installer_config.json")
     if not os.path.exists(os.path.join(ROOT_PATH, 'launcher_config_name.txt')):
         with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w') as f:
@@ -468,7 +461,7 @@ if __name__ == "__main__":
     verify_path(REPO_PATH)
     os.chdir(REPO_PATH)
     
-    logger.hr("Launching...")
+    logger.hr(t2t("Launching..."))
     GitManager(launching_config).git_install()
     PipManager(launching_config).pip_install()
     

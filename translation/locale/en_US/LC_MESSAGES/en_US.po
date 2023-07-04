@@ -1,0 +1,160 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2023-07-04 21:07+0800\n"
+"PO-Revision-Date: 2023-07-04 21:18+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 3.2.2\n"
+
+#: main.py:37
+msgid "Git Init"
+msgstr ""
+
+#: main.py:44
+msgid "Set Git Proxy"
+msgstr ""
+
+#: main.py:52
+msgid "Set Git Repository"
+msgstr ""
+
+#: main.py:56
+msgid "Fetch Repository Branch"
+msgstr ""
+
+#: main.py:60
+msgid "Pull Repository Branch"
+msgstr ""
+
+#: main.py:73
+msgid "Stash pop failed, there seems to be no local changes, skip instead"
+msgstr ""
+
+#: main.py:75
+msgid "Stash failed, this may be the first installation, drop changes instead"
+msgstr ""
+
+#: main.py:85
+msgid "Show Version"
+msgstr ""
+
+#: main.py:92
+msgid "AutoUpdate is disabled, skip"
+msgstr ""
+
+#: main.py:132 main.py:157
+msgid "Update Dependencies"
+msgstr ""
+
+#: main.py:135
+msgid "InstallDependencies is disabled, skip"
+msgstr ""
+
+#: main.py:138
+msgid "Check Python"
+msgstr ""
+
+#: main.py:151
+msgid "Update pip"
+msgstr ""
+
+#: main.py:225
+msgid "Download python successfully, extract zip"
+msgstr ""
+
+#: main.py:244
+msgid "Generate PGPL.pth"
+msgstr ""
+
+#: main.py:276
+msgid "Download Successfully"
+msgstr ""
+
+#: main.py:289
+msgid "Please waiting, python is installing. It may cost a few minutes."
+msgstr ""
+
+#: main.py:295
+msgid "Python installed successfully. Cleaning."
+msgstr ""
+
+#: main.py:297
+msgid "Python is installed."
+msgstr ""
+
+#: main.py:326
+msgid "Input"
+msgstr ""
+
+#: main.py:330
+msgid "Options"
+msgstr ""
+
+#: main.py:338
+msgid "Illegal parameters"
+msgstr ""
+
+#: main.py:346
+msgid "Illegal parameters: Empty"
+msgstr ""
+
+#: main.py:370
+msgid "Current Config"
+msgstr ""
+
+#: main.py:371
+msgid "Do you want to edit settings or select other settings?"
+msgstr ""
+
+#: main.py:373
+msgid "After 3 seconds without input, PGPL will automatically start. select: "
+msgstr ""
+
+#: main.py:381
+msgid "No config selected. A config must be selected."
+msgstr ""
+
+#: main.py:388
+msgid "possible configs"
+msgstr ""
+
+#: main.py:393
+msgid "Please enter the config name."
+msgstr ""
+
+#: main.py:394
+msgid "Config will be created automatically if the file does not exist."
+msgstr ""
+
+#: main.py:402
+msgid ""
+"If you do not want to change the settings, press enter directly on the "
+"option."
+msgstr ""
+
+#: main.py:405
+msgid "Please enter the launching config name."
+msgstr ""
+
+#: main.py:447
+msgid "Successfully edit config."
+msgstr ""
+
+#: main.py:452
+msgid "The program is free and open source on github"
+msgstr ""
+
+#: main.py:464
+msgid "Launching..."
+msgstr ""

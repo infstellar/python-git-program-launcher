@@ -9,3 +9,5 @@ configs/*
 !configs/SRC.json
 !configs/GIA_China.json
 launcher_config_name.txt
+*.pot
+*.mo
