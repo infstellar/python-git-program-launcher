@@ -214,6 +214,9 @@ class PythonManager(Command):
                     pbar.update(1024)
         pbar.close()
 
+    def clean_py(self, py_folder):
+        pass
+    
     def download_python_zip(self):
         import zipfile
         ver = self.python_version
@@ -225,8 +228,8 @@ class PythonManager(Command):
         logger.hr(t2t("Download python successfully, extract zip"))
         with zipfile.ZipFile(file_name, 'r') as zip_ref:
             zip_ref.extractall(self.python_folder)
-        with zipfile.ZipFile(file_name.replace(f'python-{ver}-amd64.zip', f'python{ver2}.zip'), 'r') as zip_ref:
-            zip_ref.extractall(self.python_folder)
+        # with zipfile.ZipFile(file_name.replace(f'python-{ver}-amd64.zip', f'python{ver2}.zip'), 'r') as zip_ref:
+        #     zip_ref.extractall(self.python_folder)
         # install pip
         logger.hr("Installing pip")
         self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}')

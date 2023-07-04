@@ -80,7 +80,6 @@ def load_json_from_folder(path, black_file: list = None):
                     json_list.append({"label": f, "json": j})
     return json_list
 
-
 def verify_path(root):
     root = os.path.abspath(root)
     if not os.path.exists(root):
@@ -88,6 +87,22 @@ def verify_path(root):
         os.mkdir(root)
         logger.info(f"dir {root} has been created")
 
+def read_file_flag(n:str) -> bool:
+    p = os.path.join(ROOT_PATH, 'pgpl-cache')
+    verify_path(p)
+    with open(os.path.join(p, n), 'w+') as f:
+        s = f.read()
+        if s == '':
+            f.write('False')
+            return False
+        else:
+            return bool(s)
+        
+def write_file_flag(n:str, x:bool) -> None:
+    p = os.path.join(ROOT_PATH, 'pgpl-cache')
+    verify_path(p)
+    with open(os.path.join(p, n), 'w') as f:
+        f.write(str(x))
 
 class ExecutionError(Exception):
     pass
