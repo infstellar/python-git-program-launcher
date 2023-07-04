@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 
 from utils import *
 from pgpl_pth import generate_pgplpth
+from inputimeout import inputimeout, TimeoutOccurred
 
 LAUNCHER_PYTHON_PATH = PYTHON_EXE_PATH
 PROGRAM_PYTHON_PATH = LAUNCHER_PYTHON_PATH
@@ -367,7 +368,14 @@ class ConfigEditor():
             launching_config = str(f.read())
             f.close()
         logger.info({'zh_CN':'当前配置','en_US':'Config'}[GLOBAL_LANG]+f": {launching_config}")
-        is_edit = self._input_bool({'zh_CN':'你想要改变配置吗','en_US':'Do you want to edit Settings?'}[GLOBAL_LANG])
+        logger.info('Do you want to edit settings or select other settings?')
+        try:
+            c = inputimeout(prompt=f"After 3 seconds without input, PGPL will automatically start. select: {['y', 'n', '']}\n", timeout=3)
+        except TimeoutOccurred:
+            c = ''
+
+        if c != '': c = {'y': True, 'n': False}[c]
+        is_edit = bool(c)
 
         if launching_config == '':
             logger.info({'zh_CN':'未选择配置文件。必须选择配置文件。','en_US':'No config selected. A config must be selected.'}[GLOBAL_LANG])
@@ -375,34 +383,38 @@ class ConfigEditor():
         if is_edit:
             possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
             possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
-            if GLOBAL_LANG == 'en_US':
-                logger.hr(f"possible configs")
-            elif GLOBAL_LANG == 'zh_CN':
-                logger.hr(f"可能的config名")
+            r = self._input_bool(info='Do you want to edit or add config? If you do not need to edit or add config, just select other config, please enter n')
+            if r:
+                if GLOBAL_LANG == 'en_US':
+                    logger.hr(f"possible configs")
+                elif GLOBAL_LANG == 'zh_CN':
+                    logger.hr(f"可能的config名")
 
-            for i in possible_configs:
-                logger.info(i)
-            if GLOBAL_LANG == 'en_US':
-                logger.info("Please enter the config name.")
-                logger.info("Config will be created automatically if the file does not exist.")
-            elif GLOBAL_LANG == 'zh_CN':
-                logger.info("请输入Config名。")
-                logger.info("如果该文件不存在，将自动创建配置。")
-            # logger.info("If the repository has pre-configured files, you can also download the configuration file by entering the repository address directly.")
+                for i in possible_configs:
+                    logger.info(i)
+                if GLOBAL_LANG == 'en_US':
+                    logger.info("Please enter the config name.")
+                    logger.info("Config will be created automatically if the file does not exist.")
+                elif GLOBAL_LANG == 'zh_CN':
+                    logger.info("请输入Config名。")
+                    logger.info("如果该文件不存在，将自动创建配置。")
+                # logger.info("If the repository has pre-configured files, you can also download the configuration file by entering the repository address directly.")
 
-            r = self._input(allow_empty=False)
-            # if 'http' in r:
-            #     pass
-            logger.info({'zh_CN': '如果你不想改变设置，直接在选项上按回车键。',
-                         'en_US': 'If you do not want to change the settings, press enter directly on the option.'}[GLOBAL_LANG])
-            self.edit_config(r)
+                inp_conf_name = self._input(allow_empty=False)
+                # if 'http' in r:
+                #     pass
 
-            possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
-            possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
-
+                logger.info({'zh_CN': '如果你不想改变设置，直接在选项上按回车键。',
+                            'en_US': 'If you do not want to change the settings, press enter directly on the option.'}[GLOBAL_LANG])
+                self.edit_config(inp_conf_name)
+                
             logger.info({'zh_CN': '请输入启动配置文件名。',
                          'en_US': 'Please enter the launching config name.'}[GLOBAL_LANG])
             launching_config = self._input(allow_empty=False, possible_answer=possible_configs)
+            possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
+            possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
+
+            
 
             with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w', encoding='utf-8') as f:
                 f.write(launching_config)
