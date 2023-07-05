@@ -1,7 +1,7 @@
 # coding:utf-8
 
 
-# i18n module for GIA.
+# i18n module
 
 # Usage:
 #     1. run `translation/generate_pot.py`

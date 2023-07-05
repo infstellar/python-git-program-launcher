@@ -10,6 +10,18 @@ LAUNCHER_PYTHON_PATH = PYTHON_EXE_PATH
 PROGRAM_PYTHON_PATH = LAUNCHER_PYTHON_PATH
 REPO_PATH = ""
 
+class PGPLOut():
+    def __init__(self) -> None:
+        self.original = sys.stdout
+        self.flush = self.original.flush
+        
+    def write(self,x):
+        if 'Requirement already satisfied: ' in x:
+            pass
+        else:
+            self.original.write(x)
+    
+
 
 class GitManager(Command):
 
@@ -157,7 +169,7 @@ class PipManager(Command):
         logger.hr(t2t('Update Dependencies'), 1)
 
         # self.execute((f'{self.pip()} install pycocotools-windows{arg}'))
-        self.execute(f'{self.pip()} install -r {self.requirements_file()}{arg}')
+        run_command(f'{self.pip()} install -r {self.requirements_file()}{arg}')
 
 
 class PythonManager(Command):
@@ -352,7 +364,7 @@ class ConfigEditor():
         try:
             r = input_type(r)
         except Exception as e:
-            logger.errort2t(("Illegal parameter type"))
+            logger.error(t2t("Illegal parameter type"))
             return self._input(info, possible_answer, ignore_case, input_type, allow_empty)
         return r
 
@@ -373,7 +385,7 @@ class ConfigEditor():
         logger.info(t2t('Current Config')+f": {launching_config}")
         logger.info(t2t('Do you want to edit settings or select other settings?'))
         try:
-            c = inputimeout(prompt=t2t("After 3 seconds without input, PGPL will automatically start. select: ") + f"{['y', 'n', '']}\n", timeout=3)
+            c = inputimeout(prompt=t2t("After $t$ seconds without input, PGPL will automatically start. select: ") + f"{['y', 'n', '']}", timeout=5)
         except TimeoutOccurred:
             c = ''
 
@@ -386,13 +398,16 @@ class ConfigEditor():
         if is_edit:
             possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
             possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
-            r = self._input_bool(info='Do you want to edit or add config? If you do not need to edit or add config, just select other config, please enter n')
-            if r:
-                logger.hr(t2t("possible configs"))
-
+            
+            def print_possible_configs():
+                logger.hr(t2t("possible configs:"), level=1)
                 for i in possible_configs:
                     logger.info(i)
-                    
+                logger.hr(t2t("end"), level=1)
+            print_possible_configs() 
+            r = self._input_bool(info=t2t('Do you want to edit or add config? If you do not need to edit or add config, just select other config, please enter `n` or enter directly.'))
+            if r:
+                # print_possible_configs() 
                 logger.info(t2t("Please enter the config name."))
                 logger.info(t2t("Config will be created automatically if the file does not exist."))
 

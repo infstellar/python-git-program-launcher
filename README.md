@@ -22,12 +22,6 @@
 
 你可能需要使用管理员权限运行。
 
-# 警告
-
-对于python安装，你的电脑每种大版本的python只能安装过一种。如果你已预先安装了，必须先手动卸载。  
-例如：目标版本3.7.6，而你的电脑安装了3.7.8，则必须先卸载3.7.8版本的python再使用。  
-Anaconda等独立包管理器不受此影响。
-
 # 设置配置
 
 |配置项|内容|默认值|
@@ -43,7 +37,7 @@ Anaconda等独立包管理器不受此影响。
 |KeepLocalChanges|是否保持本地更改|false|
 |AutoUpdate|是否自动更新|true|
 |Tag|tag，有tag时优先使用tag，否则使用branch。||
-|PythonVersion|python版本，必须为有效版本|3.10.10|
+|PythonVersion|python版本，必须为有效版本(3.x.y)|3.10.10|
 
 # 文件位置
 
@@ -53,10 +47,6 @@ Anaconda等独立包管理器不受此影响。
 ## python位置
 ./toolkit/python  
 你可能需要通过控制面板卸载。
-
-# 为你的项目添加默认配置
-
-Fork本仓库，在configs文件夹中添加配置，然后再分发。
 
 # 范例配置
 

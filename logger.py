@@ -88,6 +88,10 @@ logger.attr = attr
 logger.attr_align = attr_align
 
 if __name__ == "__main__":
+    logger.hr('1', level=0)
+    logger.hr('1', level=1)
+    logger.hr('1', level=2)
+    logger.hr('1', level=3)
     logger.warning_once("123")
     logger.warning_once("123")
     logger.warning_once("123")

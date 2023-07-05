@@ -5,6 +5,7 @@ import time
 from logger import logger
 import locale
 from i18n import t2t
+import subprocess
 
 PROGRAM_NAME = "Python-Git-Program-Launcher"
 
@@ -25,6 +26,7 @@ CONFIG_TEMPLATE = {
     "Tag": "",
     "PythonVersion": "3.10.10"
 }
+
 
 
 def get_local_lang():
@@ -107,6 +109,26 @@ def write_file_flag(n:str, x:bool) -> None:
 class ExecutionError(Exception):
     pass
 
+
+
+def run_command(command):
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    i = 0
+    while True:
+        list = ["\\", "|", "/", "—"]
+        index = i % 4
+        print("\r {}".format(list[index]), end="")
+        output = process.stdout.readline()
+        if str(output, encoding='utf-8') == '' and (process.poll() is not None):
+            break
+        if output:
+            mess = output.strip()
+            mess = str(mess, encoding='utf-8')
+            if 'Requirement already satisfied: ' not in mess:
+                print(mess)
+        i+=1
+    rc = process.poll()
+    return rc
 
 class Command():
 
