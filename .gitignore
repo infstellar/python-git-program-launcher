@@ -6,8 +6,9 @@ toolkit/
 Logs/
 configs/*
 !configs/.gitkeep
-!configs/SRC.json
-!configs/GIA_China.json
+!configs/SRC-dev.json
+!configs/GIA-China.json
+!configs/GIA-Global.json
 launcher_config_name.txt
 *.pot
 *.mo

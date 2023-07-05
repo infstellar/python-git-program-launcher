@@ -1,0 +1,14 @@
+{
+  "AutoUpdate": true,
+  "Branch": "main",
+  "GitProxy": false,
+  "InstallDependencies": true,
+  "KeepLocalChanges": true,
+  "Main": "genshin_assistant.py",
+  "PypiMirror": "AUTO",
+  "PythonMirror": "AUTO",
+  "PythonVersion": "3.7.6",
+  "Repository": "https://github.com/GenshinImpactAssistant/GIA_Launcher_Download_Lib",
+  "RequirementsFile": "requirements.txt",
+  "Tag": ""
+}

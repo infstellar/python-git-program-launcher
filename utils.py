@@ -114,10 +114,8 @@ class ExecutionError(Exception):
 def run_command(command):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     i = 0
+    pt = time.time()
     while True:
-        list = ["\\", "|", "/", "—"]
-        index = i % 4
-        print("\r {}".format(list[index]), end="")
         output = process.stdout.readline()
         if str(output, encoding='utf-8') == '' and (process.poll() is not None):
             break
@@ -125,8 +123,16 @@ def run_command(command):
             mess = output.strip()
             mess = str(mess, encoding='utf-8')
             if 'Requirement already satisfied: ' not in mess:
-                print(mess)
-        i+=1
+                logger.info(mess)
+            if 'Installing collected packages' in mess:
+                logger.info('Please waiting...')
+            
+        else:
+            if time.time()-pt>5:
+                list = ["\\", "|", "/", "—"]
+                index = i % 4
+                print("\r {}".format(list[index]), end="")
+                i+=1
     rc = process.poll()
     return rc
 
@@ -160,7 +166,7 @@ class Command():
         if not output:
             command = command + ' >nul 2>nul'
         logger.info(command)
-        error_code = os.system(command)
+        error_code = run_command(command)
         if error_code:
             if allow_failure:
                 logger.info(f"[ allowed failure ], error_code: {error_code}")

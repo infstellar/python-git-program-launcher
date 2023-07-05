@@ -265,7 +265,6 @@ class PythonManager(Command):
     
     def download_python_installer(self):
         # 这个没bug，但是要安装，因此暂时弃用
-        # 3.7 only
         logger.warning("确认python版本：")
         logger.warning("你的电脑每种大版本的python只能安装过一种。如果你已预先安装了，必须先手动卸载。")
         logger.warning("例1：目标版本3.7.6，而你的电脑安装了3.7.8，则必须先卸载3.7.8版本的python再使用。")
@@ -385,7 +384,7 @@ class ConfigEditor():
         logger.info(t2t('Current Config')+f": {launching_config}")
         logger.info(t2t('Do you want to edit settings or select other settings?'))
         try:
-            c = inputimeout(prompt=t2t("After $t$ seconds without input, PGPL will automatically start. select: ") + f"{['y', 'n', '']}", timeout=5)
+            c = inputimeout(prompt="\033[1;37m"+t2t("After $t$ seconds without input, PGPL will automatically start.") + "\033[0m "+ t2t("Options") + ": " + f"{['y', 'n', '']}", timeout=5)
         except TimeoutOccurred:
             c = ''
 

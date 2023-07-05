@@ -45,8 +45,7 @@
 ./repositories
 
 ## python位置
-./toolkit/python  
-你可能需要通过控制面板卸载。
+./toolkit/python
 
 # 范例配置
 
@@ -54,6 +53,5 @@
 [GIA](docs/GIA.json)  
 
 # 鸣谢
-ALAS-EasyInstaller
-
+ALAS-EasyInstaller  
 GIA
