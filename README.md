@@ -11,7 +11,9 @@
 # 使用
 
 ## 源代码运行
-下载[toolkit](https://github.com/infstellar/python-git-program-launcher/releases/download/v1.0.0/toolkit.7z)放在Launcher.exe同级目录下。
+克隆仓库。
+
+运行`git submodule init; git submodule update`
 
 运行Launcher.bat或Launcher.exe。
 
