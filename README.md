@@ -67,8 +67,8 @@
 
 # 范例配置
 
-[SRC](docs/SRC.json)   
-[GIA](docs/GIA.json)  
+[SRC](configs/SRC-dev.json)   
+[GIA](configs/giachina.json)  
 
 # 鸣谢
 ALAS-EasyInstaller  
