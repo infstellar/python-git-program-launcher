@@ -1,0 +1,53 @@
+name: Create Release
+
+on:
+    workflow_dispatch:
+      inputs:
+        tag_name:
+          description: 'Tag name'
+          required: false
+        release_name:
+          description: 'Release name'
+          required: false
+        body:
+          description: 'Release notes'
+          required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+    
+      - name: Build release archive
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -r release.zip .
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v1.0.0
+          release_name: Release v1.0.0
+          body: |
+            Changes in this release:
+
+            * Added feature A.
+            * Fixed bug B.
+          draft: false
+          prerelease: false
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release.zip
+          asset_name: release.zip
+          asset_content_type: application/zip
