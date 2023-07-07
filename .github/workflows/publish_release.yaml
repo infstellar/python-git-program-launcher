@@ -4,13 +4,13 @@ on:
     workflow_dispatch:
       inputs:
         tag_name:
-          description: 'Tag name'
-          required: false
+          description: 'TagName'
+          required: true
         release_name:
-          description: 'Release name'
-          required: false
+          description: 'ReleaseName'
+          required: true
         body:
-          description: 'Release notes'
+          description: 'ReleaseNotes'
           required: false
 
 jobs:
@@ -32,14 +32,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v1.0.0
-          release_name: Release v1.0.0
-          body: |
-            Changes in this release:
-
-            * Added feature A.
-            * Fixed bug B.
-          draft: false
+          tag_name: ${{ inputs.TagName }}
+          release_name: ${{ inputs.ReleaseName }}
+          body: ${{ inputs.ReleaseNotes }}
+          draft: true
           prerelease: false
 
       - name: Upload release asset
