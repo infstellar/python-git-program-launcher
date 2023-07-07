@@ -260,7 +260,7 @@ class PythonManager(Command):
         
         generate_pgplpth(self.python_folder)
         
-        self.execute(f'"{self.python_path}" -m pip install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
+        # self.execute(f'"{self.python_path}" -m pip install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
         
         # self.execute(f'pip')
     
@@ -490,6 +490,10 @@ class ConfigEditor():
         if is_edit:
             self._run_edit()
 
+        with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'r') as f:
+            launching_config = str(f.read())
+            f.close()
+        
         return load_json(launching_config)
 
 
