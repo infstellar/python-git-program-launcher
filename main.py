@@ -413,7 +413,7 @@ class ConfigEditor():
             logger.info(t2t("Please enter the config name."))
             logger.info(t2t("Config will be created automatically if the file does not exist."))
             # logger.info(t2t('Tips: You can enter the repository url to get the pgpl configuration from the remote repository (if the remote repository is already configured with pgpl.yaml)'))
-            logger.info("If the repository has pre-configured files, you can also download the configuration file by entering the repository address directly. (if the remote repository is already configured with pgpl.yaml)")
+            logger.info(t2t("If the repository has pre-configured files, you can also download the configuration file by entering the repository address directly. (if the remote repository is already configured with pgpl.yaml)"))
 
             inp_conf_name = self._input(allow_empty=False)
             if 'http' in inp_conf_name:
