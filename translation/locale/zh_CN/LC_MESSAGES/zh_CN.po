@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-07-07 21:57+0800\n"
-"PO-Revision-Date: 2023-07-07 21:58+0800\n"
+"POT-Creation-Date: 2023-07-07 22:01+0800\n"
+"PO-Revision-Date: 2023-07-07 22:01+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -92,6 +92,15 @@ msgstr "Python安装成功。清理中。"
 #: ../main.py:312
 msgid "Python is installed."
 msgstr "Python已安装。"
+
+#: ../main.py:325
+msgid ""
+"Please do not exit the program while python is being downloaded. If you "
+"accidentally quit or the installation fails, empty the . /toolkit/python "
+"folder in the corresponding folder and try again."
+msgstr ""
+"请不要在下载python时退出程序。如果你不小心退出了或安装失败，请清空./toolkit/"
+"python文件夹中的对应文件夹后重试。"
 
 #: ../main.py:341 ../main.py:371
 msgid "Input"
