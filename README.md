@@ -3,19 +3,13 @@
 
 # 特点
 - 一键启动python程序
+- 使用git自动更新
 - 允许使用不同的配置，管理不同python版本的不同仓库。
 - 自动下载并安装python和pip包。
-- 使用git自动更新
+- 从Github仓库自动下载预配置文件
 - 丰富的的自定义配置
 - 使用命令行选择/修改配置
 # 使用
-
-## 源代码运行
-克隆仓库。
-
-运行`git submodule init; git submodule update`
-
-运行Launcher.bat或Launcher.exe。
 
 ## 直接运行
 下载最新的Release。
@@ -24,14 +18,30 @@
 
 你可能需要使用管理员权限运行。
 
+## 源代码运行
+克隆仓库。
+
+运行`git submodule init; git submodule update`
+
+运行Launcher.bat或Launcher.exe。
+
+# 添加配置
+
+## 从Github自动下载
+如果你要添加的仓库有pgpl.yaml文件，你可以在添加配置时输入Github仓库地址，从而自动下载并识别远程仓库的配置文件。  
+如果你在大陆，推荐使用Watt Toolkit加速Github。***极其强烈不推荐使用Clash***，因为它会代理国内的部分链接。
+
+## 手动添加
+按照软件内说明操作。同时按照`设置配置`中的说明填写。
+
 # 设置配置
 
 |配置项|内容|默认值|
 |----|----|----|
 |RequirementsFile|requirement文件位置|requirements.txt|
 |InstallDependencies|是否安装pip依赖|true|
-|PypiMirror|pypi镜像|AUTO|
-|PythonMirror|python镜像|AUTO|
+|PypiMirror|pypi镜像地址|AUTO|
+|PythonMirror|python镜像地址|AUTO|
 |Repository|仓库地址|https://github.com/infstellar/python-git-program-launcher|
 |Main|python执行文件|main.py|
 |Branch|分支|main|
@@ -43,11 +53,17 @@
 
 # 文件位置
 
-## 仓库位置
+## 日志位置
+./Logs/yyyy-mm-dd/yyyy-mm-dd.log
+
+## 仓库保存位置
 ./repositories
 
-## python位置
+## python保存位置
 ./toolkit/python
+
+## 缓存位置
+./cache
 
 # 范例配置
 

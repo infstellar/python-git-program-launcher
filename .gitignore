@@ -6,8 +6,9 @@ Logs/
 configs/*
 !configs/.gitkeep
 !configs/SRC-dev.json
-!configs/GIA-China.json
-!configs/GIA-Global.json
+!configs/giachina.json
+!configs/giaglobal.json
 launcher_config_name.txt
 *.pot
 *.mo
+cache/

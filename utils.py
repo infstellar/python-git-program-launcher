@@ -6,6 +6,8 @@ from logger import logger
 import locale
 from i18n import t2t
 import subprocess
+import urllib.request
+import ssl
 
 PROGRAM_NAME = "Python-Git-Program-Launcher"
 
@@ -120,12 +122,13 @@ def run_command(command):
         if str(output, encoding='utf-8') == '' and (process.poll() is not None):
             break
         if output:
-            mess = output.strip()
-            mess = str(mess, encoding='utf-8')
+            orimess = output.strip()
+            mess = str(orimess, encoding='utf-8')
             if 'Requirement already satisfied: ' not in mess:
-                logger.info(mess)
+                logger.trace(mess)
+                print(mess)
             if 'Installing collected packages' in mess:
-                logger.info('Please waiting...')
+                logger.info('Please wait, pip is copying the file.')
             
         else:
             if time.time()-pt>5:
@@ -178,3 +181,14 @@ class Command():
         else:
             logger.info(f"[ success ]")
             return True
+
+def url_file_exists(url):
+    context = ssl._create_unverified_context()
+    try:
+        urllib.request.urlopen(url, context=context)
+        return True
+    except Exception as e:
+        logger.error(e)
+        return False
+
+

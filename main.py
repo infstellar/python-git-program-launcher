@@ -1,6 +1,7 @@
 import os.path
 import sys
 from urllib.parse import urlparse
+import yaml
 
 from utils import *
 from pgpl_pth import generate_pgplpth
@@ -171,7 +172,22 @@ class PipManager(Command):
         # self.execute((f'{self.pip()} install pycocotools-windows{arg}'))
         run_command(f'{self.pip()} install -r {self.requirements_file()}{arg}')
 
-
+def download_url(url, dst):
+        from tqdm import tqdm
+        import requests
+        first_byte = 0
+        logger.info(t2t("downloading url:")+f"{url} -> {dst}")
+        # tqdm 里可选 total= 参数，不传递这个参数则不显示文件总大小
+        pbar = tqdm(initial=first_byte, unit='B', unit_scale=True, desc=dst)
+        # 设置stream=True参数读取大文件
+        req = requests.get(url, stream=True, verify=False)
+        with open(dst, 'ab') as f:
+            # 每次读取一个1024个字节
+            for chunk in req.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+                    pbar.update(1024)
+        pbar.close()
 class PythonManager(Command):
 
     @logger.catch()
@@ -210,21 +226,7 @@ class PythonManager(Command):
         # self.execute('set path')
         # self.execute(f'"{self.python_path}" -m pip install --no-cache-dir -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
 
-    def download_url(self, url, dst):
-        from tqdm import tqdm
-        import requests
-        first_byte = 0
-        # tqdm 里可选 total= 参数，不传递这个参数则不显示文件总大小
-        pbar = tqdm(initial=first_byte, unit='B', unit_scale=True, desc=dst)
-        # 设置stream=True参数读取大文件
-        req = requests.get(url, stream=True)
-        with open(dst, 'ab') as f:
-            # 每次读取一个1024个字节
-            for chunk in req.iter_content(chunk_size=1024):
-                if chunk:
-                    f.write(chunk)
-                    pbar.update(1024)
-        pbar.close()
+    
 
     def clean_py(self, py_folder):
         pass
@@ -236,7 +238,7 @@ class PythonManager(Command):
         url = fr"{self.python_mirror}/{ver}/python-{ver}-embed-amd64.zip"
         logger.info(f'url: {url}')
         file_name = os.path.join(self.python_folder, f'python-{ver}-amd64.zip')
-        self.download_url(url, file_name)
+        download_url(url, file_name)
         logger.hr(t2t("Download python successfully, extract zip"))
         with zipfile.ZipFile(file_name, 'r') as zip_ref:
             zip_ref.extractall(self.python_folder)
@@ -256,7 +258,6 @@ class PythonManager(Command):
             f.seek(0)
             f.write(file_str)
         
-        logger.hr(t2t("Generate PGPL.pth"))
         generate_pgplpth(self.python_folder)
         
         self.execute(f'"{self.python_path}" -m pip install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
@@ -284,7 +285,7 @@ class PythonManager(Command):
         if not os.path.exists(file_name2):
             if os.path.exists(file_name):
                 os.remove(file_name)
-            self.download_url(url, file_name)
+            download_url(url, file_name)
             os.rename(file_name, file_name2)
 
         logger.hr(t2t("Download Successfully"))
@@ -367,70 +368,74 @@ class ConfigEditor():
             return self._input(info, possible_answer, ignore_case, input_type, allow_empty)
         return r
 
-    def _input_bool(self, info):
+    def _input_bool(self, info=t2t('Input')):
         r = self._input(info, possible_answer=['y', 'n', ''], ignore_case=True)
         if r != '':
             r = {'y': True, 'n': False}[r]
         return r
 
-    def _download_config_from_repo(self):
-        pass
+    def _download_config_from_repo(self, url:str):
+        url = url.replace('https', 'http')
+        url = url.replace("http://github.com/", "")
+        url = f"https://raw.githubusercontent.com/{url}/main/pgpl.yaml"
+        # url += "/blob/main/pgpl.yaml"
+        if url_file_exists(url):
+            verify_path(os.path.join(ROOT_PATH, 'cache'))
+            fp = os.path.join(ROOT_PATH, 'cache', 'cac.yaml')
+            download_url(url, fp)
+            with open(fp,encoding='utf-8') as f:
+                data = yaml.load(f, Loader=yaml.FullLoader)
+            for key in data:
+                with open(os.path.join(ROOT_PATH, 'configs', f"{key}.json"), "w") as f:
+                    json.dump(data[key], f)
+            logger.info(t2t('download config from repo succ'))
+            return
+        else:
+            logger.error(t2t("Invalid address"))
+            inp_conf_name = self._input(allow_empty=False)
+            self._download_config_from_repo(inp_conf_name)
+    
+    def _run_edit(self):
+        possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
+        possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
+        
+        def print_possible_configs():
+            logger.hr(t2t("possible configs:"), level=1)
+            for i in possible_configs:
+                logger.info(i)
+            logger.hr(t2t("end"), level=1)
+        print_possible_configs() 
+        logger.info(t2t('Do you want to edit or add config? If you do not need to edit or add config, just select other config, please enter `n` or enter directly.'))
+        
+        r = self._input_bool()
+        if r:
+            # print_possible_configs() 
+            logger.info(t2t("Please enter the config name."))
+            logger.info(t2t("Config will be created automatically if the file does not exist."))
+            # logger.info(t2t('Tips: You can enter the repository url to get the pgpl configuration from the remote repository (if the remote repository is already configured with pgpl.yaml)'))
+            logger.info("If the repository has pre-configured files, you can also download the configuration file by entering the repository address directly. (if the remote repository is already configured with pgpl.yaml)")
 
-    def run(self):
-
-        with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'r') as f:
-            launching_config = str(f.read())
-            f.close()
-        logger.info(t2t('Current Config')+f": {launching_config}")
-        logger.info(t2t('Do you want to edit settings or select other settings?'))
-        try:
-            c = inputimeout(prompt="\033[1;37m"+t2t("After $t$ seconds without input, PGPL will automatically start.") + "\033[0m "+ t2t("Options") + ": " + f"{['y', 'n', '']}", timeout=5)
-        except TimeoutOccurred:
-            c = ''
-
-        if c != '': c = {'y': True, 'n': False}[c]
-        is_edit = bool(c)
-
-        if launching_config == '':
-            logger.info(t2t('No config selected. A config must be selected.'))
-            is_edit = True
-        if is_edit:
-            possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
-            possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
-            
-            def print_possible_configs():
-                logger.hr(t2t("possible configs:"), level=1)
-                for i in possible_configs:
-                    logger.info(i)
-                logger.hr(t2t("end"), level=1)
-            print_possible_configs() 
-            r = self._input_bool(info=t2t('Do you want to edit or add config? If you do not need to edit or add config, just select other config, please enter `n` or enter directly.'))
-            if r:
-                # print_possible_configs() 
-                logger.info(t2t("Please enter the config name."))
-                logger.info(t2t("Config will be created automatically if the file does not exist."))
-
-                # logger.info("If the repository has pre-configured files, you can also download the configuration file by entering the repository address directly.")
-
-                inp_conf_name = self._input(allow_empty=False)
-                # if 'http' in r:
-                #     pass
-
+            inp_conf_name = self._input(allow_empty=False)
+            if 'http' in inp_conf_name:
+                self._download_config_from_repo(inp_conf_name)
+            else:
                 logger.info(t2t('If you do not want to change the settings, press enter directly on the option.'))
                 self.edit_config(inp_conf_name)
-                
-            logger.info(t2t('Please enter the launching config name.'))
-            launching_config = self._input(allow_empty=False, possible_answer=possible_configs)
-            possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
-            possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
-
             
+        logger.info(t2t('Please enter the launching config name.'))
+        possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
+        possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
+        print_possible_configs()
+        launching_config = self._input(allow_empty=False, possible_answer=possible_configs)
+        possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
+        possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
 
-            with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w', encoding='utf-8') as f:
-                f.write(launching_config)
-                f.close()
+        
 
-        return load_json(launching_config)
+        with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w', encoding='utf-8') as f:
+            f.write(launching_config)
+            f.close()
+    
 
     def edit_config(self, config_name: str):
         if not os.path.exists(os.path.join(ROOT_PATH, 'configs', config_name + '.json')):
@@ -462,11 +467,36 @@ class ConfigEditor():
 
         save_json(config, config_name)
         logger.hr(t2t("Successfully edit config."))
+        
+    def run(self):
+
+        with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'r') as f:
+            launching_config = str(f.read())
+            f.close()
+        logger.info(t2t('Current Config')+f": {launching_config}")
+        logger.info(t2t('Do you want to edit settings or select other settings?'))
+        
+        try:
+            c = inputimeout(prompt="\033[1;37m"+t2t("After $t$ seconds without input, PGPL will automatically start.") + "\033[0m "+ t2t("Options") + ": " + f"{['y', 'n', '']}", timeout=5)
+        except TimeoutOccurred:
+            c = ''
+
+        if c != '': c = {'y': True, 'n': False}[c]
+        is_edit = bool(c)
+
+        if launching_config == '':
+            logger.info(t2t('No config selected. A config must be selected.'))
+            is_edit = True
+        if is_edit:
+            self._run_edit()
+
+        return load_json(launching_config)
 
 
 if __name__ == "__main__":
     logger.hr(f"Welcome to {PROGRAM_NAME}", 0)
     logger.hr(t2t("The program is free and open source on github"))
+    logger.hr(t2t("Please see the help file at https://github.com/infstellar/python-git-program-launcher"))
     # logger.hr("Make sure you have read README.md and configured installer_config.json")
     if not os.path.exists(os.path.join(ROOT_PATH, 'launcher_config_name.txt')):
         with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w') as f:
