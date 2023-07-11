@@ -169,7 +169,7 @@ class Command():
         if not output:
             command = command + ' >nul 2>nul'
         logger.info(command)
-        error_code = run_command(command)
+        error_code = os.system(command) # run_command(command)
         if error_code:
             if allow_failure:
                 logger.info(f"[ allowed failure ], error_code: {error_code}")
