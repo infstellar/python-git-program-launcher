@@ -170,7 +170,7 @@ class PipManager(Command):
         logger.hr(t2t('Update Dependencies'), 1)
 
         # self.execute((f'{self.pip()} install pycocotools-windows{arg}'))
-        run_command(f'{self.pip()} install -r {self.requirements_file()}{arg}')
+        self.execute(f'{self.pip()} install -r {self.requirements_file()}{arg}')
 
 def download_url(url, dst):
         from tqdm import tqdm
@@ -202,6 +202,7 @@ class PythonManager(Command):
                 "zh_CN": "https://mirrors.huaweicloud.com/python",
                 "en_US": "https://www.python.org/ftp/python"
             }[GLOBAL_LANG]
+        
         # https://registry.npmmirror.com/-/binary/python/3.10.1/python-3.10.1-amd64.exe
         # paths = ''
         # for i in os.environ['PATH'].split(';'):
@@ -229,7 +230,8 @@ class PythonManager(Command):
     
 
     def clean_py(self, py_folder):
-        pass
+        import shutil
+        shutil.rmtree(py_folder)
     
     def download_python_zip(self):
         import zipfile
@@ -322,9 +324,18 @@ class PythonManager(Command):
         
         if not os.path.exists(self.python_path):
             logger.hr(f"Downloading Python Version: {self.python_version} into {self.python_folder}")
-            logger.warning(t2t("Please do not exit the program while python is being downloaded. If you accidentally quit or the installation fails, empty the . /toolkit/python folder in the corresponding folder and try again."))
+            # logger.warning(t2t("Please do not exit the program while python is being downloaded. If you accidentally quit or the installation fails, empty the . /toolkit/python folder in the corresponding folder and try again."))
             self.download_python_zip()
-
+        else:
+            try:
+                self.execute(f'"{self.python_path}" -m pip install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
+            except ExecutionError as e:
+                logger.info(t2t("pip fail, reinstall python"))
+                self.clean_py(self.python_folder)
+                verify_path(self.python_folder)
+                self.download_python_zip()
+        
+        
         # if not os.path.exists(os.path.join(self.python_folder, "Lib")):
         #     logger.hr(f"Installing pip")
         #     self.install_pip()
