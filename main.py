@@ -164,7 +164,9 @@ class PipManager(Command):
         logger.hr(t2t('Update pip'), 1)
         
         self.execute(f'{self.pip()} install --upgrade pip{arg}')
-        self.execute(f'{self.pip()} install --upgrade setuptools{arg}')
+        self.execute(f'{self.pip()} install setuptools{arg}')
+        self.execute(f'{self.pip()} install wheel{arg}')
+        self.execute(f'"{self.pip()}" install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}{arg}')
         # self.execute(f'pip install progressbar2{arg}')
 
         logger.hr(t2t('Update Dependencies'), 1)
@@ -248,8 +250,8 @@ class PythonManager(Command):
         #     zip_ref.extractall(self.python_folder)
         # install pip
         logger.hr("Installing pip")
-        self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}')
-        
+        self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py")} --no-setuptools --no-wheel')
+        # self.execute(f'"{self.python_path}" -m pip install setuptools ')
         
         # https://blog.csdn.net/liangma/article/details/120022530
         with open(os.path.join(self.python_folder, fr"python{ver2}._pth"), 'r+') as f:
@@ -262,7 +264,7 @@ class PythonManager(Command):
         
         generate_pgplpth(self.python_folder)
         
-        self.execute(f'"{self.python_path}" -m pip install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
+        
         
         # self.execute(f'pip')
     
