@@ -134,7 +134,7 @@ def run_command(command):
             if time.time()-pt>5:
                 list = ["\\", "|", "/", "—"]
                 index = i % 4
-                print("\r {}".format(list[index]), end="")
+                sys.stdout.write("\r {}".format(list[index]), end="")
                 i+=1
     rc = process.poll()
     return rc
@@ -147,7 +147,7 @@ class Command():
         logger.info("")
         logger.info(f"Last command: {command}\nerror_code: {error_code}")
         logger.info(
-            "Please check your deploy settings in config. "
+            "Please check your NETWORK ENVIROUMENT "
             "and re-open Launcher.exe"
         )
 

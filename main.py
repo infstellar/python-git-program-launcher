@@ -330,7 +330,7 @@ class PythonManager(Command):
             try:
                 self.execute(f'"{self.python_path}" -m pip install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
             except ExecutionError as e:
-                logger.info(t2t("pip fail, reinstall python"))
+                logger.warning(t2t("pip fail, reinstall python"))
                 self.clean_py(self.python_folder)
                 verify_path(self.python_folder)
                 self.download_python_zip()
