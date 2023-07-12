@@ -146,11 +146,11 @@ class Command():
         # self.show_config()
         logger.info("")
         logger.info(f"Last command: {command}\nerror_code: {error_code}")
-        logger.info(
-            "Please check your NETWORK ENVIROUMENT "
-            "and re-open Launcher.exe"
-        )
+        logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
+        logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
+        logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
 
+    @logger.catch(reraise=True)
     def execute(self, command, allow_failure=False, output=True, is_format=True):
         """
         Args:
@@ -178,6 +178,7 @@ class Command():
                 logger.info(f"[ failure ], error_code: {error_code}")
                 self.show_error(command, error_code)
                 raise ExecutionError
+
         else:
             logger.info(f"[ success ]")
             return True

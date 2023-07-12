@@ -6,6 +6,7 @@ command_head_zh = f'python pygettext.py -k t2t -d zh_CN -p locale\\zh_CN\\LC_MES
 command=r''
 
 command+='../main.py'
+command+=' ../utils.py'
         
 print(f'{command_head_en} {command}')
 os.system(f'{command_head_en} {command}')

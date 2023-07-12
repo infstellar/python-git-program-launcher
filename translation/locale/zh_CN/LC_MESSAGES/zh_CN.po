@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-07-07 22:01+0800\n"
-"PO-Revision-Date: 2023-07-07 22:01+0800\n"
+"POT-Creation-Date: 2023-07-12 18:27+0800\n"
+"PO-Revision-Date: 2023-07-12 18:28+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -53,7 +53,7 @@ msgstr "展示版本"
 msgid "AutoUpdate is disabled, skip"
 msgstr "自动更新禁用，跳过"
 
-#: ../main.py:145 ../main.py:170
+#: ../main.py:145 ../main.py:172
 msgid "Update Dependencies"
 msgstr "更新依赖"
 
@@ -69,76 +69,71 @@ msgstr "检测Python"
 msgid "Update pip"
 msgstr "更新pip"
 
-#: ../main.py:179
+#: ../main.py:181
 msgid "downloading url:"
 msgstr "下载url:"
 
-#: ../main.py:242
+#: ../main.py:246
 msgid "Download python successfully, extract zip"
 msgstr "下载python成功，解压压缩包"
 
-#: ../main.py:291
+#: ../main.py:295
 msgid "Download Successfully"
 msgstr "下载成功"
 
-#: ../main.py:304
+#: ../main.py:308
 msgid "Please waiting, python is installing. It may cost a few minutes."
 msgstr "请等待，python正在安装。这可能需要几分钟。"
 
-#: ../main.py:310
+#: ../main.py:314
 msgid "Python installed successfully. Cleaning."
 msgstr "Python安装成功。清理中。"
 
-#: ../main.py:312
+#: ../main.py:316
 msgid "Python is installed."
 msgstr "Python已安装。"
 
-#: ../main.py:325
-msgid ""
-"Please do not exit the program while python is being downloaded. If you "
-"accidentally quit or the installation fails, empty the . /toolkit/python "
-"folder in the corresponding folder and try again."
+#: ../main.py:335
+msgid "pip fail, reinstall python"
 msgstr ""
-"请不要在下载python时退出程序。如果你不小心退出了或安装失败，请清空./toolkit/"
-"python文件夹中的对应文件夹后重试。"
 
-#: ../main.py:341 ../main.py:371
+#: ../main.py:354 ../main.py:384
 msgid "Input"
 msgstr "输入"
 
-#: ../main.py:345 ../main.py:480
+#: ../main.py:358 ../main.py:493
 msgid "Options"
 msgstr "选项"
 
-#: ../main.py:353
+#: ../main.py:366
 msgid "Illegal parameters"
 msgstr "非法参数"
 
-#: ../main.py:361
+#: ../main.py:374
 msgid "Illegal parameters: Empty"
 msgstr "非法参数：空输入"
 
-#: ../main.py:367
+#: ../main.py:380
 msgid "Illegal parameter type"
 msgstr "非法参数：无效类型"
 
-#: ../main.py:391
+#: ../main.py:404
 msgid "download config from repo succ"
 msgstr "从仓库下载配置成功"
 
-#: ../main.py:394
+#: ../main.py:407
 msgid "Invalid address"
 msgstr "无效链接"
 
-#: ../main.py:403
+#: ../main.py:416
 msgid "possible configs:"
 msgstr "可能的配置"
 
-#: ../main.py:406
+#: ../main.py:419
 msgid "end"
 msgstr "结束"
 
-#: ../main.py:408
+#: ../main.py:421
 msgid ""
 "Do you want to edit or add config? If you do not need to edit or add config, "
 "just select other config, please enter `n` or enter directly."
@@ -146,15 +141,15 @@ msgstr ""
 "你想编辑或添加配置吗？如果你不需要编辑或添加配置，只是选择其他配置，请输入"
 "`n'或直接按下回车。"
 
-#: ../main.py:413
+#: ../main.py:426
 msgid "Please enter the config name."
 msgstr "请输入配置名"
 
-#: ../main.py:414
+#: ../main.py:427
 msgid "Config will be created automatically if the file does not exist."
 msgstr "如果配置文件不存在将自动创建。"
 
-#: ../main.py:416
+#: ../main.py:429
 msgid ""
 "If the repository has pre-configured files, you can also download the "
 "configuration file by entering the repository address directly. (if the "
@@ -163,50 +158,64 @@ msgstr ""
 "如果远程仓库有预先配置的文件，你也可以直接输入远程仓库地址下载配置文件。(远程"
 "仓库需要包含pgpl.yaml)"
 
-#: ../main.py:422
+#: ../main.py:435
 msgid ""
 "If you do not want to change the settings, press enter directly on the "
 "option."
 msgstr "如果你不想修改，请在编辑选项时直接按下回车"
 
-#: ../main.py:425
+#: ../main.py:438
 msgid "Please enter the launching config name."
 msgstr "请输入启动配置名"
 
-#: ../main.py:469
+#: ../main.py:482
 msgid "Successfully edit config."
 msgstr "编辑配置成功。"
 
-#: ../main.py:476
+#: ../main.py:489
 msgid "Current Config"
 msgstr "当前配置"
 
-#: ../main.py:477
+#: ../main.py:490
 msgid "Do you want to edit settings or select other settings?"
 msgstr "你想要编辑设置或选择其他设置吗？"
 
-#: ../main.py:480
+#: ../main.py:493
 msgid "After $t$ seconds without input, PGPL will automatically start."
 msgstr "无输入 $t$ 秒后，PGPL将自动启动。"
 
-#: ../main.py:488
+#: ../main.py:501
 msgid "No config selected. A config must be selected."
 msgstr "未选择配置文件。必须选择配置文件。"
 
-#: ../main.py:502
+#: ../main.py:515
 msgid "The program is free and open source on github"
 msgstr "该程序在github免费开源"
 
-#: ../main.py:503
+#: ../main.py:516
 msgid ""
 "Please see the help file at https://github.com/infstellar/python-git-program-"
 "launcher"
 msgstr ""
 "请在https://github.com/infstellar/python-git-program-launcher查看使用说明"
 
-#: ../main.py:515
+#: ../main.py:528
 msgid "Launching..."
 msgstr "启动中..."
+
+#: ../utils.py:149
+msgid "Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"
+msgstr ""
+"请检查你的网络环境，彻底关闭除了Watt Toolkit之外的所有可能干扰网络连接的软"
+"件，包括Clash/游戏加速器/网络连接管理/下载加速器等，然后重新打开Launcher.exe"
+
+#~ msgid ""
+#~ "Please do not exit the program while python is being downloaded. If you "
+#~ "accidentally quit or the installation fails, empty the . /toolkit/python "
+#~ "folder in the corresponding folder and try again."
+#~ msgstr ""
+#~ "请不要在下载python时退出程序。如果你不小心退出了或安装失败，请清空./"
+#~ "toolkit/python文件夹中的对应文件夹后重试。"
 
 #~ msgid "Generate PGPL.pth"
 #~ msgstr "生成PGPL.pth"
