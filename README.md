@@ -53,6 +53,9 @@
 |Tag|tag，有tag时优先使用tag，否则使用branch。||
 |PythonVersion|python版本，必须为有效版本(3.x.y)|3.10.10|
 
+# TODO:
+- GUI
+
 # 文件位置
 
 ## 日志位置
