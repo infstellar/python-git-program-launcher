@@ -7,9 +7,8 @@ from utils import *
 from pgpl_pth import generate_pgplpth
 from inputimeout import inputimeout, TimeoutOccurred
 
-LAUNCHER_PYTHON_PATH = PYTHON_EXE_PATH
-PROGRAM_PYTHON_PATH = LAUNCHER_PYTHON_PATH
-REPO_PATH = ""
+
+
 
 class PGPLOut():
     def __init__(self) -> None:
@@ -174,22 +173,7 @@ class PipManager(Command):
         # self.execute((f'{self.pip()} install pycocotools-windows{arg}'))
         self.execute(f'{self.pip()} install -r {self.requirements_file()}{arg}')
 
-def download_url(url, dst):
-        from tqdm import tqdm
-        import requests
-        first_byte = 0
-        logger.info(t2t("downloading url:")+f"{url} -> {dst}")
-        # tqdm 里可选 total= 参数，不传递这个参数则不显示文件总大小
-        pbar = tqdm(initial=first_byte, unit='B', unit_scale=True, desc=dst)
-        # 设置stream=True参数读取大文件
-        req = requests.get(url, stream=True, verify=False)
-        with open(dst, 'ab') as f:
-            # 每次读取一个1024个字节
-            for chunk in req.iter_content(chunk_size=1024):
-                if chunk:
-                    f.write(chunk)
-                    pbar.update(1024)
-        pbar.close()
+
 class PythonManager(Command):
 
     @logger.catch()
@@ -341,9 +325,10 @@ class PythonManager(Command):
         # if not os.path.exists(os.path.join(self.python_folder, "Lib")):
         #     logger.hr(f"Installing pip")
         #     self.install_pip()
-
         global PROGRAM_PYTHON_PATH
         PROGRAM_PYTHON_PATH = self.python_path
+        
+        return self.python_path
         # self.execute(f'{self.python_path} -m pip')
 
 
@@ -510,7 +495,7 @@ class ConfigEditor():
         return load_json(launching_config)
 
 
-if __name__ == "__main__":
+def run():
     logger.hr(f"Welcome to {PROGRAM_NAME}", 0)
     logger.hr(t2t("The program is free and open source on github"))
     logger.hr(t2t("Please see the help file at https://github.com/infstellar/python-git-program-launcher"))
@@ -539,3 +524,6 @@ if __name__ == "__main__":
     # os.system("color 07")
     os.system(f"title {PROGRAM_NAME} Console")
     os.system(f'"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
+
+if __name__ == "__main__":
+    run()    

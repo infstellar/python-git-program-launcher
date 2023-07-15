@@ -10,9 +10,12 @@ import urllib.request
 import ssl
 
 PROGRAM_NAME = "Python-Git-Program-Launcher"
-
+DEBUG_MODE = False
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 PYTHON_EXE_PATH = os.path.join(ROOT_PATH, "toolkit\\python.exe")
+LAUNCHER_PYTHON_PATH = PYTHON_EXE_PATH
+PROGRAM_PYTHON_PATH = LAUNCHER_PYTHON_PATH
+REPO_PATH = ""
 os.chdir(ROOT_PATH)
 CONFIG_TEMPLATE = {
     "RequirementsFile": "requirements.txt",
@@ -55,6 +58,22 @@ def load_json(json_name) -> dict:
     f.close()
     return a
 
+def download_url(url, dst):
+        from tqdm import tqdm
+        import requests
+        first_byte = 0
+        logger.info(t2t("downloading url:")+f"{url} -> {dst}")
+        # tqdm 里可选 total= 参数，不传递这个参数则不显示文件总大小
+        pbar = tqdm(initial=first_byte, unit='B', unit_scale=True, desc=dst)
+        # 设置stream=True参数读取大文件
+        req = requests.get(url, stream=True, verify=False)
+        with open(dst, 'ab') as f:
+            # 每次读取一个1024个字节
+            for chunk in req.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+                    pbar.update(1024)
+        pbar.close()
 
 def save_json(x, json_name):
     """保存json.
@@ -62,7 +81,7 @@ def save_json(x, json_name):
     Args:
         x (_type_): dict/list对象
         json_name (str, optional): 同load_json. Defaults to 'General.json'.
-        default_path (str, optional): 同load_json. Defaults to 'config\settings'.
+        default_path (str, optional): 同load_json. Defaults to 'config\\settings'.
         sort_keys (bool, optional): 是否自动格式化. Defaults to True.
         auto_create (bool, optional): _description_. Defaults to False.
     """

@@ -30,6 +30,9 @@ def warning_once(self, message):
 def demo(self, message):
     self.info(f"DEMO: {message}")
 
+def add_logger_to_GUI(cb_func):
+    logger.add(cb_func, level="INFO", backtrace=True, colorize=True)
+
 # import datetime
 
 # def delete_files(path, days):
