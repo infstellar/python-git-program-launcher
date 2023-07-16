@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-07-16 18:29+0800\n"
-"PO-Revision-Date: 2023-07-16 18:30+0800\n"
+"POT-Creation-Date: 2023-07-16 21:49+0800\n"
+"PO-Revision-Date: 2023-07-16 21:50+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -133,11 +133,11 @@ msgstr "非法参数：空输入"
 msgid "Illegal parameter type"
 msgstr "非法参数：无效类型"
 
-#: ..\main.py:415 ..\pages.py:241
+#: ..\main.py:415 ..\pages.py:250
 msgid "download config from repo succ"
 msgstr "从仓库下载配置成功"
 
-#: ..\main.py:418 ..\pages.py:244 ..\pages.py:252
+#: ..\main.py:418 ..\pages.py:253 ..\pages.py:261
 msgid "Invalid address"
 msgstr "无效链接"
 
@@ -204,18 +204,18 @@ msgstr "无输入 $t$ 秒后，PGPL将自动启动。"
 msgid "No config selected. A config must be selected."
 msgstr "未选择配置文件。必须选择配置文件。"
 
-#: ..\main.py:526 ..\pages.py:100
+#: ..\main.py:526 ..\pages.py:101
 msgid "The program is free and open source on github"
 msgstr "该程序在github免费开源"
 
-#: ..\main.py:527 ..\pages.py:101
+#: ..\main.py:527 ..\pages.py:102
 msgid ""
 "Please see the help file at https://github.com/infstellar/python-git-program-"
 "launcher"
 msgstr ""
 "请在https://github.com/infstellar/python-git-program-launcher查看使用说明"
 
-#: ..\main.py:539 ..\pages.py:116
+#: ..\main.py:539 ..\pages.py:117
 msgid "Launching..."
 msgstr "启动中..."
 
@@ -251,63 +251,75 @@ msgstr "程序启动中"
 msgid "## Progress"
 msgstr "## 进度"
 
-#: ..\pages.py:140
+#: ..\pages.py:142
 msgid "***ERROR OCCURRED!***"
 msgstr "***发生错误！***"
 
-#: ..\pages.py:141
-msgid "***PLEASE CHECK UP THE CONSOLE OR SEND THE ERROR LOG***"
-msgstr "***请检查控制台输出或发送错误日志以寻求帮助***"
+#: ..\pages.py:143 ..\utils.py:168 ..\utils.py:169 ..\utils.py:170
+msgid "Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"
+msgstr ""
+"请检查你的网络环境，彻底关闭除了Watt Toolkit之外的所有可能干扰网络连接的软"
+"件，包括Clash/游戏加速器/网络连接管理/下载加速器等，然后重新打开Launcher.exe"
 
-#: ..\pages.py:170
+#: ..\pages.py:144
+msgid "***CHECK UP THE CONSOLE OR SEND THE ERROR LOG***"
+msgstr "***检查控制台或发送错误日志***"
+
+#: ..\pages.py:176
 msgid "Start Program"
 msgstr "启动程序"
 
-#: ..\pages.py:257
+#: ..\pages.py:266
+msgid ""
+"(You can enter the github repository address which already have existing "
+"config)"
+msgstr "(你可以输入已有配置的github仓库地址）"
+
+#: ..\pages.py:266
 msgid "config name"
 msgstr "配置名称"
 
-#: ..\pages.py:271
+#: ..\pages.py:280
 msgid "## config:"
 msgstr "## 配置："
 
-#: ..\pages.py:273
+#: ..\pages.py:282
 msgid "Add config"
 msgstr "添加配置"
 
-#: ..\pages.py:296
+#: ..\pages.py:305
 msgid "Cannot Find Session"
 msgstr "未找到会话"
 
-#: ..\pages.py:317
+#: ..\pages.py:326
 msgid "Verified!"
 msgstr ""
 
-#: ..\pages.py:326
+#: ..\pages.py:335
 msgid "Waiting..."
 msgstr "等待中..."
 
-#: ..\pages.py:331
+#: ..\pages.py:340
 msgid "You may want to enter: "
 msgstr ""
 
-#: ..\pages.py:336
+#: ..\pages.py:345
 msgid "Not a valid name"
 msgstr ""
 
-#: ..\pages.py:379
+#: ..\pages.py:388
 msgid "saved!"
 msgstr "已保存！"
 
-#: ..\pages.py:421
+#: ..\pages.py:430
 msgid "Do you need to save changes?"
 msgstr "你要保存设置吗？"
 
-#: ..\pages.py:422
+#: ..\pages.py:431
 msgid "No"
 msgstr "否"
 
-#: ..\pages.py:422
+#: ..\pages.py:431
 msgid "Yes"
 msgstr "是"
 
@@ -315,15 +327,9 @@ msgstr "是"
 msgid "downloading url:"
 msgstr "下载url:"
 
-#: ..\utils.py:168 ..\utils.py:169 ..\utils.py:170
-msgid "Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"
-msgstr ""
-"请检查你的网络环境，彻底关闭除了Watt Toolkit之外的所有可能干扰网络连接的软"
-"件，包括Clash/游戏加速器/网络连接管理/下载加速器等，然后重新打开Launcher.exe"
-
 #: ..\webio.py:35
 msgid "webio started"
-msgstr ""
+msgstr "webio已启动"
 
 #~ msgid ""
 #~ "Please do not exit the program while python is being downloaded. If you "

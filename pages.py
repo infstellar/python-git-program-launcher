@@ -140,7 +140,8 @@ class MainPage(AdvancePage):
             pt.end_flag = True
             # output.clear(self.SCOPE_PROGRESS_INFO)
             output.put_markdown(t2t('***ERROR OCCURRED!***'),scope=self.SCOPE_PROGRESS_INFO)
-            output.put_markdown(t2t('***PLEASE CHECK UP THE CONSOLE OR SEND THE ERROR LOG***'),scope=self.SCOPE_PROGRESS_INFO)
+            output.put_markdown('***' + t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe") + '***',scope=self.SCOPE_PROGRESS_INFO)
+            output.put_markdown(t2t('***CHECK UP THE CONSOLE OR SEND THE ERROR LOG***'),scope=self.SCOPE_PROGRESS_INFO)
             logger.exception(e)
             raise e
 
