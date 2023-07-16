@@ -87,8 +87,8 @@ https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitat
 
 # 鸣谢
 ALAS-EasyInstaller  
-GIA
-pywebio
-pywebview
-pyqt
-loguru
+GIA  
+pywebio  
+pywebview  
+pyqt  
+loguru  
