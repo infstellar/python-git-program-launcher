@@ -24,5 +24,5 @@ if __name__ == '__main__':
     main()
 
 # cef: pip install cefpython3
-# qt: pip install PyQtWebEngine; pip install PyQt5
+# qt: pip install PyQtWebEngine
 # edgechromium: install edge

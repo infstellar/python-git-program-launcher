@@ -10,7 +10,7 @@ set "_pyBin=%_root%\toolkit\"
 set "_GitBin=%_root%\toolkit\Git\mingw64\bin"
 set "PATH=%_pyBin%;%_pyBin%\Scripts;%_GitBin%;%PATH%"
 title Python-Git-Program-Launcher
-python -m main
+python -m gui
 
 echo The program is over. This may be due to an error or an active end.
 pause

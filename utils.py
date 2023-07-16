@@ -169,6 +169,13 @@ class Command():
         logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
         logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
 
+    def logger_hr_and_track(self, x, c=0, p=None):
+        logger.hr(x, c)
+        if p is None:
+            self.progress_tracker.set_info(x)
+        else:
+            self.progress_tracker.inp(x,p)
+    
     @logger.catch(reraise=True)
     def execute(self, command, allow_failure=False, output=True, is_format=True):
         """

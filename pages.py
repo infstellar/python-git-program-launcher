@@ -10,14 +10,24 @@ import time
 from advance_page import AdvancePage
 from main import *
 
+
+
 class MainPage(AdvancePage):
     SCOPE_START = AN()
     SCOPE_LOG = AN()
     SCOPE_CONFIG = AN()
+    SCOPE_CONFIG_NAME = AN()
     BUTTON_START = AN()
     SELECT_CONFIG = AN()
     SCOPE_ADD_CONFIG = AN()
     SCOPE_LOG_AREA = AN()
+    
+    PROCESSBAR_PYTHON_MANAGER = AN()
+    PROCESSBAR_STAGE = AN()
+    PROCESSBAR_PIP_MANAGER = AN()
+    PROCESSBAR_START = AN()
+    SCOPE_PROGRESS_INFO = AN()
+    SCOPE_PROGRESS_STAGE = AN()
     
     
     def __init__(self):
@@ -26,57 +36,112 @@ class MainPage(AdvancePage):
         self.log_history = []
         self.log_list_lock = threading.Lock()
         self.config_files = []
+        self.last_config = ""
         
         self._load_config_files()
+        
+        if not os.path.exists(os.path.join(ROOT_PATH, 'launcher_config_name.txt')):
+            with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w') as f:
+                f.close()
 
     def _event_thread(self):
         while self.loaded:  # 当界面被加载时循环运行
-            try:
-                pin.pin['isSessionExist']
-            except SessionNotFoundException:
-                logger.info(t2t("未找到会话，可能由于窗口关闭。请刷新页面重试。"))
-                return
-            except SessionClosedException:
-                logger.info(t2t("未找到会话，可能由于窗口关闭。请刷新页面重试。"))
-                return
+            time.sleep(0.1)
+            # try:
+            #     pin.pin['isSessionExist']
+            # except SessionNotFoundException:
+            #     logger.info(t2t("未找到会话，可能由于窗口关闭。请刷新页面重试。"))
+            #     return
+            # except SessionClosedException:
+            #     logger.info(t2t("未找到会话，可能由于窗口关闭。请刷新页面重试。"))
+            #     return
             
-            self.log_list_lock.acquire()
-            for text, color in self.log_list:
-                if text == "$$end$$":
-                    output.put_text("", scope=self.SCOPE_LOG_AREA)
-                else:
-                    output.put_text(text, scope=self.SCOPE_LOG_AREA, inline=True).style(f'color: {color}; font_size: 20px') # ; background: aqua
-            self.log_list.clear()
-            self.log_list_lock.release()
+            # self.log_list_lock.acquire()
+            # for text, color in self.log_list:
+            #     if text == "$$end$$":
+            #         output.put_text("", scope=self.SCOPE_LOG_AREA)
+            #     else:
+            #         output.put_text(text, scope=self.SCOPE_LOG_AREA, inline=True).style(f'color: {color}; font_size: 20px') # ; background: aqua
+            # self.log_list.clear()
+            # self.log_list_lock.release()
+            
+            if pin.pin[self.SELECT_CONFIG] != self.last_config:
+                if pin.pin[self.SELECT_CONFIG] is None: continue
+                self.last_config = pin.pin[self.SELECT_CONFIG]
+                output.clear(self.SCOPE_CONFIG_NAME)
+                output.put_text(load_json(pin.pin[self.SELECT_CONFIG])['Repository'], scope=self.SCOPE_CONFIG_NAME)
+                with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w', encoding='utf-8') as f:
+                    f.write(self.last_config)
+                    f.close()
     
     def _start(self):
+        with output.popup(t2t("Program Starting"), implicit_close=False) as s:
+            output.put_markdown(t2t("## Progress"))
+            output.put_scope(self.SCOPE_PROGRESS_STAGE)
+            output.put_scope(self.SCOPE_PROGRESS_INFO)
+            output.put_processbar(self.PROCESSBAR_STAGE)
+            output.set_processbar(self.PROCESSBAR_STAGE, 0/3)
+            output.put_processbar(self.PROCESSBAR_PYTHON_MANAGER)
+        def set_processbar(x:ProgressTracker, processbar_name:str, info_scope:str):
+            last_info = ""
+            last_progress = 0
+            while 1:
+                if pt.end_flag: break
+                time.sleep(0.1)
+                if x.info != last_info:
+                    last_info = x.info
+                    output.clear(info_scope)
+                    output.put_text(last_info, scope=info_scope)
+                if x.percentage != last_progress:
+                    last_progress = x.percentage
+                    output.set_processbar(processbar_name, last_progress)
+                
         logger.hr(f"Welcome to {PROGRAM_NAME}", 0)
         logger.hr(t2t("The program is free and open source on github"))
         logger.hr(t2t("Please see the help file at https://github.com/infstellar/python-git-program-launcher"))
-        launching_config = pin.pin[self.SELECT_CONFIG]
-        launching_config = load_json(launching_config)
-        global PROGRAM_PYTHON_PATH
-        PROGRAM_PYTHON_PATH = PythonManager(launching_config).run()
-        logger.info(launching_config)
-        REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
-        verify_path(REPO_PATH)
-        os.chdir(REPO_PATH)
+        launching_config = load_json(pin.pin[self.SELECT_CONFIG])
         
-        logger.hr(t2t("Launching..."))
-        GitManager(launching_config).git_install()
-        PipManager(launching_config).pip_install()
-        
-        # add program path to sys.path
-        with open(os.path.join(os.path.dirname(PROGRAM_PYTHON_PATH), 'pgpl.pth'), 'w') as f:
-            f.write(REPO_PATH)
-        
-        logger.hr(f"Successfully install. Activating {PROGRAM_NAME}", 0)
-        logger.info(f'execute: "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
+        pt = ProgressTracker()
+        t = threading.Thread(target=set_processbar, daemon=False, args=(pt, self.PROCESSBAR_PYTHON_MANAGER, self.SCOPE_PROGRESS_INFO))
+        session.register_thread(t)
+        t.start()
+        try:
+            global PROGRAM_PYTHON_PATH
+            PROGRAM_PYTHON_PATH = PythonManager(launching_config, pt).run()
+            output.set_processbar(self.PROCESSBAR_STAGE, 1/3)
+            logger.info(launching_config)
+            REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
+            verify_path(REPO_PATH)
+            os.chdir(REPO_PATH)
+            logger.hr(t2t("Launching..."))
 
-        # os.system("color 07")
-        os.system(f"title {PROGRAM_NAME} Console")
-        os.system(f'"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
-    
+            GitManager(launching_config, pt).git_install()
+            output.set_processbar(self.PROCESSBAR_STAGE, 2/3)
+            PipManager(launching_config, pt).pip_install()
+            output.set_processbar(self.PROCESSBAR_STAGE, 3/3)
+            pt.end_flag = True
+            
+            # add program path to sys.path
+            with open(os.path.join(os.path.dirname(PROGRAM_PYTHON_PATH), 'pgpl.pth'), 'w') as f:
+                f.write(REPO_PATH)
+            
+            logger.hr(f"Successfully install. Activating {PROGRAM_NAME}", 0)
+            logger.info(f'execute: "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
+            output.clear(self.SCOPE_PROGRESS_INFO)
+            output.put_markdown(f'execute: "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}', scope=self.SCOPE_PROGRESS_INFO)
+            
+            # os.system("color 07")
+            os.system(f"title {PROGRAM_NAME} Console")
+            os.system(f'"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
+            
+        except Exception as e:
+            pt.end_flag = True
+            # output.clear(self.SCOPE_PROGRESS_INFO)
+            output.put_markdown(t2t('***ERROR OCCURRED!***'),scope=self.SCOPE_PROGRESS_INFO)
+            output.put_markdown(t2t('***PLEASE CHECK UP THE CONSOLE OR SEND THE ERROR LOG***'),scope=self.SCOPE_PROGRESS_INFO)
+            logger.exception(e)
+            raise e
+
     def _load_config_files(self):
         self.config_files = []
         for root, dirs, files in os.walk(os.path.join(ROOT_PATH, 'configs')):
@@ -85,24 +150,34 @@ class MainPage(AdvancePage):
                     self.config_files.append({"label": f, "value": os.path.join(root, f)})
     
     def _load(self):
+        # output.put_html('<style>@font-face {font-family: "SmileySans-Oblique"; src: url("M:\\ProgramData\\PGPL\\python-git-program-launcher\\toolkit\\SmileySans-Oblique.ttf");}</style>')
+        # output.put_html('<style>body {font-family: "Arial", sans-serif;}</style>')
         self._load_config_files()
+        show_config = self.config_files
+        with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'r') as f:
+            launching_config = str(f.read())
+            f.close()
+        for i in show_config:
+            if i['value'] == launching_config:
+                i['selected'] = True
         with output.use_scope(self.main_scope):
             output.put_row([
                 output.put_column([
-                    # 当前配置
-                    output.put_scope(self.SCOPE_CONFIG),
                     # 选择配置
+                    
                     pin.put_select(name=self.SELECT_CONFIG, options=self.config_files),
+                    # 当前配置
+                    output.put_scope(self.SCOPE_CONFIG_NAME),
                     # 启动按钮
-                    output.put_button(label=t2t("启动程序"), onclick=self._start)
+                    output.put_button(label=t2t("Start Program"), onclick=self._start)
                 ], size='auto'),
-                None,
-                output.put_scope(self.SCOPE_LOG)
-            ], size=r'35% 5% 60%')
+                # None,
+                # output.put_scope(self.SCOPE_LOG)
+            ], size=r'auto')
         
-        with output.use_scope(self.SCOPE_LOG):
-            output.put_markdown(t2t('## Log'))
-            output.put_scrollable(output.put_scope(self.SCOPE_LOG_AREA), keep_bottom=True)
+        # with output.use_scope(self.SCOPE_LOG):
+        #     output.put_markdown(t2t('## Log'))
+        #     output.put_scrollable(output.put_scope(self.SCOPE_LOG_AREA), keep_bottom=True)
 
     def logout(self, text: str, color='black'):
         if self.loaded:
@@ -220,7 +295,7 @@ class ConfigPage(AdvancePage):
             try:
                 pin.pin['isSessionExist']
             except SessionNotFoundException:
-                logger.info(t2t("未找到会话，可能由于窗口关闭。请刷新页面重试。"))
+                logger.info(t2t("Cannot Find Session")) # 未找到会话，可能由于窗口关闭。请刷新页面重试。
                 return
                 
             if pin.pin['file'] != self.last_file:  # 当下拉框被更改时

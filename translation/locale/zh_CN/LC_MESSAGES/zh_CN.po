@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-07-12 18:27+0800\n"
-"PO-Revision-Date: 2023-07-12 18:28+0800\n"
+"POT-Creation-Date: 2023-07-16 18:29+0800\n"
+"PO-Revision-Date: 2023-07-16 18:30+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -17,123 +17,139 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 "X-Generator: Poedit 3.3.1\n"
 
-#: ../main.py:50
+#: ..\advance_page.py:19
+msgid "# PGPL DEBUG"
+msgstr "# PGPL DEBUG"
+
+#: ..\advance_page.py:21
+msgid "# PGPL GUI"
+msgstr "# PGPL GUI"
+
+#: ..\main.py:66
 msgid "Git Init"
 msgstr "Git初始化"
 
-#: ../main.py:57
+#: ..\main.py:73
 msgid "Set Git Proxy"
 msgstr "设置Git验证"
 
-#: ../main.py:65
+#: ..\main.py:81
 msgid "Set Git Repository"
 msgstr "设置Git仓库"
 
-#: ../main.py:69
+#: ..\main.py:85
 msgid "Fetch Repository Branch"
 msgstr "获取仓库分支"
 
-#: ../main.py:73
+#: ..\main.py:89
 msgid "Pull Repository Branch"
 msgstr "拉取仓库分支"
 
-#: ../main.py:86
+#: ..\main.py:102
 msgid "Stash pop failed, there seems to be no local changes, skip instead"
 msgstr "Stash pop失败，似乎没有局部变化，跳过"
 
-#: ../main.py:88
+#: ..\main.py:104
 msgid "Stash failed, this may be the first installation, drop changes instead"
 msgstr "Stash失败，这可能是第一次安装，丢弃更改"
 
-#: ../main.py:98
+#: ..\main.py:114
 msgid "Show Version"
 msgstr "展示版本"
 
-#: ../main.py:105
+#: ..\main.py:121
 msgid "AutoUpdate is disabled, skip"
 msgstr "自动更新禁用，跳过"
 
-#: ../main.py:145 ../main.py:172
+#: ..\main.py:164 ..\main.py:191
 msgid "Update Dependencies"
 msgstr "更新依赖"
 
-#: ../main.py:148
+#: ..\main.py:167
 msgid "InstallDependencies is disabled, skip"
 msgstr "安装依赖被禁用，跳过"
 
-#: ../main.py:151
+#: ..\main.py:170
 msgid "Check Python"
 msgstr "检测Python"
 
-#: ../main.py:164
+#: ..\main.py:183
 msgid "Update pip"
 msgstr "更新pip"
 
-#: ../main.py:181
-msgid "downloading url:"
-msgstr "下载url:"
+#: ..\main.py:229
+msgid "set environ"
+msgstr "设置临时环境变量"
 
-#: ../main.py:246
+#: ..\main.py:249
+msgid "download python"
+msgstr "下载python"
+
+#: ..\main.py:256
 msgid "Download python successfully, extract zip"
 msgstr "下载python成功，解压压缩包"
 
-#: ../main.py:295
+#: ..\main.py:305
 msgid "Download Successfully"
 msgstr "下载成功"
 
-#: ../main.py:308
+#: ..\main.py:318
 msgid "Please waiting, python is installing. It may cost a few minutes."
 msgstr "请等待，python正在安装。这可能需要几分钟。"
 
-#: ../main.py:314
+#: ..\main.py:324
 msgid "Python installed successfully. Cleaning."
 msgstr "Python安装成功。清理中。"
 
-#: ../main.py:316
+#: ..\main.py:326
 msgid "Python is installed."
 msgstr "Python已安装。"
 
-#: ../main.py:335
+#: ..\main.py:345
 msgid "pip fail, reinstall python"
-msgstr ""
+msgstr "pip失败，重装python"
 
-#: ../main.py:354 ../main.py:384
+#: ..\main.py:356
+msgid "python installed"
+msgstr "Python已安装"
+
+#: ..\main.py:365 ..\main.py:395
 msgid "Input"
 msgstr "输入"
 
-#: ../main.py:358 ../main.py:493
+#: ..\main.py:369 ..\main.py:504
 msgid "Options"
 msgstr "选项"
 
-#: ../main.py:366
+#: ..\main.py:377
 msgid "Illegal parameters"
 msgstr "非法参数"
 
-#: ../main.py:374
+#: ..\main.py:385
 msgid "Illegal parameters: Empty"
 msgstr "非法参数：空输入"
 
-#: ../main.py:380
+#: ..\main.py:391
 msgid "Illegal parameter type"
 msgstr "非法参数：无效类型"
 
-#: ../main.py:404
+#: ..\main.py:415 ..\pages.py:241
 msgid "download config from repo succ"
 msgstr "从仓库下载配置成功"
 
-#: ../main.py:407
+#: ..\main.py:418 ..\pages.py:244 ..\pages.py:252
 msgid "Invalid address"
 msgstr "无效链接"
 
-#: ../main.py:416
+#: ..\main.py:427
 msgid "possible configs:"
 msgstr "可能的配置"
 
-#: ../main.py:419
+#: ..\main.py:430
 msgid "end"
 msgstr "结束"
 
-#: ../main.py:421
+#: ..\main.py:432
 msgid ""
 "Do you want to edit or add config? If you do not need to edit or add config, "
 "just select other config, please enter `n` or enter directly."
@@ -141,15 +157,15 @@ msgstr ""
 "你想编辑或添加配置吗？如果你不需要编辑或添加配置，只是选择其他配置，请输入"
 "`n'或直接按下回车。"
 
-#: ../main.py:426
+#: ..\main.py:437
 msgid "Please enter the config name."
 msgstr "请输入配置名"
 
-#: ../main.py:427
+#: ..\main.py:438
 msgid "Config will be created automatically if the file does not exist."
 msgstr "如果配置文件不存在将自动创建。"
 
-#: ../main.py:429
+#: ..\main.py:440
 msgid ""
 "If the repository has pre-configured files, you can also download the "
 "configuration file by entering the repository address directly. (if the "
@@ -158,56 +174,156 @@ msgstr ""
 "如果远程仓库有预先配置的文件，你也可以直接输入远程仓库地址下载配置文件。(远程"
 "仓库需要包含pgpl.yaml)"
 
-#: ../main.py:435
+#: ..\main.py:446
 msgid ""
 "If you do not want to change the settings, press enter directly on the "
 "option."
 msgstr "如果你不想修改，请在编辑选项时直接按下回车"
 
-#: ../main.py:438
+#: ..\main.py:449
 msgid "Please enter the launching config name."
 msgstr "请输入启动配置名"
 
-#: ../main.py:482
+#: ..\main.py:493
 msgid "Successfully edit config."
 msgstr "编辑配置成功。"
 
-#: ../main.py:489
+#: ..\main.py:500
 msgid "Current Config"
 msgstr "当前配置"
 
-#: ../main.py:490
+#: ..\main.py:501
 msgid "Do you want to edit settings or select other settings?"
 msgstr "你想要编辑设置或选择其他设置吗？"
 
-#: ../main.py:493
+#: ..\main.py:504
 msgid "After $t$ seconds without input, PGPL will automatically start."
 msgstr "无输入 $t$ 秒后，PGPL将自动启动。"
 
-#: ../main.py:501
+#: ..\main.py:512
 msgid "No config selected. A config must be selected."
 msgstr "未选择配置文件。必须选择配置文件。"
 
-#: ../main.py:515
+#: ..\main.py:526 ..\pages.py:100
 msgid "The program is free and open source on github"
 msgstr "该程序在github免费开源"
 
-#: ../main.py:516
+#: ..\main.py:527 ..\pages.py:101
 msgid ""
 "Please see the help file at https://github.com/infstellar/python-git-program-"
 "launcher"
 msgstr ""
 "请在https://github.com/infstellar/python-git-program-launcher查看使用说明"
 
-#: ../main.py:528
+#: ..\main.py:539 ..\pages.py:116
 msgid "Launching..."
 msgstr "启动中..."
 
-#: ../utils.py:149
+#: ..\page.py:45
+msgid "Main"
+msgstr "主页面"
+
+#: ..\page.py:46
+msgid "Setting"
+msgstr "设置页面"
+
+#: ..\page.py:47
+msgid "CombatSetting"
+msgstr "CombatSetting"
+
+#: ..\page.py:48
+msgid "CollectorSetting"
+msgstr "CollectorSetting"
+
+#: ..\page.py:49
+msgid "MissionPage"
+msgstr "MissionPage"
+
+#: ..\page.py:50
+msgid "MissionDownloadPage"
+msgstr "MissionDownloadPage"
+
+#: ..\pages.py:78
+msgid "Program Starting"
+msgstr "程序启动中"
+
+#: ..\pages.py:79
+msgid "## Progress"
+msgstr "## 进度"
+
+#: ..\pages.py:140
+msgid "***ERROR OCCURRED!***"
+msgstr "***发生错误！***"
+
+#: ..\pages.py:141
+msgid "***PLEASE CHECK UP THE CONSOLE OR SEND THE ERROR LOG***"
+msgstr "***请检查控制台输出或发送错误日志以寻求帮助***"
+
+#: ..\pages.py:170
+msgid "Start Program"
+msgstr "启动程序"
+
+#: ..\pages.py:257
+msgid "config name"
+msgstr "配置名称"
+
+#: ..\pages.py:271
+msgid "## config:"
+msgstr "## 配置："
+
+#: ..\pages.py:273
+msgid "Add config"
+msgstr "添加配置"
+
+#: ..\pages.py:296
+msgid "Cannot Find Session"
+msgstr "未找到会话"
+
+#: ..\pages.py:317
+msgid "Verified!"
+msgstr ""
+
+#: ..\pages.py:326
+msgid "Waiting..."
+msgstr "等待中..."
+
+#: ..\pages.py:331
+msgid "You may want to enter: "
+msgstr ""
+
+#: ..\pages.py:336
+msgid "Not a valid name"
+msgstr ""
+
+#: ..\pages.py:379
+msgid "saved!"
+msgstr "已保存！"
+
+#: ..\pages.py:421
+msgid "Do you need to save changes?"
+msgstr "你要保存设置吗？"
+
+#: ..\pages.py:422
+msgid "No"
+msgstr "否"
+
+#: ..\pages.py:422
+msgid "Yes"
+msgstr "是"
+
+#: ..\utils.py:65
+msgid "downloading url:"
+msgstr "下载url:"
+
+#: ..\utils.py:168 ..\utils.py:169 ..\utils.py:170
 msgid "Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"
 msgstr ""
 "请检查你的网络环境，彻底关闭除了Watt Toolkit之外的所有可能干扰网络连接的软"
 "件，包括Clash/游戏加速器/网络连接管理/下载加速器等，然后重新打开Launcher.exe"
+
+#: ..\webio.py:35
+msgid "webio started"
+msgstr ""
 
 #~ msgid ""
 #~ "Please do not exit the program while python is being downloaded. If you "

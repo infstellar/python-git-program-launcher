@@ -21,11 +21,25 @@ class PGPLOut():
         else:
             self.original.write(x)
     
+class ProgressTracker():
+    def __init__(self) -> None:
+        self.percentage = 0
+        self.info = ''
+        self.end_flag = False
+    
+    def set_percentage(self, x):
+        self.percentage = x
+    
+    def set_info(self, x):
+        self.info = x
 
-
+    def inp(self, info, percentage):
+        self.info = info
+        self.percentage = percentage
+    
 class GitManager(Command):
 
-    def __init__(self, installer_config):
+    def __init__(self, installer_config, progress_tracker=None):
         self.git = os.path.join(ROOT_PATH, "toolkit\\Git\\mingw64\\bin\\git.exe")
         self.Repository = installer_config["Repository"]
         self.Branch = installer_config["Branch"]
@@ -36,6 +50,9 @@ class GitManager(Command):
         self.folder_path = REPO_PATH
 
         verify_path(self.folder_path)
+        
+        if progress_tracker is None: progress_tracker = ProgressTracker()
+        self.progress_tracker = progress_tracker
 
     @staticmethod
     def remove(file):
@@ -46,14 +63,14 @@ class GitManager(Command):
             logger.info(f'File not found: {file}')
 
     def git_repository_init(self, repo, source='origin', branch='master', proxy=False, keep_changes=False):
-        logger.hr(t2t('Git Init'))
+        self.logger_hr_and_track(t2t('Git Init'), p=0.1)
         if not self.execute(f'"{self.git}" init', allow_failure=True):
             self.remove('./.git/config')
             self.remove('./.git/index')
             self.remove('./.git/HEAD')
             self.execute(f'"{self.git}" init')
 
-        logger.hr(t2t('Set Git Proxy'), 1)
+        self.logger_hr_and_track(t2t('Set Git Proxy'), 1, p=0.2)
         if proxy:
             self.execute(f'"{self.git}" config --local http.proxy {proxy}')
             self.execute(f'"{self.git}" config --local https.proxy {proxy}')
@@ -61,15 +78,15 @@ class GitManager(Command):
             self.execute(f'"{self.git}" config --local --unset http.proxy', allow_failure=True)
             self.execute(f'"{self.git}" config --local --unset https.proxy', allow_failure=True)
 
-        logger.hr(t2t('Set Git Repository'), 1)
+        self.logger_hr_and_track(t2t('Set Git Repository'), 1, p=0.3)
         if not self.execute(f'"{self.git}" remote set-url {source} {repo}', allow_failure=True):
             self.execute(f'"{self.git}" remote add {source} {repo}')
 
-        logger.hr(t2t('Fetch Repository Branch'), 1)
-        # logger.hr('For cn user: 重要: 如果你正在使用Github地址，确保你已经启动Watt Toolkit或其他加速器')
+        self.logger_hr_and_track(t2t('Fetch Repository Branch'), 1, p=0.4)
+        # self.logger_hr_and_track('For cn user: 重要: 如果你正在使用Github地址，确保你已经启动Watt Toolkit或其他加速器')
         self.execute(f'"{self.git}" fetch {source} {branch}')
 
-        logger.hr(t2t('Pull Repository Branch'), 1)
+        self.logger_hr_and_track(t2t('Pull Repository Branch'), 1, p=0.5)
         # Remove git lock
         lock_file = './.git/index.lock'
         if os.path.exists(lock_file):
@@ -94,11 +111,11 @@ class GitManager(Command):
         if self.tag != 'lastest' and self.tag != '':
             self.execute(f'"{self.git}" checkout {self.tag}')
 
-        logger.hr(t2t('Show Version'), 1)
+        self.logger_hr_and_track(t2t('Show Version'), 1, p=0.8)
         self.execute(f'"{self.git}" log --no-merges -1')
 
     def git_install(self):
-        logger.hr(f'Update {PROGRAM_NAME}', 0)
+        self.logger_hr_and_track(f'Update {PROGRAM_NAME}', 0, p=0.9)
 
         if not self.AutoUpdate:
             logger.info(t2t('AutoUpdate is disabled, skip'))
@@ -117,7 +134,7 @@ class GitManager(Command):
 
 class PipManager(Command):
 
-    def __init__(self, installer_config):
+    def __init__(self, installer_config, progress_tracker=None):
         self.RequirementsFile = installer_config["RequirementsFile"]
         self.python = PROGRAM_PYTHON_PATH  # os.path.join(os.path.dirname(os.path.abspath(__file__)), "toolkit\\python.exe")
 
@@ -129,6 +146,9 @@ class PipManager(Command):
                 "en_US": "https://pypi.org/simple"
             }[GLOBAL_LANG]
 
+        if progress_tracker is None: progress_tracker = ProgressTracker()
+        self.progress_tracker = progress_tracker
+        
         # self.execute("set _pyBin=%_root%\\toolkit")
         # self.execute("set _GitBin=%_root%\\toolkit\Git\mingw64\\bin")
         # self.execute("set PATH=%_root%\\toolkit\\alias;%_root%\\toolkit\command;%_pyBin%;%_pyBin%\Scripts;%_GitBin%")
@@ -160,7 +180,7 @@ class PipManager(Command):
         # arg += ['--disable-pip-version-check']
         arg = ' ' + ' '.join(arg) if arg else ''
         # Don't update pip, just leave it.
-        logger.hr(t2t('Update pip'), 1)
+        self.logger_hr_and_track(t2t('Update pip'), 1, p=0.1)
         
         self.execute(f'{self.pip()} install --upgrade pip{arg}')
         self.execute(f'{self.pip()} install setuptools{arg}')
@@ -168,16 +188,18 @@ class PipManager(Command):
         self.execute(f'"{self.pip()}" install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}{arg}')
         # self.execute(f'pip install progressbar2{arg}')
 
-        logger.hr(t2t('Update Dependencies'), 1)
+        self.logger_hr_and_track(t2t('Update Dependencies'), 1, p=0.3)
 
         # self.execute((f'{self.pip()} install pycocotools-windows{arg}'))
         self.execute(f'{self.pip()} install -r {self.requirements_file()}{arg}')
+        
+        self.progress_tracker.set_percentage(1)
 
 
 class PythonManager(Command):
 
     @logger.catch()
-    def __init__(self, installer_config):
+    def __init__(self, installer_config, progress_tracker:ProgressTracker=None):
         self.python_version = installer_config['PythonVersion']
         n = installer_config['Repository'].split('/')[-1]
         self.python_folder = os.path.join(ROOT_PATH, 'toolkit', f'python', f"{self.python_version}_{n}")
@@ -188,6 +210,9 @@ class PythonManager(Command):
                 "zh_CN": "https://mirrors.huaweicloud.com/python",
                 "en_US": "https://www.python.org/ftp/python"
             }[GLOBAL_LANG]
+        if progress_tracker is None:
+            progress_tracker = ProgressTracker()
+        self.progress_tracker = progress_tracker
         
         # https://registry.npmmirror.com/-/binary/python/3.10.1/python-3.10.1-amd64.exe
         # paths = ''
@@ -201,7 +226,7 @@ class PythonManager(Command):
 
         def add_environ(x):
             os.environ['PATH'] = x + os.pathsep + os.environ['PATH']
-        
+        self.progress_tracker.inp(t2t('set environ'), 0)
         add_environ(os.path.join(self.python_folder, "Lib", "site-packages"))
         add_environ(os.path.join(self.python_folder, "Lib"))
         add_environ(os.path.join(self.python_folder, "Scripts"))
@@ -221,19 +246,20 @@ class PythonManager(Command):
     
     def download_python_zip(self):
         import zipfile
+        self.progress_tracker.inp(t2t('download python'), 0.1)
         ver = self.python_version
         ver2 = ver.split(".")[0]+ver.split(".")[1]
         url = fr"{self.python_mirror}/{ver}/python-{ver}-embed-amd64.zip"
         logger.info(f'url: {url}')
         file_name = os.path.join(self.python_folder, f'python-{ver}-amd64.zip')
         download_url(url, file_name)
-        logger.hr(t2t("Download python successfully, extract zip"))
+        self.logger_hr_and_track(t2t("Download python successfully, extract zip"), p=0.5)
         with zipfile.ZipFile(file_name, 'r') as zip_ref:
             zip_ref.extractall(self.python_folder)
         # with zipfile.ZipFile(file_name.replace(f'python-{ver}-amd64.zip', f'python{ver2}.zip'), 'r') as zip_ref:
         #     zip_ref.extractall(self.python_folder)
         # install pip
-        logger.hr("Installing pip")
+        self.logger_hr_and_track("Installing pip", p=0.8)
         self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py")} --no-setuptools --no-wheel')
         # self.execute(f'"{self.python_path}" -m pip install setuptools ')
         
@@ -276,7 +302,7 @@ class PythonManager(Command):
             download_url(url, file_name)
             os.rename(file_name, file_name2)
 
-        logger.hr(t2t("Download Successfully"))
+        self.logger_hr_and_track(t2t("Download Successfully"))
 
         # with zipfile.ZipFile(file_name, 'r') as zip_ref:
         #     zip_ref.extractall(self.python_folder)
@@ -289,15 +315,15 @@ class PythonManager(Command):
             f'python_{ver}.exe Include_launcher=0 InstallAllUsers=0 Include_test=0 SimpleInstall=1 /passive TargetDir={self.python_folder}',
             is_format=False)
         os.chdir(ROOT_PATH)
-        logger.hr(t2t("Please waiting, python is installing. It may cost a few minutes."))
+        self.logger_hr_and_track(t2t("Please waiting, python is installing. It may cost a few minutes."))
 
         while 1:
             time.sleep(1)
             if os.path.exists(self.python_path):
                 break
-        logger.hr(t2t("Python installed successfully. Cleaning."))
+        self.logger_hr_and_track(t2t("Python installed successfully. Cleaning."))
         time.sleep(1)
-        logger.hr(t2t("Python is installed."))
+        self.logger_hr_and_track(t2t("Python is installed."))
 
     def install_pip(self):
         # self.execute(f'curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
@@ -309,7 +335,7 @@ class PythonManager(Command):
         verify_path(self.python_folder)
         
         if not os.path.exists(self.python_path):
-            logger.hr(f"Downloading Python Version: {self.python_version} into {self.python_folder}")
+            self.logger_hr_and_track(f"Downloading Python Version: {self.python_version} into {self.python_folder}", p=0.05)
             # logger.warning(t2t("Please do not exit the program while python is being downloaded. If you accidentally quit or the installation fails, empty the . /toolkit/python folder in the corresponding folder and try again."))
             self.download_python_zip()
         else:
@@ -327,7 +353,7 @@ class PythonManager(Command):
         #     self.install_pip()
         global PROGRAM_PYTHON_PATH
         PROGRAM_PYTHON_PATH = self.python_path
-        
+        self.logger_hr_and_track(t2t('python installed'), p=1)
         return self.python_path
         # self.execute(f'{self.python_path} -m pip')
 
