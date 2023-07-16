@@ -16,7 +16,7 @@ import webview
 
 def main():
     threading.Thread(target=server_thread, daemon=False).start()
-    window = webview.create_window("My first PyWebIO app", "http://localhost:22269/", width=1280, height=720) # 1024 576
+    window = webview.create_window("PGPL", "http://localhost:22269/", width=1280, height=720) # 1024 576
     webview.start(http_server=True, gui='qt')
     # window.show()
 
