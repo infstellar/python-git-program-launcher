@@ -2,13 +2,14 @@
 自动安装并启动基于git管理的python程序。
 
 # 特点
-- 一键启动python程序
-- 使用git自动更新
+- 一键启动python程序，~~终极傻瓜包~~
+- 使用git自动更新仓库
+- 基于pywebio, webview和pyqt的GUI界面
 - 允许使用不同的配置，管理不同python版本的不同仓库。
+- 允许启动多个程序。
 - 自动下载并安装python和pip包。
 - 从Github仓库自动下载预配置文件
 - 丰富的的自定义配置
-- 使用命令行选择/修改配置
 # 使用
 
 ## 直接运行
@@ -18,7 +19,7 @@
 
 你可能需要使用管理员权限运行。
 
-***不要打开除了Watt Toolkit之外的所有可能干扰网络连接的软件，包括Clash/游戏加速器/网络连接管理/下载加速器等，它们会干扰SSL验证。***
+***不要打开除了Watt Toolkit之外的所有可能干扰网络连接的软件，包括Clash/部分游戏加速器/网络连接管理/下载加速器等，它们会干扰SSL验证。***
 
 ## 源代码运行
 克隆仓库。
@@ -35,6 +36,15 @@
 
 ## 手动添加
 按照软件内说明操作。同时按照`设置配置`中的说明填写。
+
+# 故障排查
+频繁出现的故障：
+1. 使用了网络代理软件导致ssl验证错误。**必须关闭Clash/游戏加速器/网络连接管理/下载加速器**
+2. 没有启用长路径支持导致路径超过上限。你可以运行EnableLongPath.reg解决此问题。如果你不信任该文件，你可以在如下链接中找到相同解决方案。  
+https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=registry#enable-long-paths-in-windows-10-version-1607-and-later
+
+请注意，该方法仅支持Windows10-1607之后的版本。
+
 
 # 设置配置
 
@@ -78,3 +88,7 @@
 # 鸣谢
 ALAS-EasyInstaller  
 GIA
+pywebio
+pywebview
+pyqt
+loguru
