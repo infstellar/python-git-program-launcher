@@ -82,6 +82,7 @@ class MainPage(AdvancePage):
             output.put_processbar(self.PROCESSBAR_STAGE)
             output.set_processbar(self.PROCESSBAR_STAGE, 0/3)
             output.put_processbar(self.PROCESSBAR_PYTHON_MANAGER)
+            # output.put_button(t2t("Stop start"), onclick = self._stop_start)
         def set_processbar(x:ProgressTracker, processbar_name:str, info_scope:str):
             last_info = ""
             last_progress = 0
@@ -132,7 +133,8 @@ class MainPage(AdvancePage):
             
             # os.system("color 07")
             os.system(f"title {PROGRAM_NAME} Console")
-            os.system(f'"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
+            os.system(f'start cmd /k "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
+            os.chdir(ROOT_PATH)
             
         except Exception as e:
             pt.end_flag = True
@@ -152,6 +154,7 @@ class MainPage(AdvancePage):
     def _load(self):
         # output.put_html('<style>@font-face {font-family: "SmileySans-Oblique"; src: url("M:\\ProgramData\\PGPL\\python-git-program-launcher\\toolkit\\SmileySans-Oblique.ttf");}</style>')
         # output.put_html('<style>body {font-family: "Arial", sans-serif;}</style>')
+        self.last_config = ""
         self._load_config_files()
         show_config = self.config_files
         with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'r') as f:
@@ -178,7 +181,10 @@ class MainPage(AdvancePage):
         # with output.use_scope(self.SCOPE_LOG):
         #     output.put_markdown(t2t('## Log'))
         #     output.put_scrollable(output.put_scope(self.SCOPE_LOG_AREA), keep_bottom=True)
-
+    
+    def _stop_start(self):
+        output.close_popup()
+    
     def logout(self, text: str, color='black'):
         if self.loaded:
             self.log_list_lock.acquire()
@@ -256,7 +262,7 @@ class ConfigPage(AdvancePage):
             return None
     
     def _onclick_add_config(self):
-        n = input.input(t2t('config name'), validate=self._address_verify)
+        n = input.input(t2t('config name')+t2t("(You can enter the github repository address which already have existing config)"), validate=self._address_verify)
         if 'http' not in n:
             save_json(CONFIG_TEMPLATE, os.path.join(ROOT_PATH, 'configs', n + '.json'))
         else:
