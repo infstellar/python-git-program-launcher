@@ -1,15 +1,12 @@
 import hashlib
-
-import yaml
-from utils import *
-from pywebio import *
-from webio_utils import *
-import socket
 import threading
-import time
+from pathlib import Path
+
+from pywebio import *
+
 from advance_page import AdvancePage
 from main import *
-
+from webio_utils import *
 
 
 class MainPage(AdvancePage):
@@ -21,15 +18,14 @@ class MainPage(AdvancePage):
     SELECT_CONFIG = AN()
     SCOPE_ADD_CONFIG = AN()
     SCOPE_LOG_AREA = AN()
-    
+
     PROCESSBAR_PYTHON_MANAGER = AN()
     PROCESSBAR_STAGE = AN()
     PROCESSBAR_PIP_MANAGER = AN()
     PROCESSBAR_START = AN()
     SCOPE_PROGRESS_INFO = AN()
     SCOPE_PROGRESS_STAGE = AN()
-    
-    
+
     def __init__(self):
         super().__init__()
         self.log_list = []
@@ -37,9 +33,9 @@ class MainPage(AdvancePage):
         self.log_list_lock = threading.Lock()
         self.config_files = []
         self.last_config = ""
-        
+
         self._load_config_files()
-        
+
         if not os.path.exists(os.path.join(ROOT_PATH, 'launcher_config_name.txt')):
             with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w') as f:
                 f.close()
@@ -55,7 +51,7 @@ class MainPage(AdvancePage):
             # except SessionClosedException:
             #     logger.info(t2t("未找到会话，可能由于窗口关闭。请刷新页面重试。"))
             #     return
-            
+
             # self.log_list_lock.acquire()
             # for text, color in self.log_list:
             #     if text == "$$end$$":
@@ -64,7 +60,7 @@ class MainPage(AdvancePage):
             #         output.put_text(text, scope=self.SCOPE_LOG_AREA, inline=True).style(f'color: {color}; font_size: 20px') # ; background: aqua
             # self.log_list.clear()
             # self.log_list_lock.release()
-            
+
             if pin.pin[self.SELECT_CONFIG] != self.last_config:
                 if pin.pin[self.SELECT_CONFIG] is None: continue
                 self.last_config = pin.pin[self.SELECT_CONFIG]
@@ -73,17 +69,18 @@ class MainPage(AdvancePage):
                 with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w', encoding='utf-8') as f:
                     f.write(self.last_config)
                     f.close()
-    
+
     def _start(self):
         with output.popup(t2t("Program Starting"), implicit_close=False) as s:
             output.put_markdown(t2t("## Progress"))
             output.put_scope(self.SCOPE_PROGRESS_STAGE)
             output.put_scope(self.SCOPE_PROGRESS_INFO)
             output.put_processbar(self.PROCESSBAR_STAGE)
-            output.set_processbar(self.PROCESSBAR_STAGE, 0/3)
+            output.set_processbar(self.PROCESSBAR_STAGE, 0 / 3)
             output.put_processbar(self.PROCESSBAR_PYTHON_MANAGER)
             # output.put_button(t2t("Stop start"), onclick = self._stop_start)
-        def set_processbar(x:ProgressTracker, processbar_name:str, info_scope:str):
+
+        def set_processbar(x: ProgressTracker, processbar_name: str, info_scope: str):
             last_info = ""
             last_progress = 0
             while 1:
@@ -96,20 +93,21 @@ class MainPage(AdvancePage):
                 if x.percentage != last_progress:
                     last_progress = x.percentage
                     output.set_processbar(processbar_name, last_progress)
-                
+
         logger.hr(f"Welcome to {PROGRAM_NAME}", 0)
         logger.hr(t2t("The program is free and open source on github"))
         logger.hr(t2t("Please see the help file at https://github.com/infstellar/python-git-program-launcher"))
         launching_config = load_json(pin.pin[self.SELECT_CONFIG])
-        
+
         pt = ProgressTracker()
-        t = threading.Thread(target=set_processbar, daemon=False, args=(pt, self.PROCESSBAR_PYTHON_MANAGER, self.SCOPE_PROGRESS_INFO))
+        t = threading.Thread(target=set_processbar, daemon=False,
+                             args=(pt, self.PROCESSBAR_PYTHON_MANAGER, self.SCOPE_PROGRESS_INFO))
         session.register_thread(t)
         t.start()
         try:
             global PROGRAM_PYTHON_PATH
             PROGRAM_PYTHON_PATH = PythonManager(launching_config, pt).run()
-            output.set_processbar(self.PROCESSBAR_STAGE, 1/3)
+            output.set_processbar(self.PROCESSBAR_STAGE, 1 / 3)
             logger.info(launching_config)
             REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
             verify_path(REPO_PATH)
@@ -117,31 +115,33 @@ class MainPage(AdvancePage):
             logger.hr(t2t("Launching..."))
 
             GitManager(launching_config, pt).git_install()
-            output.set_processbar(self.PROCESSBAR_STAGE, 2/3)
+            output.set_processbar(self.PROCESSBAR_STAGE, 2 / 3)
             PipManager(launching_config, pt).pip_install()
-            output.set_processbar(self.PROCESSBAR_STAGE, 3/3)
+            output.set_processbar(self.PROCESSBAR_STAGE, 3 / 3)
             pt.end_flag = True
-            
+
             # add program path to sys.path
             with open(os.path.join(os.path.dirname(PROGRAM_PYTHON_PATH), 'pgpl.pth'), 'w') as f:
                 f.write(REPO_PATH)
-            
+
             logger.hr(f"Successfully install. Activating {PROGRAM_NAME}", 0)
             logger.info(f'execute: "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
             output.clear(self.SCOPE_PROGRESS_INFO)
-            output.put_markdown(f'execute: "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}', scope=self.SCOPE_PROGRESS_INFO)
-            
+            output.put_markdown(f'execute: "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}',
+                                scope=self.SCOPE_PROGRESS_INFO)
+
             # os.system("color 07")
             os.system(f"title {PROGRAM_NAME} Console")
             os.system(f'start cmd /k "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
             os.chdir(ROOT_PATH)
-            
+
         except Exception as e:
             pt.end_flag = True
             # output.clear(self.SCOPE_PROGRESS_INFO)
-            output.put_markdown(t2t('***ERROR OCCURRED!***'),scope=self.SCOPE_PROGRESS_INFO)
-            output.put_markdown('***' + t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe") + '***',scope=self.SCOPE_PROGRESS_INFO)
-            output.put_markdown(t2t('***CHECK UP THE CONSOLE OR SEND THE ERROR LOG***'),scope=self.SCOPE_PROGRESS_INFO)
+            output.put_markdown(t2t('***ERROR OCCURRED!***'), scope=self.SCOPE_PROGRESS_INFO)
+            output.put_markdown('***' + t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe") + '***',
+                                scope=self.SCOPE_PROGRESS_INFO)
+            output.put_markdown(t2t('***CHECK UP THE CONSOLE OR SEND THE ERROR LOG***'), scope=self.SCOPE_PROGRESS_INFO)
             logger.exception(e)
             raise e
 
@@ -151,7 +151,7 @@ class MainPage(AdvancePage):
             for f in files:
                 if f[f.index('.') + 1:] == "json":
                     self.config_files.append({"label": f, "value": os.path.join(root, f)})
-    
+
     def _load(self):
         # output.put_html('<style>@font-face {font-family: "SmileySans-Oblique"; src: url("M:\\ProgramData\\PGPL\\python-git-program-launcher\\toolkit\\SmileySans-Oblique.ttf");}</style>')
         # output.put_html('<style>body {font-family: "Arial", sans-serif;}</style>')
@@ -168,7 +168,7 @@ class MainPage(AdvancePage):
             output.put_row([
                 output.put_column([
                     # 选择配置
-                    
+
                     pin.put_select(name=self.SELECT_CONFIG, options=self.config_files),
                     # 当前配置
                     output.put_scope(self.SCOPE_CONFIG_NAME),
@@ -178,20 +178,21 @@ class MainPage(AdvancePage):
                 # None,
                 # output.put_scope(self.SCOPE_LOG)
             ], size=r'auto')
-        
+
         # with output.use_scope(self.SCOPE_LOG):
         #     output.put_markdown(t2t('## Log'))
         #     output.put_scrollable(output.put_scope(self.SCOPE_LOG_AREA), keep_bottom=True)
-    
+
     def _stop_start(self):
         output.close_popup()
-    
+
     def logout(self, text: str, color='black'):
         if self.loaded:
             self.log_list_lock.acquire()
             self.log_list.append((text, color))
             self.log_list_lock.release()
-            
+
+
 class ConfigPage(AdvancePage):
     def __init__(self):
         super().__init__()
@@ -212,8 +213,8 @@ class ConfigPage(AdvancePage):
         self.mode = True
         self.read_only = False
 
-        self.input_verify={
-            "test":lambda x:x
+        self.input_verify = {
+            "test": lambda x: x
         }
 
     def _load_config_files(self):
@@ -226,14 +227,14 @@ class ConfigPage(AdvancePage):
 
     def _create_new_config(self):
         pass
-    
-    def _prepro_url(self,url):
+
+    def _prepro_url(self, url):
         url = url.replace('https', 'http')
         url = url.replace("http://github.com/", "")
         url = f"https://raw.githubusercontent.com/{url}/main/pgpl.yaml"
         return url
-    
-    def _download_config_from_repo(self, url:str):
+
+    def _download_config_from_repo(self, url: str):
         url = url.replace('https', 'http')
         url = url.replace("http://github.com/", "")
         url = f"https://raw.githubusercontent.com/{url}/main/pgpl.yaml"
@@ -242,7 +243,7 @@ class ConfigPage(AdvancePage):
             verify_path(os.path.join(ROOT_PATH, 'cache'))
             fp = os.path.join(ROOT_PATH, 'cache', 'cac.yaml')
             download_url(url, fp)
-            with open(fp,encoding='utf-8') as f:
+            with open(fp, encoding='utf-8') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
             for key in data:
                 with open(os.path.join(ROOT_PATH, 'configs', f"{key}.json"), "w") as f:
@@ -251,8 +252,8 @@ class ConfigPage(AdvancePage):
             return
         else:
             logger.error(t2t("Invalid address"))
-    
-    def _address_verify(self,x):
+
+    def _address_verify(self, x):
         if 'http' in x:
             x = self._prepro_url(x)
             if url_file_exists(x):
@@ -261,16 +262,18 @@ class ConfigPage(AdvancePage):
                 return t2t("Invalid address")
         else:
             return None
-    
+
     def _onclick_add_config(self):
-        n = input.input(t2t('config name')+t2t("(You can enter the github repository address which already have existing config)"), validate=self._address_verify)
+        n = input.input(t2t('config name') + t2t(
+            "(You can enter the github repository address which already have existing config)"),
+                        validate=self._address_verify)
         if 'http' not in n:
             save_json(CONFIG_TEMPLATE, os.path.join(ROOT_PATH, 'configs', n + '.json'))
         else:
             self._download_config_from_repo(n)
         self._load_config_files()
         self._reload_self()
-    
+
     def _load(self):
         self._load_config_files()
         self.last_file = None
@@ -280,9 +283,9 @@ class ConfigPage(AdvancePage):
             output.put_markdown(t2t('## config:'))
 
             output.put_button(t2t('Add config'), onclick=self._onclick_add_config)
-            
+
             output.put_scope("select_scope")
-        
+
         pin.put_select('file', self.config_files, scope="select_scope")
 
     # 重新加载选项
@@ -292,7 +295,7 @@ class ConfigPage(AdvancePage):
         output.clear("select_scope")
         pin.put_select('file', self.config_files, scope="select_scope")
         self.can_check_select = True
-    
+
     # 循环线程
     def _event_thread(self):
         while self.loaded:
@@ -302,9 +305,9 @@ class ConfigPage(AdvancePage):
             try:
                 pin.pin['isSessionExist']
             except SessionNotFoundException:
-                logger.info(t2t("Cannot Find Session")) # 未找到会话，可能由于窗口关闭。请刷新页面重试。
+                logger.info(t2t("Cannot Find Session"))  # 未找到会话，可能由于窗口关闭。请刷新页面重试。
                 return
-                
+
             if pin.pin['file'] != self.last_file:  # 当下拉框被更改时
                 self.last_file = pin.pin['file']
 
@@ -314,8 +317,7 @@ class ConfigPage(AdvancePage):
                     self.can_remove_last_scope = True
 
                 output.put_scope('now', scope=self.main_scope)  # 创建配置页scope
-                
-                
+
                 self.put_setting(pin.pin['file'])  # 配置配置页
 
             time.sleep(1)
@@ -333,9 +335,9 @@ class ConfigPage(AdvancePage):
                     f1 = True
                     output.clear_scope(scope_name)
                     output.put_text(t2t("Waiting..."), scope=scope_name).style(f'color: black; font_size: 20px')
-                    if len(sl)<=15:
+                    if len(sl) <= 15:
                         sl.append(i)
-            
+
         if f1:
             output.put_text(t2t("You may want to enter: "), scope=scope_name).style(f'color: black; font_size: 20px')
             for i in sl:
@@ -346,7 +348,7 @@ class ConfigPage(AdvancePage):
 
     def _before_load_json(self):
         pass
-     
+
     def put_setting(self, name='', j=None):
         self.file_name = name
         self._before_load_json()
@@ -357,15 +359,16 @@ class ConfigPage(AdvancePage):
 
         # with open(os.path.join(root_path, "config", "settings", "config.json"), 'r', encoding='utf8') as f:
         #     lang = json.load(f)["lang"]
-        doc_name = f'configs\\json_doc\\{self.config_file_name}.yaml'
-        lang_doc_name = f'configs\\json_doc\\{self.config_file_name}.{GLOBAL_LANG}.yaml'
+        doc_name = Path('configs') / 'json_doc' / f'{self.config_file_name}.yaml'
+        lang_doc_name = Path('configs') / 'json_doc' / f'{self.config_file_name}.{GLOBAL_LANG}.yaml'
 
-        if os.path.exists(doc_name):
+        if doc_name.exists():
             with open(doc_name, 'r', encoding='utf8') as f:
                 doc = yaml.load(f, Loader=yaml.FullLoader)
-            if os.path.exists(lang_doc_name):
+            if lang_doc_name.exists():
                 with open(lang_doc_name, 'r', encoding='utf8') as f:
                     doc_addi = yaml.load(f, Loader=yaml.FullLoader)
+
                 for k1 in doc_addi:
                     for k2 in doc_addi[k1]:
                         if k1 not in doc:
@@ -374,7 +377,7 @@ class ConfigPage(AdvancePage):
         else:
             doc = {}
         self.put_json(j, doc, 'now', level=3)  # 载入json
-        
+
         if not self.read_only:
             output.put_button('save', scope='now', onclick=self.save)
 
@@ -387,12 +390,11 @@ class ConfigPage(AdvancePage):
         # output.put_text('saved!', scope='now')
         output.toast(t2t('saved!'), color='success', duration=4)
 
-    # 
+    #
     def get_json(self, j: dict, add_name=''):
         rt_json = {}
-        for k in j:
+        for k, v in j.items():
             k_sha1 = hashlib.sha1(k.encode('utf8')).hexdigest()
-            v = j[k]
             if type(v) == dict:
                 rt_json[k] = self.get_json(v, add_name='{}-{}'.format(add_name, k_sha1))
 
@@ -405,12 +407,9 @@ class ConfigPage(AdvancePage):
 
                 if is_dict_list:
                     # 这个是dict的id,是在列表的位置,从1开始,当然也可以改成从0开始,都一样
-                    dict_id = 0
                     # 在当前dict列表里循环,取出每一个dict
                     rt_list = []
-                    for i in v:
-                        # 计次+1
-                        dict_id += 1
+                    for dict_id, i in enumerate(v):
                         rt_list.append(
                             self.get_json(v[dict_id - 1], add_name='{}-{}-{}'.format(add_name, k_sha1, str(dict_id))))
                     rt_json[k] = rt_list
@@ -447,89 +446,85 @@ class ConfigPage(AdvancePage):
     def close_popup(self):
         output.close_popup()
         self.exit_popup = True
-    
+
     # 展示str型项
     def _show_str(self, doc_items, component_name, display_name, scope_name, v, doc_special):
         if doc_items:
             pin.put_select(component_name,
-                            [{"label": i, "value": i} for i in doc_items], value=v,
-                            label=display_name,
-                            scope=scope_name)
+                           [{"label": i, "value": i} for i in doc_items], value=v,
+                           label=display_name,
+                           scope=scope_name)
         elif doc_special:
             doc_special = doc_special.split('#')
             if doc_special[0] == "$FILE_IN_FOLDER$":
-                
-                json_dict = load_json_from_folder(os.path.join(ROOT_PATH, doc_special[1]), black_file=["character","character_dist",""])
-                sl = []
-                for i in json_dict:
-                    sl.append({"label": i["label"], "value": i["label"]})
+
+                json_dict = load_json_from_folder(os.path.join(ROOT_PATH, doc_special[1]),
+                                                  black_file=["character", "character_dist", ""])
+                sl = [{"label": i["label"], "value": i["label"]} for i in json_dict]
+
                 pin.put_select(component_name,
-                    sl, value=v,
-                    label=display_name,
-                    scope=scope_name)
+                               sl, value=v,
+                               label=display_name,
+                               scope=scope_name)
             elif doc_special[0] == "$INPUT_VERIFY$":
                 pin.put_input(component_name, label=display_name, value=v, scope=scope_name)
                 output.put_scope(name=component_name, content=[
                     output.put_text("")
                 ], scope=scope_name)
+
                 def onchange(x):
                     self._str_verify(x, verify_list=self.input_verify[doc_special[1]], scope_name=component_name)
+
                 pin.pin_on_change(component_name, onchange=onchange, clear=False, init_run=True)
         else:
             pin.put_input(component_name, label=display_name, value=v, scope=scope_name)
-    
+
     # 展示inf型项
     def _show_int(self, doc_items, component_name, display_name, scope_name, v, doc_special):
         if doc_items:
             pin.put_select(component_name,
-                            [{"label": i, "value": i} for i in doc_items], value=v,
-                            label=display_name,
-                            scope=scope_name)
+                           [{"label": i, "value": i} for i in doc_items], value=v,
+                           label=display_name,
+                           scope=scope_name)
         else:
             pin.put_input(component_name, label=display_name, value=v, scope=scope_name, type='number')
-    
+
     # 展示float型项
     def _show_float(self, doc_items, component_name, display_name, scope_name, v, doc_special):
         if doc_items:
             pin.put_select(component_name,
-                            [{"label": i, "value": i} for i in doc_items], value=v,
-                            label=display_name,
-                            scope=scope_name)
+                           [{"label": i, "value": i} for i in doc_items], value=v,
+                           label=display_name,
+                           scope=scope_name)
         else:
             pin.put_input(component_name, label=display_name, value=v, scope=scope_name, type='float')
-    
+
     # 展示bool型项
     def _show_bool(self, component_name, display_name, scope_name, v, doc_special):
         pin.put_select(component_name,
-            [{"label": 'True', "value": True}, {"label": 'False', "value": False}], value=v,
-            label=display_name,
-            scope=scope_name)
-    
+                       [{"label": 'True', "value": True}, {"label": 'False', "value": False}], value=v,
+                       label=display_name,
+                       scope=scope_name)
+
     # 展示dict型项
     def _show_dict(self, level, component_name, display_name, scope_name, doc, v, doc_special):
         output.put_scope(component_name, scope=scope_name)
         output.put_markdown('#' * level + ' ' + display_name, scope=component_name)
         self.put_json(v, doc, component_name, add_name=component_name,
-                        level=level + 1)
-    
+                      level=level + 1)
+
     # 展示list/list&dict型项
     def _show_list(self, level, display_name, scope_name, component_name, doc, v, doc_special):
         # 判断是否为dict列表
-        is_dict_list = True
-        for i in v:
-            is_dict_list = is_dict_list and (type(i) == dict)
+        is_dict_list = bool(list(filter(lambda x: type(x) == dict, v)))
 
         if is_dict_list:
             output.put_markdown('#' * level + ' ' + display_name,
                                 scope=scope_name)
             # 差点把我绕晕....
             # 这个是dict的id,是在列表的位置,从1开始,当然也可以改成从0开始,都一样
-            dict_id = 0
             # 在当前dict列表里循环,取出每一个dict
-            for i in v:
-                # 计次+1
-                dict_id += 1
-
+            for dict_id, i in enumerate(v):
                 # 创建一个容器以容纳接下来的dict,第一个是控件名称,为了防止重复,加上了dict id,后面那个是当前容器id
                 output.put_scope(component_name + '-' + str(dict_id), scope=scope_name)
                 # 写标题,第一项是标题文本,遵守markdown语法,第二项是当前容器名称
@@ -537,19 +532,17 @@ class ConfigPage(AdvancePage):
                                     scope=component_name + '-' + str(dict_id))
                 # 写dict,第一项为输入的dict,第二项为doc,第三项为当前容器名称,第四项为控件名称前缀,最后是缩进等级
                 self.put_json(i, doc, component_name + '-' + str(dict_id),
-                                component_name + '-' + str(dict_id),
-                                level=level + 2)
+                              component_name + '-' + str(dict_id),
+                              level=level + 2)
         else:
             pin.put_textarea(component_name, label=display_name, value=list2format_list_text(v),
-                                scope=scope_name)
-    
+                             scope=scope_name)
+
     # 显示json
     def put_json(self, j: dict, doc: dict, scope_name, add_name='', level=1):
-        for k in j:
-            v = j[k]
+        for k, v in j.items():
             # 获取注释
             doc_now = ''
-            doc_now_data = {}
             doc_items = None
             doc_special = None
             doc_annotation = None
@@ -576,8 +569,8 @@ class ConfigPage(AdvancePage):
 
             k_sha1 = hashlib.sha1(k.encode('utf8')).hexdigest()
             component_name = '{}-{}'.format(add_name, k_sha1)
-            
-            if doc_type != None:
+
+            if doc_type is not None:
                 if doc_type == 'int':
                     self._show_int(doc_items, component_name, display_name, scope_name, v, doc_special)
                 elif doc_type == 'float':
@@ -590,7 +583,7 @@ class ConfigPage(AdvancePage):
                     self._show_list(level, display_name, scope_name, component_name, doc, v, doc_special)
                 elif doc_type == 'str':
                     self._show_str(doc_items, component_name, display_name, scope_name, v, doc_special)
-            else:    
+            else:
                 if type(v) == str or v is None:
                     self._show_str(doc_items, component_name, display_name, scope_name, v, doc_special)
                 elif type(v) == int:
@@ -603,6 +596,6 @@ class ConfigPage(AdvancePage):
                     self._show_dict(level, component_name, display_name, scope_name, doc, v, doc_special)
                 elif type(v) == list:
                     self._show_list(level, display_name, scope_name, component_name, doc, v, doc_special)
-            if doc_annotation != None:
-                    output.put_text(doc_annotation, scope=scope_name)
-                    output.put_text("\n", scope=scope_name).style("font-size: 1px")
+            if doc_annotation is not None:
+                output.put_text(doc_annotation, scope=scope_name)
+                output.put_text("\n", scope=scope_name).style("font-size: 1px")

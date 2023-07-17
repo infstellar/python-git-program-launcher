@@ -6,3 +6,4 @@ pywebio
 pywebview
 qtpy
 PyQtWebEngine
+PyYAML
