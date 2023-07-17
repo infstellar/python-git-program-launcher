@@ -1,6 +1,8 @@
 # python-git-program-launcher
 自动安装并启动基于git管理的python程序。
 
+![demo](docs/PGPL-demo_zh-cn.gif)
+
 # 特点
 - 一键启动python程序，~~终极傻瓜包~~
 - 使用git自动更新仓库
@@ -10,6 +12,7 @@
 - 自动下载并安装python和pip包。
 - 从Github仓库自动下载预配置文件
 - 丰富的的自定义配置
+
 # 使用
 
 ## 直接运行
