@@ -185,7 +185,7 @@ class PipManager(Command):
         self.execute(f'{self.pip()} install --upgrade pip{arg}')
         self.execute(f'{self.pip()} install setuptools{arg}')
         self.execute(f'{self.pip()} install wheel{arg}')
-        self.execute(f'"{self.pip()}" install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{arg}')
+        self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{arg}')
         # self.execute(f'pip install progressbar2{arg}')
 
         self.logger_hr_and_track(t2t('Update Dependencies'), 1, p=0.3)
