@@ -185,7 +185,7 @@ class PipManager(Command):
         self.execute(f'{self.pip()} install --upgrade pip{arg}')
         self.execute(f'{self.pip()} install setuptools{arg}')
         self.execute(f'{self.pip()} install wheel{arg}')
-        self.execute(f'"{self.pip()}" install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}{arg}')
+        self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{arg}')
         # self.execute(f'pip install progressbar2{arg}')
 
         self.logger_hr_and_track(t2t('Update Dependencies'), 1, p=0.3)
@@ -260,7 +260,7 @@ class PythonManager(Command):
         #     zip_ref.extractall(self.python_folder)
         # install pip
         self.logger_hr_and_track("Installing pip", p=0.8)
-        self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py")} --no-setuptools --no-wheel')
+        self.execute(f'"{self.python_path}" "{os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}" --no-setuptools --no-wheel')
         # self.execute(f'"{self.python_path}" -m pip install setuptools ')
         
         # https://blog.csdn.net/liangma/article/details/120022530
@@ -328,7 +328,7 @@ class PythonManager(Command):
     def install_pip(self):
         # self.execute(f'curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
         # self.execute(f'"set PATH=%path%;{os.path.join(self.python_folder, "Scripts")}"')
-        self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}')
+        self.execute(f'"{self.python_path}" "{os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}"')
         # self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py --force-reinstall")}')
 
     def run(self):
@@ -340,7 +340,7 @@ class PythonManager(Command):
             self.download_python_zip()
         else:
             try:
-                self.execute(f'"{self.python_path}" -m pip install -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
+                self.execute(f'"{self.python_path}" -m pip install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"')
             except ExecutionError as e:
                 logger.warning(t2t("pip fail, reinstall python"))
                 self.clean_py(self.python_folder)
