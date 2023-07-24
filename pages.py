@@ -5,8 +5,9 @@ from pathlib import Path
 from pywebio import *
 
 from advance_page import AdvancePage
-from main import *
+from console import *
 from webio_utils import *
+from managers import *
 
 
 class MainPage(AdvancePage):

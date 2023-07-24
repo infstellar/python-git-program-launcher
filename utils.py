@@ -158,16 +158,41 @@ def run_command(command):
     rc = process.poll()
     return rc
 
+class ProgressTracker():
+    """
+    给GUI用的进度追踪器
+    """
+    def __init__(self) -> None:
+        self.percentage = 0
+        self.info = ''
+        self.end_flag = False
+        self.cmd = ""
+        self.console_output = ""
+    
+    def set_percentage(self, x):
+        self.percentage = x
+    
+    def set_info(self, x):
+        self.info = x
+
+    def inp(self, info, percentage):
+        self.info = info
+        self.percentage = percentage
+
 class Command():
 
+    def __init__(self, progress_tracker=None) -> None:
+        if progress_tracker is None: progress_tracker = ProgressTracker()
+        self.progress_tracker = progress_tracker
+    
     def show_error(self, command=None, error_code=None):
         logger.info("Update failed", 0)
         # self.show_config()
         logger.info("")
         logger.info(f"Last command: {command}\nerror_code: {error_code}")
         logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
-        logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
-        logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
+        # logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
+        # logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
 
     def logger_hr_and_track(self, x, c=0, p=None):
         logger.hr(x, c)
