@@ -66,7 +66,7 @@ class MainPage(AdvancePage):
                 if pin.pin[self.SELECT_CONFIG] is None: continue
                 self.last_config = pin.pin[self.SELECT_CONFIG]
                 output.clear(self.SCOPE_CONFIG_NAME)
-                output.put_text(load_json(pin.pin[self.SELECT_CONFIG])['Repository'], scope=self.SCOPE_CONFIG_NAME)
+                output.put_text(t2t("Repository address") + ": " + load_json(pin.pin[self.SELECT_CONFIG])['Repository'], scope=self.SCOPE_CONFIG_NAME)
                 with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w', encoding='utf-8') as f:
                     f.write(self.last_config)
                     f.close()
@@ -166,10 +166,11 @@ class MainPage(AdvancePage):
             if i['value'] == launching_config:
                 i['selected'] = True
         with output.use_scope(self.main_scope):
+            output.put_button(label=t2t("Open log folder"), onclick=self._onclick_open_log_folder, scope=self.main_scope),
             output.put_row([
                 output.put_column([
                     # 选择配置
-
+                    output.put_markdown(t2t("# Select startup configuration")),
                     pin.put_select(name=self.SELECT_CONFIG, options=self.config_files),
                     # 当前配置
                     output.put_scope(self.SCOPE_CONFIG_NAME),
@@ -192,6 +193,9 @@ class MainPage(AdvancePage):
             self.log_list_lock.acquire()
             self.log_list.append((text, color))
             self.log_list_lock.release()
+            
+    def _onclick_open_log_folder(self):
+        os.startfile(os.path.join(ROOT_PATH, "Logs"))
 
 
 class ConfigPage(AdvancePage):

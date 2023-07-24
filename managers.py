@@ -127,7 +127,7 @@ class PipManager(Command):
         self.PypiMirror = installer_config["PypiMirror"]
         if self.PypiMirror == "AUTO" or self.PypiMirror == "":
             self.PypiMirror = {
-                "zh_CN": "http://mirrors.aliyun.com/pypi/simple",
+                "zh_CN": "https://pypi.tuna.tsinghua.edu.cn/simple",
                 "en_US": "https://pypi.org/simple"
             }[GLOBAL_LANG]
 
