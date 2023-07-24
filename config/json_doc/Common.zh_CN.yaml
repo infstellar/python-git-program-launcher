@@ -1,0 +1,12 @@
+AutoUpdate:
+  doc: 自动更新
+Branch:
+  doc: 分支
+InstallDependencies:
+  doc: 安装依赖
+KeepLocalChanges:
+  doc: 保留本地修改
+PypiMirror:
+  doc: Pypi镜像源地址
+PythonMirror:
+  doc: Python镜像源地址

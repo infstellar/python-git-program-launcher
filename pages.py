@@ -228,7 +228,7 @@ class ConfigPage(AdvancePage):
         self.exit_popup = None
         self.last_file = None
         self.file_name = ''
-        self.config_file_name = 'common_config'
+        self.config_file_name = 'Common'
 
         self.config_files = []
         self.config_files_name = []
@@ -385,15 +385,17 @@ class ConfigPage(AdvancePage):
 
         # with open(os.path.join(root_path, "config", "settings", "config.json"), 'r', encoding='utf8') as f:
         #     lang = json.load(f)["lang"]
-        doc_name = Path('configs') / 'json_doc' / f'{self.config_file_name}.yaml'
-        lang_doc_name = Path('configs') / 'json_doc' / f'{self.config_file_name}.{GLOBAL_LANG}.yaml'
+        doc_name = Path('config') / 'json_doc' / f'{self.config_file_name}.yaml'
+        lang_doc_name = Path('config') / 'json_doc' / f'{self.config_file_name}.{GLOBAL_LANG}.yaml'
 
         if doc_name.exists():
             with open(doc_name, 'r', encoding='utf8') as f:
                 doc = yaml.load(f, Loader=yaml.FullLoader)
+                if doc is None: doc = {}
             if lang_doc_name.exists():
-                with open(lang_doc_name, 'r', encoding='utf8') as f:
+                with open(lang_doc_name, 'r', encoding='utf-8') as f:
                     doc_addi = yaml.load(f, Loader=yaml.FullLoader)
+                    if doc_addi is None: doc_addi = {}
 
                 for k1 in doc_addi:
                     for k2 in doc_addi[k1]:

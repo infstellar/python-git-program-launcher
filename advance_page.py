@@ -16,9 +16,9 @@ class AdvancePage(Page):
         with output.use_scope(self.main_scope):
             # 标题
             if DEBUG_MODE:
-                output.put_markdown(t2t('# PGPL DEBUG') + f" {1.0}"),
+                output.put_markdown(t2t('# PGPL DEBUG') + f" 2.1"),
             else:
-                output.put_markdown(t2t('# PGPL GUI') + f" {1.0}"),
+                output.put_markdown(t2t('# PGPL GUI') + f" 2.1"),
             
             # 页面切换按钮
             output.put_buttons(self._value_list2buttons_type(list(manager.page_dict)), onclick=manager.load_page, scope=self.main_scope)
