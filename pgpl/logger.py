@@ -53,7 +53,7 @@ delete_files(f"{ROOT_PATH}/Logs", 15)
 logger.remove(handler_id=None)
 logger.warning_once = types.MethodType(warning_once, logger)
 logger.demo = types.MethodType(demo, logger)
-logger.add(os.path.join(ROOT_PATH, os.path.join(ROOT_PATH, 'Logs', "{time:YYYY-MM-DD}/{time:YYYY-MM-DD}.log")), level="TRACE", backtrace=True)
+logger.add(os.path.join(ROOT_PATH, os.path.join(ROOT_PATH, '../Logs', "{time:YYYY-MM-DD}/{time:YYYY-MM-DD}.log")), level="TRACE", backtrace=True)
 if DEBUG_MODE:
     logger.add(sys.stdout, level="TRACE", backtrace=True)
 else:

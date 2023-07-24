@@ -1,7 +1,5 @@
 from utils import *
 from pywebio import *
-import subprocess
-import pywebio
 from logger import add_logger_to_GUI
 import log_handler
 from page_manager import manager

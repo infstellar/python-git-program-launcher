@@ -1,8 +1,9 @@
+from path_lib import *
 from pywebio import platform
 import asyncio
 import threading
-from utils import *
-import webio
+from pgpl import webio
+
 
 def server_thread():
     # https://zhuanlan.zhihu.com/p/101586682

@@ -12,7 +12,7 @@ import ssl
 PROGRAM_NAME = "Python-Git-Program-Launcher"
 DEBUG_MODE = False
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
-PYTHON_EXE_PATH = os.path.join(ROOT_PATH, "toolkit\\python.exe")
+PYTHON_EXE_PATH = os.path.join(ROOT_PATH, "../toolkit/python.exe")
 LAUNCHER_PYTHON_PATH = PYTHON_EXE_PATH
 PROGRAM_PYTHON_PATH = LAUNCHER_PYTHON_PATH
 REPO_PATH = ""
@@ -52,7 +52,7 @@ if sys.path[0] != ROOT_PATH:
 def load_json(json_name) -> dict:
     if '.json' not in json_name:
         json_name += '.json'
-    f = open(os.path.join(ROOT_PATH, 'configs', json_name), 'r')
+    f = open(os.path.join(ROOT_PATH, '../configs', json_name), 'r')
     content = f.read()
     a = json.loads(content)
     f.close()
@@ -87,7 +87,7 @@ def save_json(x, json_name):
     """
     if '.json' not in json_name:
         json_name += '.json'
-    json.dump(x, open(os.path.join(ROOT_PATH, 'configs', json_name), 'w', encoding='utf-8'), sort_keys=True, indent=2,
+    json.dump(x, open(os.path.join(ROOT_PATH, '../configs', json_name), 'w', encoding='utf-8'), sort_keys=True, indent=2,
               ensure_ascii=False)
 
 

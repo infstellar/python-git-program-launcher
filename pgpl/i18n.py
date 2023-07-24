@@ -45,11 +45,11 @@ if GLOBAL_LANG == "$locale$":
     GLOBAL_LANG = get_local_lang()
     
 # create .mo files
-po_file_path = os.path.join(ROOT_PATH, r'translation/locale', GLOBAL_LANG, 'LC_MESSAGES', f'{GLOBAL_LANG}.po')
+po_file_path = os.path.join(ROOT_PATH, r'../translation/locale', GLOBAL_LANG, 'LC_MESSAGES', f'{GLOBAL_LANG}.po')
 mo_file_path = os.path.splitext(po_file_path)[0] + '.mo'
 print(fr'python "{ROOT_PATH}/translation/msgfmt.py" -o "{mo_file_path}" "{po_file_path}"')
 os.system(fr'python "{ROOT_PATH}/translation/msgfmt.py" -o "{mo_file_path}" "{po_file_path}"')
 
-l10n = gettext.translation(GLOBAL_LANG, localedir=os.path.join(ROOT_PATH, r"translation/locale"), languages=[GLOBAL_LANG])
+l10n = gettext.translation(GLOBAL_LANG, localedir=os.path.join(ROOT_PATH, r"../translation/locale"), languages=[GLOBAL_LANG])
 l10n.install()
 t2t = l10n.gettext

@@ -26,7 +26,7 @@ class GitManager(Command):
 
     def __init__(self, installer_config, progress_tracker=None):
         super().__init__(progress_tracker=progress_tracker)
-        self.git = os.path.join(ROOT_PATH, "toolkit\\Git\\mingw64\\bin\\git.exe")
+        self.git = os.path.join(ROOT_PATH, "../toolkit/Git/mingw64/bin/git.exe")
         self.Repository = installer_config["Repository"]
         self.Branch = installer_config["Branch"]
         self.GitProxy = installer_config["GitProxy"]
@@ -157,7 +157,7 @@ class PipManager(Command):
         self.execute(f'{self.pip()} install --upgrade pip{self.pip_arg}')
         self.execute(f'{self.pip()} install setuptools{self.pip_arg}')
         self.execute(f'{self.pip()} install wheel{self.pip_arg}')
-        self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{self.pip_arg}')
+        self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "../toolkit", "basic_requirements.txt")}"{self.pip_arg}')
     
     def pip_install(self):
         logger.info(t2t('Update Dependencies'))
@@ -173,8 +173,8 @@ class PipManager(Command):
 
         try:
             self.logger_hr_and_track(t2t('Update Dependencies'), 1, p=0.3)
-            self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "lowest_requirements.txt")}"{self.pip_arg}')
-            self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{self.pip_arg}')
+            self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "../toolkit", "lowest_requirements.txt")}"{self.pip_arg}')
+            self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "../toolkit", "basic_requirements.txt")}"{self.pip_arg}')
             self.execute(f'{self.pip()} install -r {self.requirements_file()}{self.pip_arg}')
         except ExecutionError as e:
             self.logger_hr_and_track(t2t('Update Dependencies Fail, Update pip'), 1, p=0.1)
@@ -192,7 +192,7 @@ class PythonManager(Command):
         super().__init__(progress_tracker=progress_tracker)
         self.python_version = installer_config['PythonVersion']
         n = installer_config['Repository'].split('/')[-1]
-        self.python_folder = os.path.join(ROOT_PATH, 'toolkit', f'python', f"{self.python_version}_{n}")
+        self.python_folder = os.path.join(ROOT_PATH, '../toolkit', f'python', f"{self.python_version}_{n}")
         self.python_path = os.path.join(self.python_folder, "python.exe")
         self.python_mirror = installer_config['PythonMirror']
         if self.python_mirror == "AUTO" or self.python_mirror == "":
@@ -218,7 +218,7 @@ class PythonManager(Command):
         add_environ(os.path.join(self.python_folder, "Lib"))
         add_environ(os.path.join(self.python_folder, "Scripts"))
         add_environ(self.python_folder)
-        site_packages_path = os.path.join(ROOT_PATH, "toolkit", "python_site_packages")
+        site_packages_path = os.path.join(ROOT_PATH, "../toolkit", "python_site_packages")
         sys.path.insert(0, site_packages_path)
         
         # DEBUG
@@ -247,7 +247,7 @@ class PythonManager(Command):
         #     zip_ref.extractall(self.python_folder)
         # install pip
         self.logger_hr_and_track("Installing pip", p=0.8)
-        self.execute(f'"{self.python_path}" "{os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}" --no-setuptools --no-wheel')
+        self.execute(f'"{self.python_path}" "{os.path.join(ROOT_PATH, "../toolkit", "get-pip.py")}" --no-setuptools --no-wheel')
         # self.execute(f'"{self.python_path}" -m pip install setuptools ')
         
         # https://blog.csdn.net/liangma/article/details/120022530
@@ -280,8 +280,8 @@ class PythonManager(Command):
         # url = fr"https://www.python.org/ftp/python/{ver}/python-{ver}-amd64.exe"
         # url = fr"https://www.python.org/ftp/python/{ver}/python-{ver}-embed-amd64.zip"
         logger.info(f'url: {url}')
-        file_name = os.path.join(ROOT_PATH, 'toolkit', 'python', str(self.python_version), f'python-{ver}-amd64.exe')
-        file_name2 = os.path.join(ROOT_PATH, 'toolkit', 'python', str(self.python_version), f'python_{ver}.exe')
+        file_name = os.path.join(ROOT_PATH, '../toolkit', 'python', str(self.python_version), f'python-{ver}-amd64.exe')
+        file_name2 = os.path.join(ROOT_PATH, '../toolkit', 'python', str(self.python_version), f'python_{ver}.exe')
 
         if not os.path.exists(file_name2):
             if os.path.exists(file_name):
