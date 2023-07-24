@@ -120,6 +120,7 @@ class GitManager(Command):
 class PipManager(Command):
 
     def __init__(self, installer_config, progress_tracker=None):
+        super().__init__(progress_tracker=progress_tracker)
         self.RequirementsFile = installer_config["RequirementsFile"]
         self.python = PROGRAM_PYTHON_PATH  # os.path.join(os.path.dirname(os.path.abspath(__file__)), "toolkit\\python.exe")
 
@@ -130,9 +131,16 @@ class PipManager(Command):
                 "zh_CN": "https://pypi.tuna.tsinghua.edu.cn/simple",
                 "en_US": "https://pypi.org/simple"
             }[GLOBAL_LANG]
-
-        if progress_tracker is None: progress_tracker = ProgressTracker()
-        self.progress_tracker = progress_tracker
+        
+        self.pip_arg = []
+        if self.PypiMirror:
+            mirror = self.PypiMirror
+            self.pip_arg += ['-i', mirror]
+            # Trust http mirror
+            # if 'http:' in mirror:
+            self.pip_arg += ['--trusted-host', urlparse(mirror).hostname]
+        # self.pip_arg += ['--disable-pip-version-check']
+        self.pip_arg = ' ' + ' '.join(self.pip_arg) if self.pip_arg else ''
         
         # self.execute("set _pyBin=%_root%\\toolkit")
         # self.execute("set _GitBin=%_root%\\toolkit\Git\mingw64\\bin")
@@ -145,6 +153,12 @@ class PipManager(Command):
         return f'"{self.python}" -m pip'
         # return 'pip'
 
+    def update_pip(self):
+        self.execute(f'{self.pip()} install --upgrade pip{self.pip_arg}')
+        self.execute(f'{self.pip()} install setuptools{self.pip_arg}')
+        self.execute(f'{self.pip()} install wheel{self.pip_arg}')
+        self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{self.pip_arg}')
+    
     def pip_install(self):
         logger.info(t2t('Update Dependencies'))
 
@@ -154,29 +168,19 @@ class PipManager(Command):
 
         logger.info(t2t('Check Python'))
         self.execute(f'"{self.python}" --version')
-
-        arg = []
-        if self.PypiMirror:
-            mirror = self.PypiMirror
-            arg += ['-i', mirror]
-            # Trust http mirror
-            # if 'http:' in mirror:
-            arg += ['--trusted-host', urlparse(mirror).hostname]
-        # arg += ['--disable-pip-version-check']
-        arg = ' ' + ' '.join(arg) if arg else ''
-        # Don't update pip, just leave it.
-        self.logger_hr_and_track(t2t('Update pip'), 1, p=0.1)
         
-        self.execute(f'{self.pip()} install --upgrade pip{arg}')
-        self.execute(f'{self.pip()} install setuptools{arg}')
-        self.execute(f'{self.pip()} install wheel{arg}')
-        self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{arg}')
         # self.execute(f'pip install progressbar2{arg}')
 
-        self.logger_hr_and_track(t2t('Update Dependencies'), 1, p=0.3)
+        try:
+            self.logger_hr_and_track(t2t('Update Dependencies'), 1, p=0.3)
+            self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "lowest_requirements.txt")}"{self.pip_arg}')
+            self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{self.pip_arg}')
+            self.execute(f'{self.pip()} install -r {self.requirements_file()}{self.pip_arg}')
+        except ExecutionError as e:
+            self.logger_hr_and_track(t2t('Update Dependencies Fail, Update pip'), 1, p=0.1)
+            self.update_pip()
 
         # self.execute((f'{self.pip()} install pycocotools-windows{arg}'))
-        self.execute(f'{self.pip()} install -r {self.requirements_file()}{arg}')
         
         self.progress_tracker.set_percentage(1)
 
@@ -185,6 +189,7 @@ class PythonManager(Command):
 
     @logger.catch()
     def __init__(self, installer_config, progress_tracker:ProgressTracker=None):
+        super().__init__(progress_tracker=progress_tracker)
         self.python_version = installer_config['PythonVersion']
         n = installer_config['Repository'].split('/')[-1]
         self.python_folder = os.path.join(ROOT_PATH, 'toolkit', f'python', f"{self.python_version}_{n}")
@@ -195,9 +200,6 @@ class PythonManager(Command):
                 "zh_CN": "https://mirrors.huaweicloud.com/python",
                 "en_US": "https://www.python.org/ftp/python"
             }[GLOBAL_LANG]
-        if progress_tracker is None:
-            progress_tracker = ProgressTracker()
-        self.progress_tracker = progress_tracker
         
         # https://registry.npmmirror.com/-/binary/python/3.10.1/python-3.10.1-amd64.exe
         # paths = ''
@@ -311,9 +313,10 @@ class PythonManager(Command):
         self.logger_hr_and_track(t2t("Python is installed."))
 
     def install_pip(self):
+        pass
         # self.execute(f'curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
         # self.execute(f'"set PATH=%path%;{os.path.join(self.python_folder, "Scripts")}"')
-        self.execute(f'"{self.python_path}" "{os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}"')
+        # self.execute(f'"{self.python_path}" "{os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}"')
         # self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py --force-reinstall")}')
 
     def run(self):
@@ -325,7 +328,7 @@ class PythonManager(Command):
             self.download_python_zip()
         else:
             try:
-                self.execute(f'"{self.python_path}" -m pip install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"')
+                self.execute(f'"{self.python_path}" "{self.python_folder}/Lib/site-packages/pip/__main__.py" --version')
             except ExecutionError as e:
                 logger.warning(t2t("pip fail, reinstall python"))
                 self.clean_py(self.python_folder)
