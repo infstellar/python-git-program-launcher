@@ -27,8 +27,8 @@ def generate_pgplpth(path):
 #       ModuleNotFoundError: No module named 'src'
 
 # 解决方案：
-# 1. 手动下载无法下载的包，解压放入toolkit/python_site_packages
-# 2. 在PGPLPTH中写入导入失败的包位置
+# 手动下载无法下载的包，解压放入toolkit/python_site_packages，在PGPLPTH中写入导入失败的包位置
+# TODO: 使用anaconda的python安装流程可能解决此问题
 
 
 

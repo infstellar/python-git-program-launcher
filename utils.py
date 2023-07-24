@@ -130,34 +130,6 @@ def write_file_flag(n:str, x:bool) -> None:
 class ExecutionError(Exception):
     pass
 
-
-
-def run_command(command):
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    i = 0
-    pt = time.time()
-    while True:
-        output = process.stdout.readline()
-        if str(output, encoding='utf-8') == '' and (process.poll() is not None):
-            break
-        if output:
-            orimess = output.strip()
-            mess = str(orimess, encoding='utf-8')
-            if 'Requirement already satisfied: ' not in mess:
-                logger.trace(mess)
-                print(mess)
-            if 'Installing collected packages' in mess:
-                logger.info('Please wait, pip is copying the file.')
-            
-        else:
-            if time.time()-pt>5:
-                list = ["\\", "|", "/", "—"]
-                index = i % 4
-                sys.stdout.write("\r {}".format(list[index]))
-                i+=1
-    rc = process.poll()
-    return rc
-
 class ProgressTracker():
     """
     给GUI用的进度追踪器
@@ -178,6 +150,37 @@ class ProgressTracker():
     def inp(self, info, percentage):
         self.info = info
         self.percentage = percentage
+
+
+def run_command(command, progress_tracker:ProgressTracker = None):
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    i = 0
+    pt = time.time()
+    while True:
+        output = process.stdout.readline()
+        if str(output, encoding='utf-8') == '' and (process.poll() is not None):
+            break
+        if output:
+            orimess = output.strip()
+            mess = str(orimess, encoding='utf-8')
+            if 'Requirement already satisfied: ' not in mess:
+                logger.trace(mess)
+                if progress_tracker is not None: progress_tracker.console_output = mess
+                print(mess)
+            if 'Installing collected packages' in mess:
+                logger.info(t2t('Please wait, pip is copying the file.'))
+                if progress_tracker is not None: progress_tracker.console_output = t2t('Please wait, pip is copying the file.')
+            
+        else:
+            if time.time()-pt>5:
+                list = ["\\", "|", "/", "—"]
+                index = i % 4
+                sys.stdout.write("\r {}".format(list[index]))
+                i+=1
+    rc = process.poll()
+    return rc
+
+
 
 class Command():
 
@@ -220,7 +223,9 @@ class Command():
         if not output:
             command = command + ' >nul 2>nul'
         logger.info(command)
-        error_code = run_command(command) # os.system(command)
+        self.progress_tracker.cmd = command
+        self.progress_tracker.console_output = ""
+        error_code = run_command(command, progress_tracker=self.progress_tracker) # os.system(command)
         if error_code:
             if allow_failure:
                 logger.info(f"[ allowed failure ], error_code: {error_code}")

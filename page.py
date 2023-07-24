@@ -43,11 +43,7 @@ class Page:
     def _value_list2buttons_type(self, l1):
         replace_dict = {
             "MainPage": t2t("Main"),
-            "SettingPage": t2t("Setting"),
-            "CombatSettingPage": t2t("CombatSetting"),
-            "CollectorSettingPage": t2t("CollectorSetting"),
-            "MissionPage": t2t("MissionPage"),
-            "MissionDownloadPage": t2t("MissionDownloadPage")
+            "SettingPage": t2t("Setting")
         }
         for i in range(len(l1)):
             if l1[i] in replace_dict:

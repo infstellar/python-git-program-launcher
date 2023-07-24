@@ -328,6 +328,7 @@ class PythonManager(Command):
             self.download_python_zip()
         else:
             try:
+                self.progress_tracker.inp(t2t('Verify pip installation'), 0.05)
                 self.execute(f'"{self.python_path}" "{self.python_folder}/Lib/site-packages/pip/__main__.py" --version')
             except ExecutionError as e:
                 logger.warning(t2t("pip fail, reinstall python"))

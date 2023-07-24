@@ -10,7 +10,7 @@ from webio_utils import *
 from managers import *
 
 
-class MainPage(AdvancePage):
+class MainPage(AdvancePage, Command):
     SCOPE_START = AN()
     SCOPE_LOG = AN()
     SCOPE_CONFIG = AN()
@@ -25,10 +25,13 @@ class MainPage(AdvancePage):
     PROCESSBAR_PIP_MANAGER = AN()
     PROCESSBAR_START = AN()
     SCOPE_PROGRESS_INFO = AN()
-    SCOPE_PROGRESS_STAGE = AN()
+    SCOPE_PROGRESS_CMD = AN()
+    SCOPE_PROGRESS_CMD_OUTPUT = AN()
 
     def __init__(self):
-        super().__init__()
+        self.pt = ProgressTracker()
+        AdvancePage.__init__(self)
+        Command.__init__(self, progress_tracker = self.pt)
         self.log_list = []
         self.log_history = []
         self.log_list_lock = threading.Lock()
@@ -72,42 +75,55 @@ class MainPage(AdvancePage):
                     f.close()
 
     def _start(self):
+        session.set_env(output_animation=False)
         with output.popup(t2t("Program Starting"), implicit_close=False) as s:
             output.put_markdown(t2t("## Progress"))
-            output.put_scope(self.SCOPE_PROGRESS_STAGE)
             output.put_scope(self.SCOPE_PROGRESS_INFO)
             output.put_processbar(self.PROCESSBAR_STAGE)
             output.set_processbar(self.PROCESSBAR_STAGE, 0 / 3)
             output.put_processbar(self.PROCESSBAR_PYTHON_MANAGER)
+            output.put_scope(self.SCOPE_PROGRESS_CMD)
+            output.put_scope(self.SCOPE_PROGRESS_CMD_OUTPUT)
+            
             # output.put_button(t2t("Stop start"), onclick = self._stop_start)
 
-        def set_processbar(x: ProgressTracker, processbar_name: str, info_scope: str):
+        def set_processbar(x: ProgressTracker, processbar_name: str, info_scope: str, cmd_scope, cmd_output_scope):
             last_info = ""
             last_progress = 0
+            last_cmd = ''
+            last_cmd_output = ''
+            def clear_and_put_text(_text, _scope):
+                output.clear(_scope)
+                output.put_markdown(_text, scope=_scope)
             while 1:
-                if pt.end_flag: break
+                if self.pt.end_flag: break
                 time.sleep(0.1)
                 if x.info != last_info:
                     last_info = x.info
-                    output.clear(info_scope)
-                    output.put_text(last_info, scope=info_scope)
+                    clear_and_put_text(t2t("## Info: \n")+last_info, info_scope)
                 if x.percentage != last_progress:
                     last_progress = x.percentage
                     output.set_processbar(processbar_name, last_progress)
+                if x.cmd != last_cmd:
+                    last_cmd = x.cmd
+                    clear_and_put_text(t2t("#### Running Command: \n")+last_cmd, cmd_scope)
+                if x.console_output != last_cmd_output:
+                    last_cmd_output = x.console_output
+                    clear_and_put_text(t2t("#### Command Output: \n")+last_cmd_output, cmd_output_scope)
 
         logger.hr(f"Welcome to {PROGRAM_NAME}", 0)
         logger.hr(t2t("The program is free and open source on github"))
         logger.hr(t2t("Please see the help file at https://github.com/infstellar/python-git-program-launcher"))
         launching_config = load_json(pin.pin[self.SELECT_CONFIG])
 
-        pt = ProgressTracker()
+        self.pt.end_flag = False
         t = threading.Thread(target=set_processbar, daemon=False,
-                             args=(pt, self.PROCESSBAR_PYTHON_MANAGER, self.SCOPE_PROGRESS_INFO))
+                             args=(self.pt, self.PROCESSBAR_PYTHON_MANAGER, self.SCOPE_PROGRESS_INFO, self.SCOPE_PROGRESS_CMD, self.SCOPE_PROGRESS_CMD_OUTPUT))
         session.register_thread(t)
         t.start()
         try:
             global PROGRAM_PYTHON_PATH
-            PROGRAM_PYTHON_PATH = PythonManager(launching_config, pt).run()
+            PROGRAM_PYTHON_PATH = PythonManager(launching_config, self.pt).run()
             output.set_processbar(self.PROCESSBAR_STAGE, 1 / 3)
             logger.info(launching_config)
             REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
@@ -115,11 +131,11 @@ class MainPage(AdvancePage):
             os.chdir(REPO_PATH)
             logger.hr(t2t("Launching..."))
 
-            GitManager(launching_config, pt).git_install()
+            GitManager(launching_config, self.pt).git_install()
             output.set_processbar(self.PROCESSBAR_STAGE, 2 / 3)
-            PipManager(launching_config, pt).pip_install()
+            PipManager(launching_config, self.pt).pip_install()
             output.set_processbar(self.PROCESSBAR_STAGE, 3 / 3)
-            pt.end_flag = True
+            self.pt.end_flag = True
 
             # add program path to sys.path
             with open(os.path.join(os.path.dirname(PROGRAM_PYTHON_PATH), 'pgpl.pth'), 'w') as f:
@@ -128,16 +144,19 @@ class MainPage(AdvancePage):
             logger.hr(f"Successfully install. Activating {PROGRAM_NAME}", 0)
             logger.info(f'execute: "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
             output.clear(self.SCOPE_PROGRESS_INFO)
-            output.put_markdown(f'execute: "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}',
-                                scope=self.SCOPE_PROGRESS_INFO)
+            output.put_markdown(t2t("## Info: \n") + t2t("#### Successfully install. Activating"), scope=self.SCOPE_PROGRESS_INFO) # +f" {PROGRAM_NAME}"
+            output.put_markdown(t2t("#### You can close this popup window and start another programme or restart this programme."), scope=self.SCOPE_PROGRESS_INFO)
 
             # os.system("color 07")
-            os.system(f"title {PROGRAM_NAME} Console")
+            # self.execute(f"title {PROGRAM_NAME} Console")
+            # self.execute("")
+            self.progress_tracker.cmd = f'start cmd /k "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}'
+            self.progress_tracker.console_output = ""
             os.system(f'start cmd /k "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
             os.chdir(ROOT_PATH)
 
         except Exception as e:
-            pt.end_flag = True
+            self.pt.end_flag = True
             # output.clear(self.SCOPE_PROGRESS_INFO)
             output.put_markdown(t2t('***ERROR OCCURRED!***'), scope=self.SCOPE_PROGRESS_INFO)
             output.put_markdown('***' + t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe") + '***',
@@ -145,6 +164,8 @@ class MainPage(AdvancePage):
             output.put_markdown(t2t('***CHECK UP THE CONSOLE OR SEND THE ERROR LOG***'), scope=self.SCOPE_PROGRESS_INFO)
             logger.exception(e)
             raise e
+        self.pt.end_flag = True
+        session.set_env(output_animation=True)
 
     def _load_config_files(self):
         self.config_files = []
@@ -166,11 +187,11 @@ class MainPage(AdvancePage):
             if i['value'] == launching_config:
                 i['selected'] = True
         with output.use_scope(self.main_scope):
-            output.put_button(label=t2t("Open log folder"), onclick=self._onclick_open_log_folder, scope=self.main_scope),
+            output.put_button(label=t2t("Open logs folder"), onclick=self._onclick_open_log_folder, scope=self.main_scope),
             output.put_row([
                 output.put_column([
                     # 选择配置
-                    output.put_markdown(t2t("# Select startup configuration")),
+                    output.put_markdown(t2t("## Select startup configuration")),
                     pin.put_select(name=self.SELECT_CONFIG, options=self.config_files),
                     # 当前配置
                     output.put_scope(self.SCOPE_CONFIG_NAME),
