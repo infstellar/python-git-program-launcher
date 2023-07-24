@@ -33,27 +33,27 @@ def demo(self, message):
 def add_logger_to_GUI(cb_func):
     logger.add(cb_func, level="INFO", backtrace=True, colorize=True)
 
-# import datetime
+import datetime
 
-# def delete_files(path, days):
-#     now = datetime.datetime.now()
-#     for root, dirs, files in os.walk(path):
-#         for file in files:
-#             file_path = os.path.join(root, file)
-#             modified_time = datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
-#             if (now - modified_time).days > days:
-#                 if DEBUG_MODE:
-#                     print(f"Log File Delete: Deleting file {file_path} Last modified {modified_time} Days since modified {(now - modified_time).days} Days to delete {days}")
-#                 os.remove(file_path)
+def delete_files(path, days):
+    now = datetime.datetime.now()
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            file_path = os.path.join(root, file)
+            modified_time = datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
+            if (now - modified_time).days > days:
+                if DEBUG_MODE:
+                    print(f"Log File Delete: Deleting file {file_path} Last modified {modified_time} Days since modified {(now - modified_time).days} Days to delete {days}")
+                os.remove(file_path)
 
-# delete_files(f"{ROOT_PATH}/Logs", 15)
+delete_files(f"{ROOT_PATH}/Logs", 15)
 
 
 # configure loguru
 logger.remove(handler_id=None)
 logger.warning_once = types.MethodType(warning_once, logger)
 logger.demo = types.MethodType(demo, logger)
-# logger.add(os.path.join(ROOT_PATH, os.path.join(ROOT_PATH, 'Logs', "{time:YYYY-MM-DD}/{time:YYYY-MM-DD}.log")), level="TRACE", backtrace=True)
+logger.add(os.path.join(ROOT_PATH, os.path.join(ROOT_PATH, 'Logs', "{time:YYYY-MM-DD}/{time:YYYY-MM-DD}.log")), level="TRACE", backtrace=True)
 if DEBUG_MODE:
     logger.add(sys.stdout, level="TRACE", backtrace=True)
 else:
