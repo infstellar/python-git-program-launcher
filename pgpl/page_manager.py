@@ -1,8 +1,8 @@
 import subprocess
 
 
-from utils import *
-from page import Page
+from pgpl.utils import *
+from pgpl.page import Page
 
 
 

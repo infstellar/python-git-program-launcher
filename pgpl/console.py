@@ -3,10 +3,10 @@ import sys
 from urllib.parse import urlparse
 import yaml
 
-from utils import *
-from pgpl_pth import generate_pgplpth
-from inputimeout import inputimeout, TimeoutOccurred
-from managers import *
+from pgpl.utils import *
+from pgpl.pgpl_pth import generate_pgplpth
+from pgpl.inputimeout import inputimeout, TimeoutOccurred
+from pgpl.managers import *
 
 
 class ConfigEditor():

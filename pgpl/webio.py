@@ -1,9 +1,9 @@
-from utils import *
+from pgpl.utils import *
 from pywebio import *
-from logger import add_logger_to_GUI
-import log_handler
-from page_manager import manager
-from pages import MainPage, ConfigPage
+from pgpl.logger import add_logger_to_GUI
+from pgpl import log_handler
+from pgpl.page_manager import manager
+from pgpl.pages import MainPage, ConfigPage
 status = True
 global first_run
 first_run = False

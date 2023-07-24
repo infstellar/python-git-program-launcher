@@ -1,7 +1,7 @@
-from utils import *
-from page import Page
-from page_manager import manager
-from webio_utils import *
+from pgpl.utils import *
+from pgpl.page import Page
+from pgpl.page_manager import manager
+from pgpl.webio_utils import *
 
 class AdvancePage(Page):
     """Page的加强版，多了一个显示页面切换的功能

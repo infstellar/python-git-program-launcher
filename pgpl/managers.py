@@ -3,8 +3,8 @@ import sys
 from urllib.parse import urlparse
 import yaml
 
-from utils import *
-from pgpl_pth import generate_pgplpth
+from pgpl.utils import *
+from pgpl.pgpl_pth import generate_pgplpth
 
 
 

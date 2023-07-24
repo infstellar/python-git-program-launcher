@@ -1,4 +1,4 @@
-from utils import *
+from pgpl.utils import *
 
 PGPLPTH = "Lib/site-packages\n../../python_site_packages\n../../python_site_packages/future\n# DEBUG\n# import sys; print(sys.path)"
 

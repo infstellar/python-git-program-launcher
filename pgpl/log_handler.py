@@ -1,4 +1,4 @@
-from page_manager import manager
+from pgpl.page_manager import manager
 
 def ansl_code2col(ansl_code):
     if ansl_code == "0":

@@ -2,9 +2,9 @@ import os
 import sys
 import json
 import time
-from logger import logger
+from pgpl.logger import logger
 import locale
-from i18n import t2t
+from pgpl.i18n import t2t
 import subprocess
 import urllib.request
 import ssl
