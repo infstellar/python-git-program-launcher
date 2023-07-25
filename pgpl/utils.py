@@ -4,7 +4,7 @@ import json
 import time
 from pgpl.logger import logger
 import locale
-from pgpl.i18n import t2t
+from i18n import t2t
 import subprocess
 import urllib.request
 import ssl
