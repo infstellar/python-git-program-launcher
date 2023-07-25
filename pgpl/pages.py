@@ -40,8 +40,8 @@ class MainPage(AdvancePage, Command):
 
         self._load_config_files()
 
-        if not os.path.exists(os.path.join(ROOT_PATH, '../launcher_config_name.txt')):
-            with open(os.path.join(ROOT_PATH, '../launcher_config_name.txt'), 'w') as f:
+        if not os.path.exists(os.path.join(ROOT_PATH, 'launcher_config_name.txt')):
+            with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w') as f:
                 f.close()
 
     def _event_thread(self):
@@ -70,7 +70,7 @@ class MainPage(AdvancePage, Command):
                 self.last_config = pin.pin[self.SELECT_CONFIG]
                 output.clear(self.SCOPE_CONFIG_NAME)
                 output.put_text(t2t("Repository address") + ": " + load_json(pin.pin[self.SELECT_CONFIG])['Repository'], scope=self.SCOPE_CONFIG_NAME)
-                with open(os.path.join(ROOT_PATH, '../launcher_config_name.txt'), 'w', encoding='utf-8') as f:
+                with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w', encoding='utf-8') as f:
                     f.write(self.last_config)
                     f.close()
 
@@ -126,7 +126,7 @@ class MainPage(AdvancePage, Command):
             PROGRAM_PYTHON_PATH = PythonManager(launching_config, self.pt).run()
             output.set_processbar(self.PROCESSBAR_STAGE, 1 / 3)
             logger.info(launching_config)
-            REPO_PATH = os.path.join(ROOT_PATH, '../repositories', launching_config['Repository'].split('/')[-1])
+            REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
             verify_path(REPO_PATH)
             os.chdir(REPO_PATH)
             logger.hr(t2t("Launching..."))
@@ -169,7 +169,7 @@ class MainPage(AdvancePage, Command):
 
     def _load_config_files(self):
         self.config_files = []
-        for root, dirs, files in os.walk(os.path.join(ROOT_PATH, '../configs')):
+        for root, dirs, files in os.walk(os.path.join(ROOT_PATH, 'configs')):
             for f in files:
                 if f[f.index('.') + 1:] == "json":
                     self.config_files.append({"label": f, "value": os.path.join(root, f)})
@@ -180,7 +180,7 @@ class MainPage(AdvancePage, Command):
         self.last_config = ""
         self._load_config_files()
         show_config = self.config_files
-        with open(os.path.join(ROOT_PATH, '../launcher_config_name.txt'), 'r') as f:
+        with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'r') as f:
             launching_config = str(f.read())
             f.close()
         for i in show_config:
@@ -216,7 +216,7 @@ class MainPage(AdvancePage, Command):
             self.log_list_lock.release()
             
     def _onclick_open_log_folder(self):
-        os.startfile(os.path.join(ROOT_PATH, "../Logs"))
+        os.startfile(os.path.join(ROOT_PATH, "Logs"))
 
 
 class ConfigPage(AdvancePage):
@@ -266,13 +266,13 @@ class ConfigPage(AdvancePage):
         url = f"https://raw.githubusercontent.com/{url}/main/pgpl.yaml"
         # url += "/blob/main/pgpl.yaml"
         if url_file_exists(url):
-            verify_path(os.path.join(ROOT_PATH, '../cache'))
-            fp = os.path.join(ROOT_PATH, '../cache', 'cac.yaml')
+            verify_path(os.path.join(ROOT_PATH, 'cache'))
+            fp = os.path.join(ROOT_PATH, 'cache', 'cac.yaml')
             download_url(url, fp)
             with open(fp, encoding='utf-8') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
             for key in data:
-                with open(os.path.join(ROOT_PATH, '../configs', f"{key}.json"), "w") as f:
+                with open(os.path.join(ROOT_PATH, 'configs', f"{key}.json"), "w") as f:
                     json.dump(data[key], f)
             logger.info(t2t('download config from repo succ'))
             return
@@ -294,7 +294,7 @@ class ConfigPage(AdvancePage):
             "(You can enter the github repository address which already have existing config)"),
                         validate=self._address_verify)
         if 'http' not in n:
-            save_json(CONFIG_TEMPLATE, os.path.join(ROOT_PATH, '../configs', n + '.json'))
+            save_json(CONFIG_TEMPLATE, os.path.join(ROOT_PATH, 'configs', n + '.json'))
         else:
             self._download_config_from_repo(n)
         self._load_config_files()
@@ -385,8 +385,8 @@ class ConfigPage(AdvancePage):
 
         # with open(os.path.join(root_path, "config", "settings", "config.json"), 'r', encoding='utf8') as f:
         #     lang = json.load(f)["lang"]
-        doc_name = Path('../config') / 'json_doc' / f'{self.config_file_name}.yaml'
-        lang_doc_name = Path('../config') / 'json_doc' / f'{self.config_file_name}.{GLOBAL_LANG}.yaml'
+        doc_name = Path('config') / 'json_doc' / f'{self.config_file_name}.yaml'
+        lang_doc_name = Path('config') / 'json_doc' / f'{self.config_file_name}.{GLOBAL_LANG}.yaml'
 
         if doc_name.exists():
             with open(doc_name, 'r', encoding='utf8') as f:

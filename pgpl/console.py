@@ -55,13 +55,13 @@ class ConfigEditor():
         url = f"https://raw.githubusercontent.com/{url}/main/pgpl.yaml"
         # url += "/blob/main/pgpl.yaml"
         if url_file_exists(url):
-            verify_path(os.path.join(ROOT_PATH, '../cache'))
-            fp = os.path.join(ROOT_PATH, '../cache', 'cac.yaml')
+            verify_path(os.path.join(ROOT_PATH, 'cache'))
+            fp = os.path.join(ROOT_PATH, 'cache', 'cac.yaml')
             download_url(url, fp)
             with open(fp,encoding='utf-8') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
             for key in data:
-                with open(os.path.join(ROOT_PATH, '../configs', f"{key}.json"), "w") as f:
+                with open(os.path.join(ROOT_PATH, 'configs', f"{key}.json"), "w") as f:
                     json.dump(data[key], f)
             logger.info(t2t('download config from repo succ'))
             return
@@ -71,7 +71,7 @@ class ConfigEditor():
             self._download_config_from_repo(inp_conf_name)
     
     def _run_edit(self):
-        possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, '../configs'))
+        possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
         possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
         
         def print_possible_configs():
@@ -98,22 +98,22 @@ class ConfigEditor():
                 self.edit_config(inp_conf_name)
             
         logger.info(t2t('Please enter the launching config name.'))
-        possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, '../configs'))
+        possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
         possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
         print_possible_configs()
         launching_config = self._input(allow_empty=False, possible_answer=possible_configs)
-        possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, '../configs'))
+        possible_configs = load_json_from_folder(os.path.join(ROOT_PATH, 'configs'))
         possible_configs = [ii['label'][:ii['label'].index('.')] for ii in possible_configs]
 
         
 
-        with open(os.path.join(ROOT_PATH, '../launcher_config_name.txt'), 'w', encoding='utf-8') as f:
+        with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w', encoding='utf-8') as f:
             f.write(launching_config)
             f.close()
     
 
     def edit_config(self, config_name: str):
-        if not os.path.exists(os.path.join(ROOT_PATH, '../configs', config_name + '.json')):
+        if not os.path.exists(os.path.join(ROOT_PATH, 'configs', config_name + '.json')):
             save_json(CONFIG_TEMPLATE, config_name)
         config = load_json(config_name)
 
@@ -145,7 +145,7 @@ class ConfigEditor():
         
     def run(self):
 
-        with open(os.path.join(ROOT_PATH, '../launcher_config_name.txt'), 'r') as f:
+        with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'r') as f:
             launching_config = str(f.read())
             f.close()
         logger.info(t2t('Current Config')+f": {launching_config}")
@@ -165,7 +165,7 @@ class ConfigEditor():
         if is_edit:
             self._run_edit()
 
-        with open(os.path.join(ROOT_PATH, '../launcher_config_name.txt'), 'r') as f:
+        with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'r') as f:
             launching_config = str(f.read())
             f.close()
         
@@ -177,13 +177,13 @@ def run():
     logger.hr(t2t("The program is free and open source on github"))
     logger.hr(t2t("Please see the help file at https://github.com/infstellar/python-git-program-launcher"))
     # logger.hr("Make sure you have read README.md and configured installer_config.json")
-    if not os.path.exists(os.path.join(ROOT_PATH, '../launcher_config_name.txt')):
-        with open(os.path.join(ROOT_PATH, '../launcher_config_name.txt'), 'w') as f:
+    if not os.path.exists(os.path.join(ROOT_PATH, 'launcher_config_name.txt')):
+        with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w') as f:
             f.close()
     launching_config = ConfigEditor().run()
     PythonManager(launching_config).run()
     logger.info(launching_config)
-    REPO_PATH = os.path.join(ROOT_PATH, '../repositories', launching_config['Repository'].split('/')[-1])
+    REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
     verify_path(REPO_PATH)
     os.chdir(REPO_PATH)
     
