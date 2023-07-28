@@ -168,9 +168,10 @@ def run_command(command, progress_tracker:ProgressTracker = None):
             if 'Requirement already satisfied: ' not in mess:
                 logger.trace(mess)
                 if progress_tracker is not None: progress_tracker.console_output = mess
-                print(mess)
+                # print(mess)
             if 'Installing collected packages' in mess:
                 logger.info(t2t('Please wait, pip is copying the file.'))
+                # progress_tracker.set_info(t2t('Please wait, pip is copying the file.'))
                 if progress_tracker is not None: progress_tracker.console_output = t2t('Please wait, pip is copying the file.')
             
         else:
@@ -188,7 +189,9 @@ def run_command(command, progress_tracker:ProgressTracker = None):
 class Command():
 
     def __init__(self, progress_tracker=None) -> None:
-        if progress_tracker is None: progress_tracker = ProgressTracker()
+        if progress_tracker is None:
+            logger.warning("progress_tracker is None")
+            progress_tracker = ProgressTracker()
         self.progress_tracker = progress_tracker
     
     def show_error(self, command=None, error_code=None):
@@ -238,14 +241,14 @@ class Command():
             stdout = ""
             stderr = ""
         else:
-            error_code, stdout, stderr = run_command(command)
+            error_code, stdout, stderr = run_command(command, self.progress_tracker)
             # error_code = run_command(command, progress_tracker=self.progress_tracker) # os.system(command)
         if error_code:
             if allow_failure:
                 logger.info(f"[ allowed failure ], error_code: {error_code} stdout: {stdout} stderr: {stderr}")
                 return False
             elif systematic_retry:
-                logger.info(f"[ failure - SYSTEM RETRY ], error_code: {error_code}")
+                logger.info(f"[ failure - USE SYSTEM INSTEAD ], error_code: {error_code}")
                 return self.execute(command, allow_failure, output, is_format, systematic_retry=False, systematic_execute=True)
             else:
                 logger.info(f"[ failure ], error_code: {error_code} stdout: {stdout} stderr: {stderr}")

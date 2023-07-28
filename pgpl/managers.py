@@ -43,9 +43,9 @@ class GitManager(Command):
     def remove(file):
         try:
             os.remove(file)
-            self.info(f'Removed file: {file}')
+            logger.info(f'Removed file: {file}')
         except FileNotFoundError:
-            self.info(f'File not found: {file}')
+            logger.info(f'File not found: {file}')
 
     def git_repository_init(self, repo, source='origin', branch='master', proxy=False, keep_changes=False):
         self.logger_hr_and_track(t2t('Git Init'), p=0.1)
@@ -158,7 +158,7 @@ class PipManager(Command):
         self.execute(f'{self.pip()} install wheel{self.pip_arg}')
         self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{self.pip_arg}')
     
-    def pip_install(self):
+    def pip_install(self, check_pip = True, check_reqs = True):
         self.info(t2t('Update Dependencies'))
 
         if not self.InstallDependencies:
@@ -172,9 +172,11 @@ class PipManager(Command):
 
         try:
             self.logger_hr_and_track(t2t('Update Dependencies'), 1, p=0.3)
-            self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "lowest_requirements.txt")}"{self.pip_arg}')
-            self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{self.pip_arg}')
-            self.execute(f'{self.pip()} install -r {self.requirements_file()}{self.pip_arg}')
+            if check_pip:
+                self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "lowest_requirements.txt")}"{self.pip_arg}')
+                self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{self.pip_arg}')
+            if check_reqs:
+                self.execute(f'{self.pip()} install -r {self.requirements_file()}{self.pip_arg}')
         except ExecutionError as e:
             self.logger_hr_and_track(t2t('Update Dependencies Fail, Update pip'), 1, p=0.1)
             self.update_pip()

@@ -2,11 +2,13 @@ from path_lib import *
 from pywebio import platform
 import asyncio
 import threading
-from pgpl.utils import t2t
+from pgpl.utils import t2t, logger
 
 if not ROOT_PATH.isascii():
-    print(t2t("Error:PGPL path must contain only ASCII characters\nThe current path is ")+ROOT_PATH)
-
+    logger.critical(t2t("Error:PGPL path must contain only ASCII characters\nThe current path is ")+ROOT_PATH)
+    input(t2t("Press enter to exit"))
+    os._exit()
+    
 from pgpl import webio
 
 

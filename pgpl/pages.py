@@ -28,6 +28,9 @@ class MainPage(AdvancePage, Command):
     SCOPE_PROGRESS_CMD = AN()
     SCOPE_PROGRESS_CMD_OUTPUT = AN()
     SCOPE_PROGRESS_CMD_STDERR = AN()
+    CHECKBOX_PIP = AN()
+    # CHECKBOX_DISABLE_REQUIREMENTS_CHECK = AN()
+    # CHECKBOX_DISABLE_PULL = AN()
 
     def __init__(self):
         self.pt = ProgressTracker()
@@ -145,7 +148,11 @@ class MainPage(AdvancePage, Command):
 
             GitManager(launching_config, self.pt).git_install()
             output.set_processbar(self.PROCESSBAR_STAGE, 2 / 3)
-            PipManager(launching_config, self.pt).pip_install()
+            cp = pin.pin[self.CHECKBOX_PIP]
+            check_pip = 'DCPU' not in cp
+            check_reqs = 'DCRU' not in cp
+            # print(cp, check_pip, check_reqs)
+            PipManager(launching_config, self.pt).pip_install(check_pip=check_pip, check_reqs=check_reqs)
             output.set_processbar(self.PROCESSBAR_STAGE, 3 / 3)
             self.pt.end_flag = True
 
@@ -211,7 +218,23 @@ class MainPage(AdvancePage, Command):
                     # 当前配置
                     output.put_scope(self.SCOPE_CONFIG_NAME),
                     # 启动按钮
-                    output.put_button(label=t2t("Start Program"), onclick=self._start)
+                    output.put_button(label=t2t("Start Program"), onclick=self._start),
+                    # 其他配置
+                    output.put_column([
+                        output.put_markdown(t2t('## Startup Options')),
+                        output.put_markdown(t2t("Setting the startup options, which may speed up the startup of the programme, but may cause the programme to fail to start. Make sure you use them when you understand what they do.")),
+                        pin.put_checkbox(name=self.CHECKBOX_PIP, options=[
+                            {
+                                "label":t2t("Disable checking pip update"),
+                                "value":"DCPU"
+                            },
+                            {
+                                "label":t2t("Disable checking requirements update"),
+                                "value":"DCRU"
+                            },
+                            ]),
+
+                    ], size='auto')
                 ], size='auto'),
                 # None,
                 # output.put_scope(self.SCOPE_LOG)
