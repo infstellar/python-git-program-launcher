@@ -7,7 +7,7 @@ from pgpl.utils import t2t, logger
 if not ROOT_PATH.isascii():
     logger.critical(t2t("Error:PGPL path must contain only ASCII characters\nThe current path is ")+ROOT_PATH)
     input(t2t("Press enter to exit"))
-    os._exit()
+    os._exit(0)
     
 from pgpl import webio
 
