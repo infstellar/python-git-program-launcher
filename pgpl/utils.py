@@ -207,6 +207,10 @@ class Command():
         else:
             self.progress_tracker.inp(x,p)
     
+    def info(self, x):
+        logger.info(x)
+        self.progress_tracker.set_info(x)
+    
     def execute(self, command, allow_failure=False, output=True, is_format=True, systematic_retry=False, systematic_execute=False):
         """
         Args:

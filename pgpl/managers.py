@@ -43,9 +43,9 @@ class GitManager(Command):
     def remove(file):
         try:
             os.remove(file)
-            logger.info(f'Removed file: {file}')
+            self.info(f'Removed file: {file}')
         except FileNotFoundError:
-            logger.info(f'File not found: {file}')
+            self.info(f'File not found: {file}')
 
     def git_repository_init(self, repo, source='origin', branch='master', proxy=False, keep_changes=False):
         self.logger_hr_and_track(t2t('Git Init'), p=0.1)
@@ -74,7 +74,7 @@ class GitManager(Command):
         # Remove git lock
         lock_file = './.git/index.lock'
         if os.path.exists(lock_file):
-            logger.info(f'Lock file {lock_file} exists, removing')
+            self.info(f'Lock file {lock_file} exists, removing')
             os.remove(lock_file)
         if keep_changes:
             if self.execute(f'"{self.git}" stash', allow_failure=True):
@@ -83,9 +83,9 @@ class GitManager(Command):
                     pass
                 else:
                     # No local changes to existing files, untracked files not included
-                    logger.info(t2t('Stash pop failed, there seems to be no local changes, skip instead'))
+                    self.info(t2t('Stash pop failed, there seems to be no local changes, skip instead'))
             else:
-                logger.info(t2t('Stash failed, this may be the first installation, drop changes instead'))
+                self.info(t2t('Stash failed, this may be the first installation, drop changes instead'))
                 self.execute(f'"{self.git}" reset --hard {source}/{branch}')
                 self.execute(f'"{self.git}" pull --ff-only {source} {branch}')
         else:
@@ -102,7 +102,7 @@ class GitManager(Command):
         self.logger_hr_and_track(f'Update {PROGRAM_NAME}', 0, p=0.9)
 
         if not self.AutoUpdate:
-            logger.info(t2t('AutoUpdate is disabled, skip'))
+            self.info(t2t('AutoUpdate is disabled, skip'))
             return
 
         os.environ['PATH'] += os.pathsep + self.git
@@ -159,13 +159,13 @@ class PipManager(Command):
         self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{self.pip_arg}')
     
     def pip_install(self):
-        logger.info(t2t('Update Dependencies'))
+        self.info(t2t('Update Dependencies'))
 
         if not self.InstallDependencies:
-            logger.info(t2t('InstallDependencies is disabled, skip'))
+            self.info(t2t('InstallDependencies is disabled, skip'))
             return
 
-        logger.info(t2t('Check Python'))
+        self.info(t2t('Check Python'))
         self.execute(f'"{self.python}" --version')
         
         # self.execute(f'pip install progressbar2{arg}')
@@ -236,7 +236,7 @@ class PythonManager(Command):
         ver = self.python_version
         ver2 = ver.split(".")[0]+ver.split(".")[1]
         url = fr"{self.python_mirror}/{ver}/python-{ver}-embed-amd64.zip"
-        logger.info(f'url: {url}')
+        self.info(f'url: {url}')
         file_name = os.path.join(self.python_folder, f'python-{ver}-amd64.zip')
         download_url(url, file_name)
         self.logger_hr_and_track(t2t("Download python successfully, extract zip"), p=0.5)
@@ -278,7 +278,7 @@ class PythonManager(Command):
         url = fr"{self.python_mirror}/{ver}/python-{ver}-amd64.exe"
         # url = fr"https://www.python.org/ftp/python/{ver}/python-{ver}-amd64.exe"
         # url = fr"https://www.python.org/ftp/python/{ver}/python-{ver}-embed-amd64.zip"
-        logger.info(f'url: {url}')
+        self.info(f'url: {url}')
         file_name = os.path.join(ROOT_PATH, 'toolkit', 'python', str(self.python_version), f'python-{ver}-amd64.exe')
         file_name2 = os.path.join(ROOT_PATH, 'toolkit', 'python', str(self.python_version), f'python_{ver}.exe')
 

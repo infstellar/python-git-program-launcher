@@ -217,8 +217,8 @@ class MainPage(AdvancePage, Command):
                 # output.put_scope(self.SCOPE_LOG)
             ], size=r'auto')
 
-        if not ROOT_PATH.isascii():
-            output.popup(t2t("Error:PGPL path must contain only ASCII characters\nThe current path is ")+ROOT_PATH, closable=False)
+        
+        #     output.popup(t2t("Error:PGPL path must contain only ASCII characters\nThe current path is ")+ROOT_PATH, closable=False)
         
         # with output.use_scope(self.SCOPE_LOG):
         #     output.put_markdown(t2t('## Log'))
