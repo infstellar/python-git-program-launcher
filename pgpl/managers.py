@@ -68,7 +68,6 @@ class GitManager(Command):
             self.execute(f'"{self.git}" remote add {source} {repo}')
 
         self.logger_hr_and_track(t2t('Fetch Repository Branch'), 1, p=0.4)
-        # self.logger_hr_and_track('For cn user: 重要: 如果你正在使用Github地址，确保你已经启动Watt Toolkit或其他加速器')
         self.execute(f'"{self.git}" fetch {source} {branch}')
 
         self.logger_hr_and_track(t2t('Pull Repository Branch'), 1, p=0.5)

@@ -27,6 +27,7 @@ class MainPage(AdvancePage, Command):
     SCOPE_PROGRESS_INFO = AN()
     SCOPE_PROGRESS_CMD = AN()
     SCOPE_PROGRESS_CMD_OUTPUT = AN()
+    SCOPE_PROGRESS_CMD_STDERR = AN()
 
     def __init__(self):
         self.pt = ProgressTracker()
@@ -76,8 +77,13 @@ class MainPage(AdvancePage, Command):
 
     def _start(self):
         session.set_env(output_animation=False)
+        # clean pt
+        self.progress_tracker.err_info = ''
+        self.progress_tracker.console_output = ''
         with output.popup(t2t("Program Starting"), implicit_close=False) as s:
             output.put_markdown(t2t("## Progress"))
+            output.put_scope(self.SCOPE_PROGRESS_CMD_STDERR)
+            output.clear(self.SCOPE_PROGRESS_CMD_STDERR)
             output.put_scope(self.SCOPE_PROGRESS_INFO)
             output.put_processbar(self.PROCESSBAR_STAGE)
             output.set_processbar(self.PROCESSBAR_STAGE, 0 / 3)
@@ -85,16 +91,19 @@ class MainPage(AdvancePage, Command):
             output.put_scope(self.SCOPE_PROGRESS_CMD)
             output.put_scope(self.SCOPE_PROGRESS_CMD_OUTPUT)
             
+            
             # output.put_button(t2t("Stop start"), onclick = self._stop_start)
-
-        def set_processbar(x: ProgressTracker, processbar_name: str, info_scope: str, cmd_scope, cmd_output_scope):
+        
+        def clear_and_put_text(_text, _scope):
+            output.clear(_scope)
+            output.put_markdown(_text, scope=_scope)
+        
+        def set_processbar(x: ProgressTracker, processbar_name: str, info_scope: str, cmd_scope, cmd_output_scope, cmd_err_scope):
             last_info = ""
             last_progress = 0
             last_cmd = ''
             last_cmd_output = ''
-            def clear_and_put_text(_text, _scope):
-                output.clear(_scope)
-                output.put_markdown(_text, scope=_scope)
+            # last_cmd_err = ''
             while 1:
                 if self.pt.end_flag: break
                 time.sleep(0.1)
@@ -110,6 +119,9 @@ class MainPage(AdvancePage, Command):
                 if x.console_output != last_cmd_output:
                     last_cmd_output = x.console_output
                     clear_and_put_text(t2t("#### Command Output: \n")+last_cmd_output, cmd_output_scope)
+                # if x.err_info != last_cmd_err:
+                #     last_cmd_err = x.err_info
+                #     clear_and_put_text(t2t("# ***ERR INFO*** \n")+last_cmd_err, cmd_err_scope)
 
         logger.hr(f"Welcome to {PROGRAM_NAME}", 0)
         logger.hr(t2t("The program is free and open source on github"))
@@ -118,7 +130,7 @@ class MainPage(AdvancePage, Command):
 
         self.pt.end_flag = False
         t = threading.Thread(target=set_processbar, daemon=False,
-                             args=(self.pt, self.PROCESSBAR_PYTHON_MANAGER, self.SCOPE_PROGRESS_INFO, self.SCOPE_PROGRESS_CMD, self.SCOPE_PROGRESS_CMD_OUTPUT))
+                             args=(self.pt, self.PROCESSBAR_PYTHON_MANAGER, self.SCOPE_PROGRESS_INFO, self.SCOPE_PROGRESS_CMD, self.SCOPE_PROGRESS_CMD_OUTPUT, self.SCOPE_PROGRESS_CMD_STDERR))
         session.register_thread(t)
         t.start()
         try:
@@ -156,13 +168,16 @@ class MainPage(AdvancePage, Command):
             os.chdir(ROOT_PATH)
 
         except Exception as e:
-            self.pt.end_flag = True
             # output.clear(self.SCOPE_PROGRESS_INFO)
             output.put_markdown(t2t('***ERROR OCCURRED!***'), scope=self.SCOPE_PROGRESS_INFO)
             output.put_markdown('***' + t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe") + '***',
                                 scope=self.SCOPE_PROGRESS_INFO)
             output.put_markdown(t2t('***CHECK UP THE CONSOLE OR SEND THE ERROR LOG***'), scope=self.SCOPE_PROGRESS_INFO)
             logger.exception(e)
+            # time.sleep(0.2)
+            
+            output.put_markdown(t2t("# ***ERR INFO*** \n")+self.pt.err_info, scope = self.SCOPE_PROGRESS_CMD_STDERR).style('font: SimHei; color: red')
+            self.pt.end_flag = True
             raise e
         self.pt.end_flag = True
         session.set_env(output_animation=True)
@@ -202,6 +217,9 @@ class MainPage(AdvancePage, Command):
                 # output.put_scope(self.SCOPE_LOG)
             ], size=r'auto')
 
+        if not ROOT_PATH.isascii():
+            output.popup(t2t("Error:PGPL path must contain only ASCII characters\nThe current path is ")+ROOT_PATH, closable=False)
+        
         # with output.use_scope(self.SCOPE_LOG):
         #     output.put_markdown(t2t('## Log'))
         #     output.put_scrollable(output.put_scope(self.SCOPE_LOG_AREA), keep_bottom=True)

@@ -1,6 +1,6 @@
 from pgpl.utils import *
 
-from pywebio import output, session, pin
+from pywebio import output, session, pin, SessionClosedException, SessionNotFoundException
 
 import threading
 
@@ -25,12 +25,24 @@ class Page:
     def _on_load(self):
         pin.pin['isSessionExist'] = "1"
         self._load()  # 加载主页
-        t = threading.Thread(target=self._event_thread, daemon=False)  # 创建事件线程
+        t = threading.Thread(target=self.__event_thread, daemon=False)  # 创建事件线程
         session.register_thread(t)  # 注册线程
         t.start()  # 启动线程
 
 
     def _load(self):pass
+    
+    def __event_thread(self):
+        try:
+            self._event_thread()
+        except SessionClosedException as e:
+            print("SessionClosed, exit.")
+            os._exit(0)
+            sys.exit()
+        except SessionNotFoundException as e:
+            print("SessionNotFound, exit.")
+            os._exit(0)
+            sys.exit()
     
     def _event_thread(self):
         while self.loaded:

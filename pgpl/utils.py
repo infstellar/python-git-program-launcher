@@ -11,7 +11,7 @@ import ssl
 
 PROGRAM_NAME = "Python-Git-Program-Launcher"
 DEBUG_MODE = False
-ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PYTHON_EXE_PATH = os.path.join(ROOT_PATH, "toolkit/python.exe")
 LAUNCHER_PYTHON_PATH = PYTHON_EXE_PATH
 PROGRAM_PYTHON_PATH = LAUNCHER_PYTHON_PATH
@@ -140,6 +140,8 @@ class ProgressTracker():
         self.end_flag = False
         self.cmd = ""
         self.console_output = ""
+        self.err_info = ""
+        self.err_code = 0
     
     def set_percentage(self, x):
         self.percentage = x
@@ -172,14 +174,15 @@ def run_command(command, progress_tracker:ProgressTracker = None):
                 if progress_tracker is not None: progress_tracker.console_output = t2t('Please wait, pip is copying the file.')
             
         else:
-            if time.time()-pt>5:
-                list = ["\\", "|", "/", "—"]
-                index = i % 4
-                sys.stdout.write("\r {}".format(list[index]))
-                i+=1
+            pass
+            # if time.time()-pt>5:
+            #     list = ["\\", "|", "/", "—"]
+            #     index = i % 4
+            #     sys.stdout.write("\r {}".format(list[index]))
+            #     i+=1
+    stdout, stderr = process.communicate()
     rc = process.poll()
-    return rc
-
+    return rc, stdout.decode('utf-8'), stderr.decode('utf-8')
 
 
 class Command():
@@ -204,13 +207,14 @@ class Command():
         else:
             self.progress_tracker.inp(x,p)
     
-    @logger.catch(reraise=True)
-    def execute(self, command, allow_failure=False, output=True, is_format=True):
+    def execute(self, command, allow_failure=False, output=True, is_format=True, systematic_retry=False, systematic_execute=False):
         """
         Args:
             command (str):
             allow_failure (bool):
             output(bool):
+            
+            systematic_retry, systematic_execute: when subprocess fail but os.system succ, use it.
 
         Returns:
             bool: If success.
@@ -225,14 +229,26 @@ class Command():
         logger.info(command)
         self.progress_tracker.cmd = command
         self.progress_tracker.console_output = ""
-        error_code = run_command(command, progress_tracker=self.progress_tracker) # os.system(command)
+        if systematic_execute:
+            error_code = os.system(command)
+            stdout = ""
+            stderr = ""
+        else:
+            error_code, stdout, stderr = run_command(command)
+            # error_code = run_command(command, progress_tracker=self.progress_tracker) # os.system(command)
         if error_code:
             if allow_failure:
-                logger.info(f"[ allowed failure ], error_code: {error_code}")
+                logger.info(f"[ allowed failure ], error_code: {error_code} stdout: {stdout} stderr: {stderr}")
                 return False
+            elif systematic_retry:
+                logger.info(f"[ failure - SYSTEM RETRY ], error_code: {error_code}")
+                return self.execute(command, allow_failure, output, is_format, systematic_retry=False, systematic_execute=True)
             else:
-                logger.info(f"[ failure ], error_code: {error_code}")
+                logger.info(f"[ failure ], error_code: {error_code} stdout: {stdout} stderr: {stderr}")
                 self.show_error(command, error_code)
+                self.progress_tracker.err_code = error_code
+                self.progress_tracker.err_info = stderr
+                self.progress_tracker.console_output = stdout
                 raise ExecutionError
 
         else:
