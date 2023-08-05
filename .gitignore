@@ -13,3 +13,4 @@ launcher_config_name.txt
 *.pot
 *.mo
 cache/
+CppProperties.json

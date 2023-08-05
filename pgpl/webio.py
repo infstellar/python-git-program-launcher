@@ -30,7 +30,7 @@ def main():
     if not first_run:
         add_logger_to_GUI(log_handler.webio_poster)
         first_run = True
-    logger.info(t2t("webio started"))
+    # logger.info(t2t("webio started"))
 
 if __name__ == '__main__':
     platform.tornado.start_server(main, auto_open_webbrowser=True, debug=True)
