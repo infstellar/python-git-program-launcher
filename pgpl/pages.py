@@ -176,10 +176,13 @@ class MainPage(AdvancePage, Command):
 
         except Exception as e:
             # output.clear(self.SCOPE_PROGRESS_INFO)
-            output.put_markdown(t2t('***ERROR OCCURRED!***'), scope=self.SCOPE_PROGRESS_INFO)
-            output.put_markdown('***' + t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe") + '***',
-                                scope=self.SCOPE_PROGRESS_INFO)
-            output.put_markdown(t2t('***CHECK UP THE CONSOLE OR SEND THE ERROR LOG***'), scope=self.SCOPE_PROGRESS_INFO)
+            with output.use_scope(self.SCOPE_PROGRESS_INFO):
+                output.put_markdown(t2t('***ERROR OCCURRED!***'))
+                output.put_markdown('***' + t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe") + '***')
+                if self.progress_tracker.err_slu:
+                    output.put_markdown(t2t("## Possible reasons: "))
+                    output.put_markdown(self.progress_tracker.err_slu)
+                output.put_markdown(t2t('***CHECK UP THE CONSOLE OR SEND THE ERROR LOG***'))
             logger.exception(e)
             # time.sleep(0.2)
             

@@ -142,6 +142,7 @@ class ProgressTracker():
         self.console_output = ""
         self.err_info = ""
         self.err_code = 0
+        self.err_slu = ""
     
     def set_percentage(self, x):
         self.percentage = x
@@ -194,12 +195,19 @@ class Command():
             progress_tracker = ProgressTracker()
         self.progress_tracker = progress_tracker
     
+    def error_checking(self, err_msg, err_code):
+        def add_slu(msg:str):
+            self.progress_tracker.err_slu+=f"- {msg}\n"
+        logger.info("Running automatic error checking...")
+        if 'get-pip.py' in err_msg and "No such file or directory" in err_msg:
+            add_slu(t2t("toolkit is not installed. Please check if you downloaded the correct file or if you cloned the submodule."))
+    
     def show_error(self, command=None, error_code=None):
         logger.info("Update failed", 0)
         # self.show_config()
         logger.info("")
         logger.info(f"Last command: {command}\nerror_code: {error_code}")
-        logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
+        # logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
         # logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
         # logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
 
@@ -256,6 +264,7 @@ class Command():
                 self.progress_tracker.err_code = error_code
                 self.progress_tracker.err_info = stderr
                 self.progress_tracker.console_output = stdout
+                self.error_checking(stderr, error_code)
                 raise ExecutionError
 
         else:

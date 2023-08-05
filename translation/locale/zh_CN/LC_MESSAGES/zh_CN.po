@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-07-28 20:25+0800\n"
-"PO-Revision-Date: 2023-07-28 20:26+0800\n"
+"POT-Creation-Date: 2023-08-05 23:06+0800\n"
+"PO-Revision-Date: 2023-08-05 23:09+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -45,17 +45,17 @@ msgstr "非法参数：空输入"
 msgid "Illegal parameter type"
 msgstr "非法参数：无效类型"
 
-#: ../pgpl\console.py:66 ../pgpl\pages.py:318
+#: ../pgpl\console.py:66 ../pgpl\pages.py:321
 msgid "download config from repo succ"
 msgstr "从仓库下载配置成功"
 
-#: ../pgpl\console.py:69 ../pgpl\pages.py:321 ../pgpl\pages.py:329
+#: ../pgpl\console.py:69 ../pgpl\pages.py:324 ../pgpl\pages.py:332
 msgid "Invalid address"
 msgstr "无效链接"
 
 #: ../pgpl\console.py:78
 msgid "possible configs:"
-msgstr "可能的配置"
+msgstr "可能的配置:"
 
 #: ../pgpl\console.py:81
 msgid "end"
@@ -265,41 +265,45 @@ msgid ""
 "this programme."
 msgstr "#### 您可以关闭此弹窗，然后启动另一个程序或重新启动这个程序。"
 
-#: ../pgpl\pages.py:179
+#: ../pgpl\pages.py:180
 msgid "***ERROR OCCURRED!***"
 msgstr "***发生错误！***"
 
-#: ../pgpl\pages.py:180 ../pgpl\utils.py:202
+#: ../pgpl\pages.py:181
 msgid "Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"
 msgstr ""
 "请检查你的网络环境，彻底关闭除了Watt Toolkit之外的所有可能干扰网络连接的软"
 "件，包括Clash/游戏加速器/网络连接管理/下载加速器等，然后重新打开Launcher.exe"
 
-#: ../pgpl\pages.py:182
+#: ../pgpl\pages.py:183
+msgid "## Possible reasons: "
+msgstr "## 可能的原因： "
+
+#: ../pgpl\pages.py:185
 msgid "***CHECK UP THE CONSOLE OR SEND THE ERROR LOG***"
 msgstr "***检查控制台或发送错误日志***"
 
-#: ../pgpl\pages.py:186
+#: ../pgpl\pages.py:189
 msgid "# ***ERR INFO*** \n"
-msgstr "# *** 错误信息****\n"
+msgstr "# *** 错误信息 ***\n"
 
-#: ../pgpl\pages.py:212
+#: ../pgpl\pages.py:215
 msgid "Open logs folder"
 msgstr "打开日志文件夹"
 
-#: ../pgpl\pages.py:216
+#: ../pgpl\pages.py:219
 msgid "## Select startup configuration"
 msgstr "## 选择启动配置"
 
-#: ../pgpl\pages.py:221
+#: ../pgpl\pages.py:224
 msgid "Start Program"
 msgstr "启动程序"
 
-#: ../pgpl\pages.py:224
+#: ../pgpl\pages.py:227
 msgid "## Startup Options"
 msgstr "## 启动选项"
 
-#: ../pgpl\pages.py:225
+#: ../pgpl\pages.py:228
 msgid ""
 "Setting the startup options, which may speed up the startup of the "
 "programme, but may cause the programme to fail to start. Make sure you use "
@@ -308,65 +312,65 @@ msgstr ""
 "设置启动选项，这些选项可能会加快程序的启动速度，但也可能导致程序无法启动。请"
 "确保你已了解它们的作用后再使用。"
 
-#: ../pgpl\pages.py:228
+#: ../pgpl\pages.py:231
 msgid "Disable checking pip update"
 msgstr "禁用 pip 更新检查"
 
-#: ../pgpl\pages.py:232
+#: ../pgpl\pages.py:235
 msgid "Disable checking requirements update"
 msgstr "禁用依赖更新检查"
 
-#: ../pgpl\pages.py:334
+#: ../pgpl\pages.py:337
 msgid ""
 "(You can enter the github repository address which already have existing "
 "config)"
 msgstr "(你可以输入已有配置的github仓库地址）"
 
-#: ../pgpl\pages.py:334
+#: ../pgpl\pages.py:337
 msgid "config name"
 msgstr "配置名称"
 
-#: ../pgpl\pages.py:350
+#: ../pgpl\pages.py:353
 msgid "## config:"
 msgstr "## 配置："
 
-#: ../pgpl\pages.py:352
+#: ../pgpl\pages.py:355
 msgid "Add config"
 msgstr "添加配置"
 
-#: ../pgpl\pages.py:375
+#: ../pgpl\pages.py:378
 msgid "Cannot Find Session"
 msgstr "未找到会话"
 
-#: ../pgpl\pages.py:395
+#: ../pgpl\pages.py:398
 msgid "Verified!"
 msgstr "已验证！"
 
-#: ../pgpl\pages.py:404
+#: ../pgpl\pages.py:407
 msgid "Waiting..."
 msgstr "等待中..."
 
-#: ../pgpl\pages.py:409
+#: ../pgpl\pages.py:412
 msgid "You may want to enter: "
 msgstr "您可能想输入 "
 
-#: ../pgpl\pages.py:414
+#: ../pgpl\pages.py:417
 msgid "Not a valid name"
 msgstr "不是有效的名称"
 
-#: ../pgpl\pages.py:460
+#: ../pgpl\pages.py:463
 msgid "saved!"
 msgstr "已保存！"
 
-#: ../pgpl\pages.py:498
+#: ../pgpl\pages.py:501
 msgid "Do you need to save changes?"
 msgstr "你要保存设置吗？"
 
-#: ../pgpl\pages.py:499
+#: ../pgpl\pages.py:502
 msgid "No"
 msgstr "否"
 
-#: ../pgpl\pages.py:499
+#: ../pgpl\pages.py:502
 msgid "Yes"
 msgstr "是"
 
@@ -374,13 +378,15 @@ msgstr "是"
 msgid "downloading url:"
 msgstr "下载url:"
 
-#: ../pgpl\utils.py:173 ../pgpl\utils.py:175
+#: ../pgpl\utils.py:174 ../pgpl\utils.py:176
 msgid "Please wait, pip is copying the file."
 msgstr "请稍候，pip 正在复制文件。"
 
-#: ../pgpl\webio.py:33
-msgid "webio started"
-msgstr "webio已启动"
+#: ../pgpl\utils.py:203
+msgid ""
+"toolkit is not installed. Please check if you downloaded the correct file or "
+"if you cloned the submodule."
+msgstr "toolkit未安装。请检查您下载的文件是否正确或是否克隆了submodule。"
 
 #: ..\gui.py:8
 msgid ""
@@ -393,6 +399,9 @@ msgstr ""
 #: ..\gui.py:9
 msgid "Press enter to exit"
 msgstr "按回车键退出"
+
+#~ msgid "webio started"
+#~ msgstr "webio已启动"
 
 #~ msgid "Update pip"
 #~ msgstr "更新pip"
