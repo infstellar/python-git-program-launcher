@@ -68,6 +68,7 @@ https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitat
 |AutoUpdate|是否自动更新|true|
 |Tag|tag，有tag时优先使用tag，否则使用branch。||
 |PythonVersion|python版本，必须为有效版本(3.x.y)|3.10.10|
+|UAC|是否需求UAC|True|
 
 # TODO:
 - GUI

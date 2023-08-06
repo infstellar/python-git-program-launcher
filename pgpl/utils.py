@@ -29,7 +29,8 @@ CONFIG_TEMPLATE = {
     "KeepLocalChanges": False,
     "AutoUpdate": True,
     "Tag": "",
-    "PythonVersion": "3.10.10"
+    "PythonVersion": "3.10.10",
+    "UAC": True
 }
 
 
@@ -305,3 +306,33 @@ def url_file_exists(url):
         return False
 
 
+requesting_administrative_privileges = "@echo off\n"+\
+"\n"+\
+":: BatchGotAdmin\n"+\
+":-------------------------------------\n"+\
+"REM  --> Check for permissions\n"+\
+"    IF \"%PROCESSOR_ARCHITECTURE%\" EQU \"amd64\" (\n"+\
+">nul 2>&1 \"%SYSTEMROOT%\SysWOW64\cacls.exe\" \"%SYSTEMROOT%\SysWOW64\config\system\"\n"+\
+") ELSE (\n"+\
+">nul 2>&1 \"%SYSTEMROOT%\system32\cacls.exe\" \"%SYSTEMROOT%\system32\config\system\"\n"+\
+")\n"+\
+"\n"+\
+"REM --> If error flag set, we do not have admin.\n"+\
+"if '%errorlevel%' NEQ '0' (\n"+\
+"    echo Requesting administrative privileges...\n"+\
+"    goto UACPrompt\n"+\
+") else ( goto gotAdmin )\n"+\
+"\n"+\
+":UACPrompt\n"+\
+"    echo Set UAC = CreateObject^(\"Shell.Application\"^) > \"%temp%\getadmin.vbs\"\n"+\
+"    set params= %*\n"+\
+"    echo UAC.ShellExecute \"cmd.exe\", \"/c \"\"%~s0\"\" %params:\"=\"\"%\", \"\", \"runas\", 1 >> \"%temp%\getadmin.vbs\"\n"+\
+"\n"+\
+"    \"%temp%\getadmin.vbs\"\n"+\
+"    del \"%temp%\getadmin.vbs\"\n"+\
+"    exit /B\n"+\
+"\n"+\
+":gotAdmin\n"+\
+"    pushd \"%CD%\"\n"+\
+"    CD /D \"%~dp0\"\n"+\
+":--------------------------------------    \n"

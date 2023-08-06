@@ -10,5 +10,6 @@
   "PythonVersion": "3.10.10",
   "Repository": "https://github.com/LmeSzinc/StarRailCopilot",
   "RequirementsFile": "requirements.txt",
-  "Tag": ""
+  "Tag": "",
+  "UAC": false
 }

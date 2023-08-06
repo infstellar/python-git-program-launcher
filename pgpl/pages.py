@@ -160,20 +160,29 @@ class MainPage(AdvancePage, Command):
             # add program path to sys.path
             with open(os.path.join(os.path.dirname(PROGRAM_PYTHON_PATH), 'pgpl.pth'), 'w') as f:
                 f.write(REPO_PATH)
-
+            
+            # os.system("color 07")
+            # self.execute(f"title {PROGRAM_NAME} Console")
+            # self.execute("")
+            if launching_config['UAC']:
+                start_cmd = f'{requesting_administrative_privileges}\nset "PATH={os.environ["PATH"]};%PATH%"\ncd /d "{REPO_PATH}"\n"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}\npause'
+            else:
+                start_cmd = f'@echo off\nset "PATH={os.environ["PATH"]};%PATH%"\ncd /d "{REPO_PATH}"\n"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}\npause'
+            run_path = os.path.join(ROOT_PATH, 'cache', 'run.bat')
+            with open(run_path, 'w') as f:
+                f.write(start_cmd)
+            self.progress_tracker.cmd = f'C:\\Windows\\explorer.exe "{run_path}"'
+            self.progress_tracker.console_output = ""
+            os.system(f'C:\\Windows\\explorer.exe "{run_path}"')
+            # t = threading.Thread(target=lambda : os.system(f'C:\\Windows\\explorer.exe "{run_path}"'), daemon=True)
+            # t.start()
+            os.chdir(ROOT_PATH)
+            
             logger.hr(f"Successfully install. Activating {PROGRAM_NAME}", 0)
             logger.info(f'execute: "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
             output.clear(self.SCOPE_PROGRESS_INFO)
             output.put_markdown(t2t("## Info: \n") + t2t("#### Successfully install. Activating"), scope=self.SCOPE_PROGRESS_INFO) # +f" {PROGRAM_NAME}"
             output.put_markdown(t2t("#### You can close this popup window and start another programme or restart this programme."), scope=self.SCOPE_PROGRESS_INFO)
-
-            # os.system("color 07")
-            # self.execute(f"title {PROGRAM_NAME} Console")
-            # self.execute("")
-            self.progress_tracker.cmd = f'start cmd /k "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}'
-            self.progress_tracker.console_output = ""
-            os.system(f'start cmd /k "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
-            os.chdir(ROOT_PATH)
 
         except Exception as e:
             # output.clear(self.SCOPE_PROGRESS_INFO)
@@ -248,11 +257,11 @@ class MainPage(AdvancePage, Command):
                                 "value":"APR",
                                 "selected":self.sos.get_options_status('APR'),
                             },
-                            # {
-                            #     "label":t2t("Automatic shutdown of the starter after startup completion"),
-                            #     "value":"SSASC",
-                            #     "selected":self.sos.get_options_status('SSASC'),
-                            # },
+                            {
+                                "label":t2t("Automatic shutdown of the starter after startup completion"),
+                                "value":"SSASC",
+                                "selected":self.sos.get_options_status('SSASC'),
+                            },
                             ]),
 
                     ], size='auto'),
