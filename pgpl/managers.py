@@ -98,7 +98,7 @@ class GitManager(Command):
         self.logger_hr_and_track(t2t('Show Version'), 1, p=0.8)
         self.execute(f'"{self.git}" log --no-merges -1')
 
-    def git_install(self):
+    def git_install(self, allow_failure = False):
         self.logger_hr_and_track(f'Update {PROGRAM_NAME}', 0, p=0.9)
 
         if not self.AutoUpdate:
@@ -106,14 +106,22 @@ class GitManager(Command):
             return
 
         os.environ['PATH'] += os.pathsep + self.git
-
-        self.git_repository_init(
-            repo=self.Repository,
-            source='origin',
-            branch=self.Branch,
-            proxy=self.GitProxy,
-            keep_changes=self.KeepLocalChanges,
-        )
+        
+        
+        
+        try:
+            self.git_repository_init(
+                repo=self.Repository,
+                source='origin',
+                branch=self.Branch,
+                proxy=self.GitProxy,
+                keep_changes=self.KeepLocalChanges,
+            )
+        except Exception as e:
+            if allow_failure:
+                self.info(t2t("update git repo fail, skip"))
+            else:
+                raise e
 
 
 class PipManager(Command):
@@ -201,6 +209,12 @@ class PythonManager(Command):
                 "zh_CN": "https://mirrors.huaweicloud.com/python",
                 "en_US": "https://www.python.org/ftp/python"
             }[GLOBAL_LANG]
+        self.PypiMirror = installer_config["PypiMirror"]
+        if self.PypiMirror == "AUTO" or self.PypiMirror == "":
+            self.PypiMirror = {
+                "zh_CN": "https://pypi.tuna.tsinghua.edu.cn/simple",
+                "en_US": "https://pypi.org/simple"
+            }[GLOBAL_LANG]
         
         # https://registry.npmmirror.com/-/binary/python/3.10.1/python-3.10.1-amd64.exe
         # paths = ''
@@ -215,13 +229,14 @@ class PythonManager(Command):
         def add_environ(x):
             os.environ['PATH'] = x + os.pathsep + os.environ['PATH']
         self.progress_tracker.inp(t2t('set environ'), 0)
+        # add_environ(os.path.join(ROOT_PATH, "toolkit", "Scripts"))
         add_environ(os.path.join(self.python_folder, "Lib", "site-packages"))
         add_environ(os.path.join(self.python_folder, "Lib"))
         add_environ(os.path.join(self.python_folder, "Scripts"))
         add_environ(self.python_folder)
         site_packages_path = os.path.join(ROOT_PATH, "toolkit", "python_site_packages")
         sys.path.insert(0, site_packages_path)
-        
+        # logger.error(os.environ['PATH'])
         # DEBUG
         # self.execute('set path')
         # self.execute(f'"{self.python_path}" -m pip install --no-cache-dir -r {os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}')
@@ -248,6 +263,8 @@ class PythonManager(Command):
         #     zip_ref.extractall(self.python_folder)
         # install pip
         self.logger_hr_and_track("Installing pip", p=0.8)
+        pip_path = os.path.join(ROOT_PATH, "toolkit", "Lib\\site-packages\\pip", "__main__.py")
+        self.execute(f'python "{pip_path}" config set global.index-url {self.PypiMirror}')
         self.execute(f'"{self.python_path}" "{os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}" --no-setuptools --no-wheel')
         # self.execute(f'"{self.python_path}" -m pip install setuptools ')
         

@@ -13,4 +13,4 @@ title Python-Git-Program-Launcher
 python -m gui
 
 echo The program is over. This may be due to an error or an active end.
-pause
+cmd /k

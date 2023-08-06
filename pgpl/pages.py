@@ -41,6 +41,7 @@ class MainPage(AdvancePage, Command):
         self.log_list_lock = threading.Lock()
         self.config_files = []
         self.last_config = ""
+        self.sos = StorageOptionsStatus(self.CHECKBOX_PIP)
 
         self._load_config_files()
 
@@ -73,7 +74,7 @@ class MainPage(AdvancePage, Command):
                 if pin.pin[self.SELECT_CONFIG] is None: continue
                 self.last_config = pin.pin[self.SELECT_CONFIG]
                 output.clear(self.SCOPE_CONFIG_NAME)
-                output.put_text(t2t("Repository address") + ": " + load_json(pin.pin[self.SELECT_CONFIG])['Repository'], scope=self.SCOPE_CONFIG_NAME)
+                output.put_text(t2t("Repository address") + ": " + load_config_json(pin.pin[self.SELECT_CONFIG])['Repository'], scope=self.SCOPE_CONFIG_NAME)
                 with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w', encoding='utf-8') as f:
                     f.write(self.last_config)
                     f.close()
@@ -129,7 +130,7 @@ class MainPage(AdvancePage, Command):
         logger.hr(f"Welcome to {PROGRAM_NAME}", 0)
         logger.hr(t2t("The program is free and open source on github"))
         logger.hr(t2t("Please see the help file at https://github.com/infstellar/python-git-program-launcher"))
-        launching_config = load_json(pin.pin[self.SELECT_CONFIG])
+        launching_config = load_config_json(pin.pin[self.SELECT_CONFIG])
 
         self.pt.end_flag = False
         t = threading.Thread(target=set_processbar, daemon=False,
@@ -146,7 +147,7 @@ class MainPage(AdvancePage, Command):
             os.chdir(REPO_PATH)
             logger.hr(t2t("Launching..."))
 
-            GitManager(launching_config, self.pt).git_install()
+            GitManager(launching_config, self.pt).git_install(allow_failure=("APR" in pin.pin[self.CHECKBOX_PIP]))
             output.set_processbar(self.PROCESSBAR_STAGE, 2 / 3)
             cp = pin.pin[self.CHECKBOX_PIP]
             check_pip = 'DCPU' not in cp
@@ -178,7 +179,7 @@ class MainPage(AdvancePage, Command):
             # output.clear(self.SCOPE_PROGRESS_INFO)
             with output.use_scope(self.SCOPE_PROGRESS_INFO):
                 output.put_markdown(t2t('***ERROR OCCURRED!***'))
-                output.put_markdown('***' + t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe") + '***')
+                output.put_markdown(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
                 if self.progress_tracker.err_slu:
                     output.put_markdown(t2t("## Possible reasons: "))
                     output.put_markdown(self.progress_tracker.err_slu)
@@ -191,6 +192,11 @@ class MainPage(AdvancePage, Command):
             raise e
         self.pt.end_flag = True
         session.set_env(output_animation=True)
+        if ("SSASC" in pin.pin[self.CHECKBOX_PIP]):
+            self.info(t2t("Preparing to shut down the starter"))
+            output.toast(t2t("Preparing to shut down the starter"))
+            time.sleep(2)
+            os._exit(0)
 
     def _load_config_files(self):
         self.config_files = []
@@ -229,15 +235,28 @@ class MainPage(AdvancePage, Command):
                         pin.put_checkbox(name=self.CHECKBOX_PIP, options=[
                             {
                                 "label":t2t("Disable checking pip update"),
-                                "value":"DCPU"
+                                "value":"DCPU",
+                                "selected":self.sos.get_options_status('DCPU'),
                             },
                             {
                                 "label":t2t("Disable checking requirements update"),
-                                "value":"DCRU"
+                                "value":"DCRU",
+                                "selected":self.sos.get_options_status('DCRU'),
                             },
+                            {
+                                "label":t2t("Allow git to abort pulling repositories if the connection fails"),
+                                "value":"APR",
+                                "selected":self.sos.get_options_status('APR'),
+                            },
+                            # {
+                            #     "label":t2t("Automatic shutdown of the starter after startup completion"),
+                            #     "value":"SSASC",
+                            #     "selected":self.sos.get_options_status('SSASC'),
+                            # },
                             ]),
 
-                    ], size='auto')
+                    ], size='auto'),
+                    pin.pin_on_change(self.CHECKBOX_PIP, onchange=self.sos.storage_options_status)
                 ], size='auto'),
                 # None,
                 # output.put_scope(self.SCOPE_LOG)
@@ -338,7 +357,7 @@ class ConfigPage(AdvancePage):
             "(You can enter the github repository address which already have existing config)"),
                         validate=self._address_verify)
         if 'http' not in n:
-            save_json(CONFIG_TEMPLATE, os.path.join(ROOT_PATH, 'configs', n + '.json'))
+            save_config_json(CONFIG_TEMPLATE, os.path.join(ROOT_PATH, 'configs', n + '.json'))
         else:
             self._download_config_from_repo(n)
         self._load_config_files()

@@ -114,8 +114,8 @@ class ConfigEditor():
 
     def edit_config(self, config_name: str):
         if not os.path.exists(os.path.join(ROOT_PATH, 'configs', config_name + '.json')):
-            save_json(CONFIG_TEMPLATE, config_name)
-        config = load_json(config_name)
+            save_config_json(CONFIG_TEMPLATE, config_name)
+        config = load_config_json(config_name)
 
         var_type = str
 
@@ -140,7 +140,7 @@ class ConfigEditor():
                 logger.info(f"config {k}: {config[k]} -> {r}")
                 config[k] = r
 
-        save_json(config, config_name)
+        save_config_json(config, config_name)
         logger.hr(t2t("Successfully edit config."))
         
     def run(self):
@@ -169,7 +169,7 @@ class ConfigEditor():
             launching_config = str(f.read())
             f.close()
         
-        return load_json(launching_config)
+        return load_config_json(launching_config)
 
 
 def run():

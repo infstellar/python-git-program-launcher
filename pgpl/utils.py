@@ -49,10 +49,19 @@ if sys.path[0] != ROOT_PATH:
     sys.path.insert(0, ROOT_PATH)
 
 
-def load_json(json_name) -> dict:
+def load_config_json(json_name) -> dict:
     if '.json' not in json_name:
         json_name += '.json'
     f = open(os.path.join(ROOT_PATH, 'configs', json_name), 'r')
+    content = f.read()
+    a = json.loads(content)
+    f.close()
+    return a
+
+def load_json(json_name) -> dict:
+    if '.json' not in json_name:
+        json_name += '.json'
+    f = open(json_name, 'r')
     content = f.read()
     a = json.loads(content)
     f.close()
@@ -75,7 +84,7 @@ def download_url(url, dst):
                     pbar.update(1024)
         pbar.close()
 
-def save_json(x, json_name):
+def save_config_json(x, json_name):
     """保存json.
 
     Args:
@@ -88,6 +97,21 @@ def save_json(x, json_name):
     if '.json' not in json_name:
         json_name += '.json'
     json.dump(x, open(os.path.join(ROOT_PATH, 'configs', json_name), 'w', encoding='utf-8'), sort_keys=True, indent=2,
+              ensure_ascii=False)
+    
+def save_json(x, json_name):
+    """保存json.
+
+    Args:
+        x (_type_): dict/list对象
+        json_name (str, optional): 同load_json. Defaults to 'General.json'.
+        default_path (str, optional): 同load_json. Defaults to 'config\\settings'.
+        sort_keys (bool, optional): 是否自动格式化. Defaults to True.
+        auto_create (bool, optional): _description_. Defaults to False.
+    """
+    if '.json' not in json_name:
+        json_name += '.json'
+    json.dump(x, open(json_name, 'w', encoding='utf-8'), sort_keys=True, indent=2,
               ensure_ascii=False)
 
 

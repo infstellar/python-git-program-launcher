@@ -1,6 +1,8 @@
 import json
 from pywebio import output
 import traceback
+import os
+from pgpl.utils import *
 
 def toast_succ(text="succ!", duration=2):
     output.toast(text, position='center', color='#2188ff', duration=duration)
@@ -66,3 +68,18 @@ def is_json_equal(j1: str, j2: str) -> bool:
         return json.dumps(json.loads(j1), sort_keys=True) == json.dumps(json.loads(j2), sort_keys=True)
     except:
         return False
+
+class StorageOptionsStatus():
+    def __init__(self, pin_name) -> None:
+        self.pin_name = pin_name
+        self.fn=os.path.join(ROOT_PATH, "cache", f"{pin_name}.json")
+        verify_path(os.path.join(ROOT_PATH, "cache"))
+        if not os.path.exists(self.fn):
+            save_json([],self.fn)
+    
+    def storage_options_status(self, pin_value:list):
+        if isinstance(pin_value, list):
+            save_json(pin_value, self.fn)
+
+    def get_options_status(self, option_name):
+        return option_name in load_json(self.fn)
