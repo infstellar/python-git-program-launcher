@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <direct.h>
 #include <windows.h>
-#include<sys/stat.h>
+#pragma comment(lib,"user32.lib")  // https://stackoverflow.com/a/10844369/10714490
 using namespace std;
 
 HWND hwnd = GetForegroundWindow();  //获取程序启动时的窗口
@@ -20,12 +20,8 @@ void ShowWindow() {
 }
 
 bool checkIfFileExists(const char* filename){
-    struct stat buffer;
-    int exist = stat(filename,&buffer);
-    if(exist == 0)
-        return true;
-    else  
-        return false;
+    DWORD dwAttrib = GetFileAttributes(filename);
+    return (dwAttrib != INVALID_FILE_ATTRIBUTES && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
 int main()
@@ -33,7 +29,7 @@ int main()
     HideWindow();
     // ShowWindow(); // If debug
     char buffer[16384]; 
-    getcwd(buffer, 16384);
+    _getcwd(buffer, 16384);
     string root = buffer;
     string pyBin = root + "\\toolkit";
     string GitBin = root + "\\toolkit\\Git\\mingw64\\bin";
@@ -44,7 +40,7 @@ int main()
     string p_cmd = "cd /d "+root+" && python -m gui";
     cout << p_cmd.c_str() << endl;
     // system(p_cmd.c_str());
-    FILE *fp = popen(p_cmd.c_str(),"r");
+    FILE *fp = _popen(p_cmd.c_str(),"r");
     if (fp == NULL) //判断管道是否打开成功
     {
         cout << "Fatal Error: Cannot open pipe" << endl;
@@ -55,13 +51,13 @@ int main()
     if (ret > 0) //判断是否读取成功
     {
         cout << buf << endl; //输出显示结果
-        pclose(fp);
+        _pclose(fp);
         // ShowWindow();
         return 0;
     }
     else
     {
-        pclose(fp);
+        _pclose(fp);
         ShowWindow();
         cout << "Fatal Error: Program Run Failure." << endl;
         cout << "Running automatic error checking..." << endl;
