@@ -35,6 +35,7 @@ class GitManager(Command):
         self.tag = installer_config["Tag"]
         self.folder_path = REPO_PATH
 
+        os.environ['PATH'] += os.pathsep + self.git
         verify_path(self.folder_path)
         
         
@@ -48,14 +49,14 @@ class GitManager(Command):
             logger.info(f'File not found: {file}')
 
     def git_repository_init(self, repo, source='origin', branch='master', proxy=False, keep_changes=False):
-        self.logger_hr_and_track(t2t('Git Init'), p=0.1)
+        self.logger_hr(t2t('Git Init'), progress=0.1)
         if not self.execute(f'"{self.git}" init', allow_failure=True):
             self.remove('./.git/config')
             self.remove('./.git/index')
             self.remove('./.git/HEAD')
             self.execute(f'"{self.git}" init')
 
-        self.logger_hr_and_track(t2t('Set Git Proxy'), 1, p=0.2)
+        self.logger_hr(t2t('Set Git Proxy'), 1, progress=0.2)
         if proxy:
             self.execute(f'"{self.git}" config --local http.proxy {proxy}')
             self.execute(f'"{self.git}" config --local https.proxy {proxy}')
@@ -63,14 +64,14 @@ class GitManager(Command):
             self.execute(f'"{self.git}" config --local --unset http.proxy', allow_failure=True)
             self.execute(f'"{self.git}" config --local --unset https.proxy', allow_failure=True)
 
-        self.logger_hr_and_track(t2t('Set Git Repository'), 1, p=0.3)
+        self.logger_hr(t2t('Set Git Repository'), 1, progress=0.3)
         if not self.execute(f'"{self.git}" remote set-url {source} {repo}', allow_failure=True):
             self.execute(f'"{self.git}" remote add {source} {repo}')
 
-        self.logger_hr_and_track(t2t('Fetch Repository Branch'), 1, p=0.4)
+        self.logger_hr(t2t('Fetch Repository Branch'), 1, progress=0.4)
         self.execute(f'"{self.git}" fetch {source} {branch}')
 
-        self.logger_hr_and_track(t2t('Pull Repository Branch'), 1, p=0.5)
+        self.logger_hr(t2t('Pull Repository Branch'), 1, progress=0.5)
         # Remove git lock
         lock_file = './.git/index.lock'
         if os.path.exists(lock_file):
@@ -95,13 +96,11 @@ class GitManager(Command):
         if self.tag != 'lastest' and self.tag != '':
             self.execute(f'"{self.git}" checkout {self.tag}')
 
-        self.logger_hr_and_track(t2t('Show Version'), 1, p=0.8)
+        self.logger_hr(t2t('Show Version'), 1, progress=0.8)
         self.execute(f'"{self.git}" log --no-merges -1')
 
     def git_install(self, allow_failure = False):
-        self.logger_hr_and_track(f'Update {PROGRAM_NAME}', 0, p=0.9)
-
-        os.environ['PATH'] += os.pathsep + self.git
+        self.logger_hr(f'Update {PROGRAM_NAME}', 0, progress=0.9)
         
         if not self.AutoUpdate:
             self.info(t2t('AutoUpdate is disabled, skip'))
@@ -184,14 +183,14 @@ class PipManager(Command):
         # self.execute(f'pip install progressbar2{arg}')
 
         try:
-            self.logger_hr_and_track(t2t('Update Dependencies'), 1, p=0.3)
+            self.logger_hr(t2t('Update Dependencies'), 1, progress=0.3)
             if check_pip:
                 self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "lowest_requirements.txt")}"{self.pip_arg}')
                 self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{self.pip_arg}')
             if check_reqs:
                 self.execute(f'{self.pip()} install -r {self.requirements_file()}{self.pip_arg}')
         except ExecutionError as e:
-            self.logger_hr_and_track(t2t('Update Dependencies Fail, Update pip'), 1, p=0.1)
+            self.logger_hr(t2t('Update Dependencies Fail, Update pip'), 1, progress=0.1)
             self.update_pip()
 
         # self.execute((f'{self.pip()} install pycocotools-windows{arg}'))
@@ -261,13 +260,13 @@ class PythonManager(Command):
         self.info(f'url: {url}')
         file_name = os.path.join(self.python_folder, f'python-{ver}-amd64.zip')
         download_url(url, file_name)
-        self.logger_hr_and_track(t2t("Download python successfully, extract zip"), p=0.5)
+        self.logger_hr(t2t("Download python successfully, extract zip"), progress=0.5)
         with zipfile.ZipFile(file_name, 'r') as zip_ref:
             zip_ref.extractall(self.python_folder)
         # with zipfile.ZipFile(file_name.replace(f'python-{ver}-amd64.zip', f'python{ver2}.zip'), 'r') as zip_ref:
         #     zip_ref.extractall(self.python_folder)
         # install pip
-        self.logger_hr_and_track("Installing pip", p=0.8)
+        self.logger_hr("Installing pip", progress=0.8)
         pip_path = os.path.join(ROOT_PATH, "toolkit", "Lib\\site-packages\\pip", "__main__.py")
         self.execute(f'python "{pip_path}" config set global.index-url {self.PypiMirror}')
         self.execute(f'"{self.python_path}" "{os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}" --no-setuptools --no-wheel')
@@ -312,7 +311,7 @@ class PythonManager(Command):
             download_url(url, file_name)
             os.rename(file_name, file_name2)
 
-        self.logger_hr_and_track(t2t("Download Successfully"))
+        self.logger_hr(t2t("Download Successfully"))
 
         # with zipfile.ZipFile(file_name, 'r') as zip_ref:
         #     zip_ref.extractall(self.python_folder)
@@ -325,15 +324,15 @@ class PythonManager(Command):
             f'python_{ver}.exe Include_launcher=0 InstallAllUsers=0 Include_test=0 SimpleInstall=1 /passive TargetDir={self.python_folder}',
             is_format=False)
         os.chdir(ROOT_PATH)
-        self.logger_hr_and_track(t2t("Please waiting, python is installing. It may cost a few minutes."))
+        self.logger_hr(t2t("Please waiting, python is installing. It may cost a few minutes."))
 
         while 1:
             time.sleep(1)
             if os.path.exists(self.python_path):
                 break
-        self.logger_hr_and_track(t2t("Python installed successfully. Cleaning."))
+        self.logger_hr(t2t("Python installed successfully. Cleaning."))
         time.sleep(1)
-        self.logger_hr_and_track(t2t("Python is installed."))
+        self.logger_hr(t2t("Python is installed."))
 
     def install_pip(self):
         pass
@@ -346,7 +345,7 @@ class PythonManager(Command):
         verify_path(self.python_folder)
         
         if not os.path.exists(self.python_path):
-            self.logger_hr_and_track(f"Downloading Python Version: {self.python_version} into {self.python_folder}", p=0.05)
+            self.logger_hr(f"Downloading Python Version: {self.python_version} into {self.python_folder}", progress=0.05)
             # logger.warning(t2t("Please do not exit the program while python is being downloaded. If you accidentally quit or the installation fails, empty the . /toolkit/python folder in the corresponding folder and try again."))
             self.download_python_zip()
         else:
@@ -365,6 +364,6 @@ class PythonManager(Command):
         #     self.install_pip()
         global PROGRAM_PYTHON_PATH
         PROGRAM_PYTHON_PATH = self.python_path
-        self.logger_hr_and_track(t2t('python installed'), p=1)
+        self.logger_hr(t2t('python installed'), progress=1)
         return self.python_path
         # self.execute(f'{self.python_path} -m pip')

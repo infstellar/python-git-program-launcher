@@ -236,25 +236,33 @@ class Command():
         # logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
         # logger.warning(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
 
-    def logger_hr_and_track(self, x, c=0, p=None):
-        logger.hr(x, c)
-        if p is None:
-            self.progress_tracker.set_info(x)
+    def logger_hr(self, message, hr_mode=0, progress=None):
+        logger.hr(message, hr_mode)
+        if progress is None:
+            self.progress_tracker.set_info(message)
         else:
-            self.progress_tracker.inp(x,p)
+            self.progress_tracker.inp(message, progress)
     
-    def info(self, x):
+    def info(self, x:str):
+        """output info to console and UI.
+
+        Args:
+            x (str): message.
+        """
         logger.info(x)
         self.progress_tracker.set_info(x)
     
-    def execute(self, command, allow_failure=False, output=True, is_format=True, systematic_retry=False, systematic_execute=False):
+    def execute(self, command, allow_failure=False, output=True, is_format=True): #, systematic_retry=False, systematic_execute=False):
         """
+        
+        execute command in subprocess and synchronize command output to GUI and console.
+        
         Args:
-            command (str):
-            allow_failure (bool):
+            command (str): command
+            allow_failure (bool): whether to raise an exception on failure
             output(bool):
             
-            systematic_retry, systematic_execute: when subprocess fail but os.system succ, use it.
+            # systematic_retry, systematic_execute: when subprocess fail but os.system succ, use it.
 
         Returns:
             bool: If success.
@@ -269,7 +277,7 @@ class Command():
         logger.info(command)
         self.progress_tracker.cmd = command
         self.progress_tracker.console_output = ""
-        if systematic_execute:
+        if False: #systematic_execute:
             error_code = os.system(command)
             stdout = ""
             stderr = ""
@@ -280,7 +288,7 @@ class Command():
             if allow_failure:
                 logger.info(f"[ allowed failure ], error_code: {error_code} stdout: {stdout} stderr: {stderr}")
                 return False
-            elif systematic_retry:
+            elif False: #systematic_retry:
                 logger.info(f"[ failure - USE SYSTEM INSTEAD ], error_code: {error_code}")
                 return self.execute(command, allow_failure, output, is_format, systematic_retry=False, systematic_execute=True)
             else:
