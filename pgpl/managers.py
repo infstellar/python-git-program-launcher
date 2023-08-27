@@ -101,14 +101,19 @@ class GitManager(Command):
     def git_install(self, allow_failure = False):
         self.logger_hr_and_track(f'Update {PROGRAM_NAME}', 0, p=0.9)
 
+        os.environ['PATH'] += os.pathsep + self.git
+        
         if not self.AutoUpdate:
             self.info(t2t('AutoUpdate is disabled, skip'))
             return
 
-        os.environ['PATH'] += os.pathsep + self.git
-        
-        
-        
+        if True:
+            r = self.execute(f'"{self.git}" diff', allow_failure=True)
+            if r:
+                if self.progress_tracker.console_output == "":
+                    self.info(t2t('no difference in git, skip'))
+                    return
+
         try:
             self.git_repository_init(
                 repo=self.Repository,
