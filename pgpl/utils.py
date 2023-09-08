@@ -45,6 +45,10 @@ def get_local_lang():
 
 
 GLOBAL_LANG = get_local_lang()
+if locale.getdefaultlocale()[0] == 'zh_CN':
+    PROXY_LANG = 'zh_CN' 
+else:
+    PROXY_LANG = "en_US"
 
 if sys.path[0] != ROOT_PATH:
     sys.path.insert(0, ROOT_PATH)

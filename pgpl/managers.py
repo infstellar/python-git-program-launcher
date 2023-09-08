@@ -141,7 +141,7 @@ class PipManager(Command):
             self.PypiMirror = {
                 "zh_CN": "https://pypi.tuna.tsinghua.edu.cn/simple",
                 "en_US": "https://pypi.org/simple"
-            }[GLOBAL_LANG]
+            }[PROXY_LANG]
         
         self.pip_arg = []
         if self.PypiMirror:
@@ -212,13 +212,13 @@ class PythonManager(Command):
             self.python_mirror = {
                 "zh_CN": "https://mirrors.huaweicloud.com/python",
                 "en_US": "https://www.python.org/ftp/python"
-            }[GLOBAL_LANG]
+            }[PROXY_LANG]
         self.PypiMirror = installer_config["PypiMirror"]
         if self.PypiMirror == "AUTO" or self.PypiMirror == "":
             self.PypiMirror = {
                 "zh_CN": "https://pypi.tuna.tsinghua.edu.cn/simple",
                 "en_US": "https://pypi.org/simple"
-            }[GLOBAL_LANG]
+            }[PROXY_LANG]
         
         # https://registry.npmmirror.com/-/binary/python/3.10.1/python-3.10.1-amd64.exe
         # paths = ''
