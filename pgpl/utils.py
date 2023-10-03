@@ -183,6 +183,14 @@ class ProgressTracker():
         self.info = info
         self.percentage = percentage
 
+def find_right_encoding(str):
+    encodings = ['utf-8', 'gbk', 'gb2312', 'big5']
+    for encoding in encodings:
+        try:
+            logger.info(f"encoding: {encoding}, decode: {str.decode(encoding)}")
+            return encoding
+        except UnicodeDecodeError:
+            pass
 
 def run_command(command, progress_tracker:ProgressTracker = None):
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -190,11 +198,13 @@ def run_command(command, progress_tracker:ProgressTracker = None):
     pt = time.time()
     while True:
         output = process.stdout.readline()
-        if str(output, encoding='utf-8') == '' and (process.poll() is not None):
+        logger.info(f"output: {output}")
+        right_encoding = find_right_encoding(output)
+        if str(output, encoding=right_encoding) == '' and (process.poll() is not None):
             break
         if output:
             orimess = output.strip()
-            mess = str(orimess, encoding='utf-8')
+            mess = str(orimess, encoding=right_encoding)
             if 'Requirement already satisfied: ' not in mess:
                 logger.trace(mess)
                 if progress_tracker is not None: progress_tracker.console_output = mess
@@ -212,8 +222,10 @@ def run_command(command, progress_tracker:ProgressTracker = None):
             #     sys.stdout.write("\r {}".format(list[index]))
             #     i+=1
     stdout, stderr = process.communicate()
+    stdout_encoding = find_right_encoding(stdout)
+    stderr_encoding = find_right_encoding(stderr)
     rc = process.poll()
-    return rc, stdout.decode('utf-8'), stderr.decode('utf-8')
+    return rc, stdout.decode(stdout_encoding), stderr.decode(stderr_encoding)
 
 
 class Command():
