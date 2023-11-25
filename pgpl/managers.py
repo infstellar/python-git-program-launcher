@@ -107,11 +107,13 @@ class GitManager(Command):
             return
 
         if True:
-            r = self.execute(f'"{self.git}" diff', allow_failure=True)
+            r = self.execute(f'"{self.git}" config --local sendpack.sideband false', allow_failure=True)
             if r:
-                if self.progress_tracker.console_output == "":
-                    self.info(t2t('no difference in git, skip'))
-                    return
+                r = self.execute(f'"{self.git}" diff', allow_failure=True)
+                if r:
+                    if self.progress_tracker.console_output == "":
+                        self.info(t2t('no difference in git, skip'))
+                        return
 
         try:
             self.git_repository_init(
