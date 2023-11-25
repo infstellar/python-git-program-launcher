@@ -187,7 +187,8 @@ def find_right_encoding(str):
     encodings = ['utf-8', 'gbk', 'gb2312', 'big5']
     for encoding in encodings:
         try:
-            logger.info(f"encoding: {encoding}, decode: {str.decode(encoding)}")
+            if DEBUG_MODE: logger.trace(f"encoding: {encoding}, decode: {str.decode(encoding)}")
+            str.decode(encoding)
             return encoding
         except UnicodeDecodeError:
             pass
