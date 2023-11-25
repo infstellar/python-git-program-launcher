@@ -71,7 +71,7 @@ https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitat
 |UAC|是否需求UAC|True|
 
 # TODO:
-- GUI
+- 修改pip缓存默认位置
 
 # 文件位置
 

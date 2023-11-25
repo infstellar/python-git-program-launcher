@@ -268,7 +268,7 @@ class PythonManager(Command):
         # install pip
         self.logger_hr("Installing pip", progress=0.8)
         pip_path = os.path.join(ROOT_PATH, "toolkit", "Lib\\site-packages\\pip", "__main__.py")
-        self.execute(f'python "{pip_path}" config set global.index-url {self.PypiMirror}')
+        self.execute(f'"{LAUNCHER_PYTHON_PATH}" "{pip_path}" config set global.index-url {self.PypiMirror}')
         self.execute(f'"{self.python_path}" "{os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}" --no-setuptools --no-wheel')
         # self.execute(f'"{self.python_path}" -m pip install setuptools ')
         
