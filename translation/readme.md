@@ -18,3 +18,4 @@ cd translation;python generate_pot.py;cd ../
 
 ## Generate mo file
 
+.mo file will be automatic generated when program launched.

@@ -128,6 +128,7 @@ class MainPage(AdvancePage, Command):
         self._load_config_files()
 
         if not os.path.exists(os.path.join(ROOT_PATH, 'launcher_config_name.txt')):
+            output.toast('Please click \'Check for launcher updates\' for your first use', duration=30)
             with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w') as f:
                 f.close()
 
@@ -340,14 +341,14 @@ class MainPage(AdvancePage, Command):
         os.chdir(ROOT_PATH)
         sp = ShowProcess(self.pt)
         self.pt.reset()
-        self.pt.add_monitor('Already up to date')
+        self.pt.add_monitor('Already up to date.')
         sp.create_popup()
         gm = GitManager(self.CONFIG_PGPL, self.pt)
         try:
             gm.git_install()
-            if self.pt.get_counts('Already up to date'):
+            if self.pt.get_counts('Already up to date.'):
                 output.clear(sp.SCOPE_PROGRESS_INFO)
-                output.put_markdown(t2t('### Already up to date'), scope=sp.SCOPE_PROGRESS_INFO)
+                output.put_markdown(t2t('### Already up to date.'), scope=sp.SCOPE_PROGRESS_INFO)
             else:
                 output.clear(sp.SCOPE_PROGRESS_INFO)
                 output.put_markdown(t2t('### Update complete, please restart the launcher.'), scope=sp.SCOPE_PROGRESS_INFO)
