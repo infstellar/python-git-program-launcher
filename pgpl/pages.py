@@ -344,13 +344,13 @@ class MainPage(AdvancePage, Command):
         sp.create_popup()
         gm = GitManager(self.CONFIG_PGPL, self.pt)
         gm.git_install()
+        sp.end()
         if self.pt.get_counts('Already up to date'):
             output.clear(sp.SCOPE_PROGRESS_INFO)
             output.put_markdown(t2t('## Already up to date'), scope=sp.SCOPE_PROGRESS_INFO)
         else:
             output.clear(sp.SCOPE_PROGRESS_INFO)
             output.put_markdown(t2t('## Update complete, please restart the launcher.'), scope=sp.SCOPE_PROGRESS_INFO)
-        sp.end()
         self.pt.reset()
         # rc, inf, erc = run_command('git pull')
         # output.popup(t2t("Update"), f"{rc}, {inf}, {erc}")
@@ -393,7 +393,9 @@ class ConfigPage(AdvancePage):
     def _prepro_url(self, url):
         url = url.replace('https', 'http')
         url = url.replace("http://github.com/", "")
+        url = url.replace(" ", "")
         url = f"https://raw.githubusercontent.com/{url}/main/pgpl.yaml"
+        logger.debug(f'url: {url}')
         return url
 
     def _download_config_from_repo(self, url: str):
