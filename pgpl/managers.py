@@ -106,7 +106,7 @@ class GitManager(Command):
             self.info(t2t('AutoUpdate is disabled, skip'))
             return
 
-        if True:
+        if False:
             r = self.execute(f'"{self.git}" config --local sendpack.sideband false', allow_failure=True)
             if r:
                 r = self.execute(f'"{self.git}" diff', allow_failure=True)
