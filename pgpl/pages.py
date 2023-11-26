@@ -91,9 +91,9 @@ class ShowProcess():
         
             output.put_markdown(t2t("# ***ERR INFO*** \n")+self.progress_tracker.err_info, scope = self.SCOPE_PROGRESS_CMD_STDERR).style('font: SimHei; color: red')
     
-    def end(self):
+    def stop(self, is_success=True):
         session.set_env(output_animation=True)
-        output.put_button("Exit", onclick=output.close_popup, color='success', scope=self.SCOPE_EXIT)
+        output.put_button("Exit", onclick=output.close_popup, color=('success' if is_success else 'fail'), scope=self.SCOPE_EXIT)
         self.progress_tracker.end_flag = True  
     
 
@@ -225,7 +225,7 @@ class MainPage(AdvancePage, Command):
             self.pt.end_flag = True
             raise e
         self.pt.end_flag = True
-        sp.end()
+        sp.stop()
         if ("SSASC" in pin.pin[self.CHECKBOX_PIP]):
             self.info(t2t("Preparing to shut down the starter"))
             output.toast(t2t("Preparing to shut down the starter"))
@@ -343,14 +343,18 @@ class MainPage(AdvancePage, Command):
         self.pt.add_monitor('Already up to date')
         sp.create_popup()
         gm = GitManager(self.CONFIG_PGPL, self.pt)
-        gm.git_install()
-        sp.end()
-        if self.pt.get_counts('Already up to date'):
-            output.clear(sp.SCOPE_PROGRESS_INFO)
-            output.put_markdown(t2t('## Already up to date'), scope=sp.SCOPE_PROGRESS_INFO)
-        else:
-            output.clear(sp.SCOPE_PROGRESS_INFO)
-            output.put_markdown(t2t('## Update complete, please restart the launcher.'), scope=sp.SCOPE_PROGRESS_INFO)
+        try:
+            gm.git_install()
+            if self.pt.get_counts('Already up to date'):
+                output.clear(sp.SCOPE_PROGRESS_INFO)
+                output.put_markdown(t2t('### Already up to date'), scope=sp.SCOPE_PROGRESS_INFO)
+            else:
+                output.clear(sp.SCOPE_PROGRESS_INFO)
+                output.put_markdown(t2t('### Update complete, please restart the launcher.'), scope=sp.SCOPE_PROGRESS_INFO)
+            sp.stop(True)
+        except:
+            output.put_markdown(t2t('### Update Fail, please check whether your network is able to access github.com.'), scope=sp.SCOPE_PROGRESS_INFO)
+            sp.stop(False)
         self.pt.reset()
         # rc, inf, erc = run_command('git pull')
         # output.popup(t2t("Update"), f"{rc}, {inf}, {erc}")
