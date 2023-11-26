@@ -92,6 +92,7 @@ class ShowProcess():
             output.put_markdown(t2t("# ***ERR INFO*** \n")+self.progress_tracker.err_info, scope = self.SCOPE_PROGRESS_CMD_STDERR).style('font: SimHei; color: red')
     
     def stop(self, is_success=True):
+        time.sleep(0.2)
         session.set_env(output_animation=True)
         output.put_button("Exit", onclick=output.close_popup, color=('success' if is_success else 'fail'), scope=self.SCOPE_EXIT)
         self.progress_tracker.end_flag = True  
@@ -346,7 +347,7 @@ class MainPage(AdvancePage, Command):
         gm = GitManager(self.CONFIG_PGPL, self.pt)
         try:
             gm.git_install()
-            if self.pt.get_counts('Already up to date.'):
+            if self.pt.get_counts('Already up to date.') > 0:
                 output.clear(sp.SCOPE_PROGRESS_INFO)
                 output.put_markdown(t2t('### Already up to date.'), scope=sp.SCOPE_PROGRESS_INFO)
             else:
