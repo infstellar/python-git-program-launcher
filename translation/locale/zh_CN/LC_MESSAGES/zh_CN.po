@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-11-26 14:16+0800\n"
-"PO-Revision-Date: 2023-11-26 14:17+0800\n"
+"POT-Creation-Date: 2023-11-26 14:31+0800\n"
+"PO-Revision-Date: 2023-11-26 14:32+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -45,11 +45,11 @@ msgstr "非法参数：空输入"
 msgid "Illegal parameter type"
 msgstr "非法参数：无效类型"
 
-#: ../pgpl\console.py:66 ../pgpl\pages.py:404
+#: ../pgpl\console.py:66 ../pgpl\pages.py:414
 msgid "download config from repo succ"
 msgstr "从仓库下载配置成功"
 
-#: ../pgpl\console.py:69 ../pgpl\pages.py:407 ../pgpl\pages.py:415
+#: ../pgpl\console.py:69 ../pgpl\pages.py:417 ../pgpl\pages.py:425
 msgid "Invalid address"
 msgstr "无效链接"
 
@@ -340,57 +340,65 @@ msgstr "允许连接失败时中止git拉取"
 msgid "Automatic shutdown of the starter after startup completion"
 msgstr "启动完成后自动关闭启动器"
 
-#: ../pgpl\pages.py:420
+#: ../pgpl\pages.py:350
+msgid "## Already up to date"
+msgstr "## 已是最新版本"
+
+#: ../pgpl\pages.py:353
+msgid "## Update complete, please restart the launcher."
+msgstr "## 更新完成，请重新启动启动器。"
+
+#: ../pgpl\pages.py:430
 msgid ""
 "(You can enter the github repository address which already have existing "
 "config)"
 msgstr "(你可以输入已有配置的github仓库地址）"
 
-#: ../pgpl\pages.py:420
+#: ../pgpl\pages.py:430
 msgid "config name"
 msgstr "配置名称"
 
-#: ../pgpl\pages.py:436
+#: ../pgpl\pages.py:446
 msgid "## config:"
 msgstr "## 配置："
 
-#: ../pgpl\pages.py:438
+#: ../pgpl\pages.py:448
 msgid "Add config"
 msgstr "添加配置"
 
-#: ../pgpl\pages.py:461
+#: ../pgpl\pages.py:471
 msgid "Cannot Find Session"
 msgstr "未找到会话"
 
-#: ../pgpl\pages.py:481
+#: ../pgpl\pages.py:491
 msgid "Verified!"
 msgstr "已验证！"
 
-#: ../pgpl\pages.py:490
+#: ../pgpl\pages.py:500
 msgid "Waiting..."
 msgstr "等待中..."
 
-#: ../pgpl\pages.py:495
+#: ../pgpl\pages.py:505
 msgid "You may want to enter: "
 msgstr "您可能想输入 "
 
-#: ../pgpl\pages.py:500
+#: ../pgpl\pages.py:510
 msgid "Not a valid name"
 msgstr "不是有效的名称"
 
-#: ../pgpl\pages.py:546
+#: ../pgpl\pages.py:556
 msgid "saved!"
 msgstr "已保存！"
 
-#: ../pgpl\pages.py:584
+#: ../pgpl\pages.py:594
 msgid "Do you need to save changes?"
 msgstr "你要保存设置吗？"
 
-#: ../pgpl\pages.py:585
+#: ../pgpl\pages.py:595
 msgid "No"
 msgstr "否"
 
-#: ../pgpl\pages.py:585
+#: ../pgpl\pages.py:595
 msgid "Yes"
 msgstr "是"
 
@@ -398,11 +406,11 @@ msgstr "是"
 msgid "downloading url:"
 msgstr "下载url:"
 
-#: ../pgpl\utils.py:214 ../pgpl\utils.py:216
+#: ../pgpl\utils.py:232 ../pgpl\utils.py:234
 msgid "Please wait, pip is copying the file."
 msgstr "请稍候，pip 正在复制文件。"
 
-#: ../pgpl\utils.py:245
+#: ../pgpl\utils.py:263
 msgid ""
 "toolkit is not installed. Please check if you downloaded the correct file or "
 "if you cloned the submodule."

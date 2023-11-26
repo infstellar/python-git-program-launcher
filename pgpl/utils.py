@@ -172,6 +172,7 @@ class ProgressTracker():
         self.err_info = ""
         self.err_code = 0
         self.err_slu = ""
+        self.monitor_list = []
     
     def set_percentage(self, x):
         self.percentage = x
@@ -183,6 +184,22 @@ class ProgressTracker():
         self.info = info
         self.percentage = percentage
 
+    def add_monitor(self, text:str):
+        self.monitor_list.append({'text':text,'count':0})
+    
+    def monitor(self, t):
+        for i in self.monitor_list:
+            if t in i['text']:
+                i['count'] += 1
+    
+    def get_counts(self, t):
+        for i in self.monitor_list:
+            if t == i['text']:
+                return i['count']
+    
+    def reset(self):
+        self.monitor_list = []
+    
 def find_right_encoding(str):
     encodings = ['utf-8', 'gbk', 'gb2312', 'big5']
     for encoding in encodings:
@@ -206,6 +223,7 @@ def run_command(command, progress_tracker:ProgressTracker = None):
         if output:
             orimess = output.strip()
             mess = str(orimess, encoding=right_encoding)
+            if progress_tracker is not None: progress_tracker.monitor(mess)
             if 'Requirement already satisfied: ' not in mess:
                 logger.trace(mess)
                 if progress_tracker is not None: progress_tracker.console_output = mess
