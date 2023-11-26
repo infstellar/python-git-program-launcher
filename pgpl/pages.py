@@ -128,7 +128,7 @@ class MainPage(AdvancePage, Command):
         self._load_config_files()
 
         if not os.path.exists(os.path.join(ROOT_PATH, 'launcher_config_name.txt')):
-            output.toast('Please click \'Check for launcher updates\' for your first use', duration=30)
+            output.toast(t2t('Please click \'Check for launcher updates\' for your first use'), duration=30)
             with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'w') as f:
                 f.close()
 
