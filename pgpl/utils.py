@@ -189,7 +189,7 @@ class ProgressTracker():
     
     def monitor(self, t):
         for i in self.monitor_list:
-            if t in i['text']:
+            if t in i['text'] and t != '':
                 i['count'] += 1
     
     def get_counts(self, t):
