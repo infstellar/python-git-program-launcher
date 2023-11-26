@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-08-06 12:15+0800\n"
-"PO-Revision-Date: 2023-08-06 12:15+0800\n"
+"POT-Creation-Date: 2023-11-26 14:16+0800\n"
+"PO-Revision-Date: 2023-11-26 14:17+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -45,11 +45,11 @@ msgstr "非法参数：空输入"
 msgid "Illegal parameter type"
 msgstr "非法参数：无效类型"
 
-#: ../pgpl\console.py:66 ../pgpl\pages.py:349
+#: ../pgpl\console.py:66 ../pgpl\pages.py:404
 msgid "download config from repo succ"
 msgstr "从仓库下载配置成功"
 
-#: ../pgpl\console.py:69 ../pgpl\pages.py:352 ../pgpl\pages.py:360
+#: ../pgpl\console.py:69 ../pgpl\pages.py:407 ../pgpl\pages.py:415
 msgid "Invalid address"
 msgstr "无效链接"
 
@@ -116,114 +116,118 @@ msgstr "无输入 $t$ 秒后，PGPL将自动启动。"
 msgid "No config selected. A config must be selected."
 msgstr "未选择配置文件。必须选择配置文件。"
 
-#: ../pgpl\console.py:177 ../pgpl\pages.py:131
+#: ../pgpl\console.py:177 ../pgpl\pages.py:168
 msgid "The program is free and open source on github"
 msgstr "该程序在github免费开源"
 
-#: ../pgpl\console.py:178 ../pgpl\pages.py:132
+#: ../pgpl\console.py:178 ../pgpl\pages.py:169
 msgid ""
 "Please see the help file at https://github.com/infstellar/python-git-program-"
 "launcher"
 msgstr ""
 "请在https://github.com/infstellar/python-git-program-launcher查看使用说明"
 
-#: ../pgpl\console.py:190 ../pgpl\pages.py:148
+#: ../pgpl\console.py:190 ../pgpl\pages.py:182
 msgid "Launching..."
 msgstr "启动中..."
 
-#: ../pgpl\managers.py:51
+#: ../pgpl\managers.py:52
 msgid "Git Init"
 msgstr "Git初始化"
 
-#: ../pgpl\managers.py:58
+#: ../pgpl\managers.py:59
 msgid "Set Git Proxy"
 msgstr "设置Git验证"
 
-#: ../pgpl\managers.py:66
+#: ../pgpl\managers.py:67
 msgid "Set Git Repository"
 msgstr "设置Git仓库"
 
-#: ../pgpl\managers.py:70
+#: ../pgpl\managers.py:71
 msgid "Fetch Repository Branch"
 msgstr "获取仓库分支"
 
-#: ../pgpl\managers.py:73
+#: ../pgpl\managers.py:74
 msgid "Pull Repository Branch"
 msgstr "拉取仓库分支"
 
-#: ../pgpl\managers.py:86
+#: ../pgpl\managers.py:87
 msgid "Stash pop failed, there seems to be no local changes, skip instead"
 msgstr "Stash pop失败，似乎没有局部变化，跳过"
 
-#: ../pgpl\managers.py:88
+#: ../pgpl\managers.py:89
 msgid "Stash failed, this may be the first installation, drop changes instead"
 msgstr "Stash失败，这可能是第一次安装，丢弃更改"
 
-#: ../pgpl\managers.py:98
+#: ../pgpl\managers.py:99
 msgid "Show Version"
 msgstr "展示版本"
 
-#: ../pgpl\managers.py:105
+#: ../pgpl\managers.py:106
 msgid "AutoUpdate is disabled, skip"
 msgstr "自动更新禁用，跳过"
 
-#: ../pgpl\managers.py:122
+#: ../pgpl\managers.py:115
+msgid "no difference in git, skip"
+msgstr "在 git 中没有区别，跳过"
+
+#: ../pgpl\managers.py:128
 msgid "update git repo fail, skip"
 msgstr "更新 git 仓库失败，跳过"
 
-#: ../pgpl\managers.py:170 ../pgpl\managers.py:182
+#: ../pgpl\managers.py:176 ../pgpl\managers.py:188
 msgid "Update Dependencies"
 msgstr "更新依赖"
 
-#: ../pgpl\managers.py:173
+#: ../pgpl\managers.py:179
 msgid "InstallDependencies is disabled, skip"
 msgstr "安装依赖被禁用，跳过"
 
-#: ../pgpl\managers.py:176
+#: ../pgpl\managers.py:182
 msgid "Check Python"
 msgstr "检测Python"
 
-#: ../pgpl\managers.py:189
+#: ../pgpl\managers.py:195
 msgid "Update Dependencies Fail, Update pip"
 msgstr "更新依赖失败，更新 pip"
 
-#: ../pgpl\managers.py:231
+#: ../pgpl\managers.py:237
 msgid "set environ"
 msgstr "设置临时环境变量"
 
-#: ../pgpl\managers.py:252
+#: ../pgpl\managers.py:258
 msgid "download python"
 msgstr "下载python"
 
-#: ../pgpl\managers.py:259
+#: ../pgpl\managers.py:265
 msgid "Download python successfully, extract zip"
 msgstr "下载python成功，解压压缩包"
 
-#: ../pgpl\managers.py:310
+#: ../pgpl\managers.py:316
 msgid "Download Successfully"
 msgstr "下载成功"
 
-#: ../pgpl\managers.py:323
+#: ../pgpl\managers.py:329
 msgid "Please waiting, python is installing. It may cost a few minutes."
 msgstr "请等待，python正在安装。这可能需要几分钟。"
 
-#: ../pgpl\managers.py:329
+#: ../pgpl\managers.py:335
 msgid "Python installed successfully. Cleaning."
 msgstr "Python安装成功。清理中。"
 
-#: ../pgpl\managers.py:331
+#: ../pgpl\managers.py:337
 msgid "Python is installed."
 msgstr "Python已安装。"
 
-#: ../pgpl\managers.py:349
+#: ../pgpl\managers.py:355
 msgid "Verify pip installation"
 msgstr "验证pip安装"
 
-#: ../pgpl\managers.py:352
+#: ../pgpl\managers.py:358
 msgid "pip fail, reinstall python"
 msgstr "pip失败，重装python"
 
-#: ../pgpl\managers.py:363
+#: ../pgpl\managers.py:369
 msgid "python installed"
 msgstr "Python已安装"
 
@@ -235,83 +239,83 @@ msgstr "主页面"
 msgid "Setting"
 msgstr "设置页面"
 
-#: ../pgpl\pages.py:77
-msgid "Repository address"
-msgstr "仓库地址"
-
-#: ../pgpl\pages.py:87
-msgid "Program Starting"
-msgstr "程序启动中"
-
-#: ../pgpl\pages.py:88
+#: ../pgpl\pages.py:32
 msgid "## Progress"
 msgstr "## 进度"
 
-#: ../pgpl\pages.py:116 ../pgpl\pages.py:184
+#: ../pgpl\pages.py:61 ../pgpl\pages.py:218
 msgid "## Info: \n"
 msgstr "## 信息: \n"
 
-#: ../pgpl\pages.py:122
+#: ../pgpl\pages.py:67
 msgid "#### Running Command: \n"
 msgstr "#### 运行命令：\n"
 
-#: ../pgpl\pages.py:125
+#: ../pgpl\pages.py:70
 msgid "#### Command Output: \n"
 msgstr "#### 命令输出：\n"
 
-#: ../pgpl\pages.py:184
+#: ../pgpl\pages.py:83
+msgid "***ERROR OCCURRED!***"
+msgstr "***发生错误！***"
+
+#: ../pgpl\pages.py:87
+msgid "## Possible reasons: "
+msgstr "## 可能的原因： "
+
+#: ../pgpl\pages.py:89
+msgid "***CHECK UP THE CONSOLE OR SEND THE ERROR LOG***"
+msgstr "***检查控制台或发送错误日志***"
+
+#: ../pgpl\pages.py:92
+msgid "# ***ERR INFO*** \n"
+msgstr "# *** 错误信息 ***\n"
+
+#: ../pgpl\pages.py:159
+msgid "Repository address"
+msgstr "仓库地址"
+
+#: ../pgpl\pages.py:218
 msgid "#### Successfully install. Activating"
 msgstr "#### 安装成功。正在启动"
 
-#: ../pgpl\pages.py:185
+#: ../pgpl\pages.py:219
 msgid ""
 "#### You can close this popup window and start another programme or restart "
 "this programme."
 msgstr "#### 您可以关闭此弹窗，然后启动另一个程序或重新启动这个程序。"
 
-#: ../pgpl\pages.py:190
-msgid "***ERROR OCCURRED!***"
-msgstr "***发生错误！***"
-
-#: ../pgpl\pages.py:191
+#: ../pgpl\pages.py:223
 msgid "Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"
 msgstr ""
 "请检查你的网络环境，彻底关闭除了Watt Toolkit之外的所有可能干扰网络连接的软"
 "件，包括Clash/游戏加速器/网络连接管理/下载加速器等，然后重新打开Launcher.exe"
 
-#: ../pgpl\pages.py:193
-msgid "## Possible reasons: "
-msgstr "## 可能的原因： "
-
-#: ../pgpl\pages.py:195
-msgid "***CHECK UP THE CONSOLE OR SEND THE ERROR LOG***"
-msgstr "***检查控制台或发送错误日志***"
-
-#: ../pgpl\pages.py:199
-msgid "# ***ERR INFO*** \n"
-msgstr "# *** 错误信息 ***\n"
-
-#: ../pgpl\pages.py:205 ../pgpl\pages.py:206
+#: ../pgpl\pages.py:230 ../pgpl\pages.py:231
 msgid "Preparing to shut down the starter"
 msgstr "准备关闭启动器"
 
-#: ../pgpl\pages.py:230
+#: ../pgpl\pages.py:256
 msgid "Open logs folder"
 msgstr "打开日志文件夹"
 
-#: ../pgpl\pages.py:234
+#: ../pgpl\pages.py:257
+msgid "Check for launcher updates"
+msgstr "检查启动器更新"
+
+#: ../pgpl\pages.py:264
 msgid "## Select startup configuration"
 msgstr "## 选择启动配置"
 
-#: ../pgpl\pages.py:239
+#: ../pgpl\pages.py:269
 msgid "Start Program"
 msgstr "启动程序"
 
-#: ../pgpl\pages.py:242
+#: ../pgpl\pages.py:272
 msgid "## Startup Options"
 msgstr "## 启动选项"
 
-#: ../pgpl\pages.py:243
+#: ../pgpl\pages.py:273
 msgid ""
 "Setting the startup options, which may speed up the startup of the "
 "programme, but may cause the programme to fail to start. Make sure you use "
@@ -320,85 +324,85 @@ msgstr ""
 "设置启动选项，这些选项可能会加快程序的启动速度，但也可能导致程序无法启动。请"
 "确保你已了解它们的作用后再使用。"
 
-#: ../pgpl\pages.py:246
+#: ../pgpl\pages.py:276
 msgid "Disable checking pip update"
 msgstr "禁用 pip 更新检查"
 
-#: ../pgpl\pages.py:251
+#: ../pgpl\pages.py:281
 msgid "Disable checking requirements update"
 msgstr "禁用依赖更新检查"
 
-#: ../pgpl\pages.py:256
+#: ../pgpl\pages.py:286
 msgid "Allow git to abort pulling repositories if the connection fails"
 msgstr "允许连接失败时中止git拉取"
 
-#: ../pgpl\pages.py:261
+#: ../pgpl\pages.py:291
 msgid "Automatic shutdown of the starter after startup completion"
 msgstr "启动完成后自动关闭启动器"
 
-#: ../pgpl\pages.py:365
+#: ../pgpl\pages.py:420
 msgid ""
 "(You can enter the github repository address which already have existing "
 "config)"
 msgstr "(你可以输入已有配置的github仓库地址）"
 
-#: ../pgpl\pages.py:365
+#: ../pgpl\pages.py:420
 msgid "config name"
 msgstr "配置名称"
 
-#: ../pgpl\pages.py:381
+#: ../pgpl\pages.py:436
 msgid "## config:"
 msgstr "## 配置："
 
-#: ../pgpl\pages.py:383
+#: ../pgpl\pages.py:438
 msgid "Add config"
 msgstr "添加配置"
 
-#: ../pgpl\pages.py:406
+#: ../pgpl\pages.py:461
 msgid "Cannot Find Session"
 msgstr "未找到会话"
 
-#: ../pgpl\pages.py:426
+#: ../pgpl\pages.py:481
 msgid "Verified!"
 msgstr "已验证！"
 
-#: ../pgpl\pages.py:435
+#: ../pgpl\pages.py:490
 msgid "Waiting..."
 msgstr "等待中..."
 
-#: ../pgpl\pages.py:440
+#: ../pgpl\pages.py:495
 msgid "You may want to enter: "
 msgstr "您可能想输入 "
 
-#: ../pgpl\pages.py:445
+#: ../pgpl\pages.py:500
 msgid "Not a valid name"
 msgstr "不是有效的名称"
 
-#: ../pgpl\pages.py:491
+#: ../pgpl\pages.py:546
 msgid "saved!"
 msgstr "已保存！"
 
-#: ../pgpl\pages.py:529
+#: ../pgpl\pages.py:584
 msgid "Do you need to save changes?"
 msgstr "你要保存设置吗？"
 
-#: ../pgpl\pages.py:530
+#: ../pgpl\pages.py:585
 msgid "No"
 msgstr "否"
 
-#: ../pgpl\pages.py:530
+#: ../pgpl\pages.py:585
 msgid "Yes"
 msgstr "是"
 
-#: ../pgpl\utils.py:75
+#: ../pgpl\utils.py:79
 msgid "downloading url:"
 msgstr "下载url:"
 
-#: ../pgpl\utils.py:199 ../pgpl\utils.py:201
+#: ../pgpl\utils.py:214 ../pgpl\utils.py:216
 msgid "Please wait, pip is copying the file."
 msgstr "请稍候，pip 正在复制文件。"
 
-#: ../pgpl\utils.py:228
+#: ../pgpl\utils.py:245
 msgid ""
 "toolkit is not installed. Please check if you downloaded the correct file or "
 "if you cloned the submodule."
@@ -415,6 +419,9 @@ msgstr ""
 #: ..\gui.py:9
 msgid "Press enter to exit"
 msgstr "按回车键退出"
+
+#~ msgid "Program Starting"
+#~ msgstr "程序启动中"
 
 #~ msgid "webio started"
 #~ msgstr "webio已启动"
