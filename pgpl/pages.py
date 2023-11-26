@@ -34,7 +34,7 @@ class ShowProcess():
             output.clear(self.SCOPE_PROGRESS_CMD_STDERR)
             output.put_scope(self.SCOPE_PROGRESS_INFO)
             output.put_processbar(self.PROCESSBAR_STAGE)
-            output.set_processbar(self.PROCESSBAR_STAGE, 0 / 3)
+            output.set_processbar(self.PROCESSBAR_STAGE, 0)
             output.put_processbar(self.PROCESSBAR_PYTHON_MANAGER)
             output.put_scope(self.SCOPE_PROGRESS_CMD)
             output.put_scope(self.SCOPE_PROGRESS_CMD_OUTPUT)
@@ -94,7 +94,9 @@ class ShowProcess():
     def stop(self, is_success=True):
         session.set_env(output_animation=True)
         output.put_button("Exit", onclick=output.close_popup, color=('success' if is_success else 'fail'), scope=self.SCOPE_EXIT)
-        self.progress_tracker.end_flag = True  
+        self.progress_tracker.end_flag = True
+        output.set_progressbar(self.PROCESSBAR_STAGE, 1)
+        output.set_progressbar(self.PROCESSBAR_PYTHON_MANAGER, 1)
     
 
 class MainPage(AdvancePage, Command):
@@ -354,6 +356,7 @@ class MainPage(AdvancePage, Command):
             else:
                 output.clear(sp.SCOPE_PROGRESS_INFO)
                 output.put_markdown(t2t('### Update complete, please restart the launcher.'), scope=sp.SCOPE_PROGRESS_INFO)
+                
         except:
             sp.stop(False)
             time.sleep(0.2)
