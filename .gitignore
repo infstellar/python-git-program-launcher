@@ -14,3 +14,4 @@ launcher_config_name.txt
 *.mo
 cache/
 CppProperties.json
+installed_python/

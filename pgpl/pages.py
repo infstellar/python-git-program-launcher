@@ -95,8 +95,8 @@ class ShowProcess():
         session.set_env(output_animation=True)
         output.put_button("Exit", onclick=output.close_popup, color=('success' if is_success else 'fail'), scope=self.SCOPE_EXIT)
         self.progress_tracker.end_flag = True
-        output.set_progressbar(self.PROCESSBAR_STAGE, 1)
-        output.set_progressbar(self.PROCESSBAR_PYTHON_MANAGER, 1)
+        output.set_processbar(self.PROCESSBAR_STAGE, 1)
+        output.set_processbar(self.PROCESSBAR_PYTHON_MANAGER, 1)
     
 
 class MainPage(AdvancePage, Command):
@@ -324,6 +324,8 @@ class MainPage(AdvancePage, Command):
     def _onclick_open_log_folder(self):
         os.startfile(os.path.join(ROOT_PATH, "Logs"))
 
+    
+    branch = ("main" if not os.path.exists(fr'{ROOT_PATH}/toolkit/.condarc') else "miniconda")
     CONFIG_PGPL = {
         "RequirementsFile": "requirements.txt",
         "InstallDependencies": True,
@@ -331,7 +333,7 @@ class MainPage(AdvancePage, Command):
         "PythonMirror": "AUTO",
         "Repository": "https://github.com/infstellar/python-git-program-launcher",
         "Main": "main.py",
-        "Branch": "main",
+        "Branch": branch,
         "GitProxy": False,
         "KeepLocalChanges": True,
         "AutoUpdate": True,
@@ -341,7 +343,10 @@ class MainPage(AdvancePage, Command):
     }
     
     def _onclick_upd(self):
+        
         os.chdir(ROOT_PATH)
+        if self.branch == 'main':
+            output.toast(t2t('PGPL-2.3 will soon be unsupported, please visit https://github.com/infstellar/python-git-program-launcher for the latest version.'), duration=10)
         sp = ShowProcess(self.pt)
         self.pt.reset()
         self.pt.add_monitor('Already up to date.')

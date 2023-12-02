@@ -260,12 +260,12 @@ class PythonManager(Command):
             if not os.path.exists(CONDARC_FILE_PATH):
                 CONDARC_NOT_FOUND_flag = True
                 import shutil
-                self.info(t2t('The .condarc not found, create one'))
+                self.info(t2t('The .condarc not found, create one'), mode='a')
                 shutil.copyfile(rf'{ROOT_PATH}/toolkit/.condarc', CONDARC_FILE_PATH)
             else:
-                self.info(t2t('The .condarc already exists, you may have install anaconda/miniconda, the original configuration file will be used'))
+                self.info(t2t('The .condarc already exists, you may have install anaconda/miniconda, the original configuration file will be used'), mode='a')
         
-        self.execute(fr'"{ROOT_PATH}/toolkit/Scripts/activate.bat" && conda create -p "{self.python_folder}" python={self.python_version} -y', progress_tracker=self.progress_tracker)
+        self.execute(fr'"{ROOT_PATH}/toolkit/Scripts/activate.bat" && conda create -p "{self.python_folder}" python={self.python_version} -y')
         
         if CONDARC_NOT_FOUND_flag:
             if DEBUG_MODE: logger.info('remove .condarc file')

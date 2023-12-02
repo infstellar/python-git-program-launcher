@@ -231,7 +231,7 @@ def run_command(command, progress_tracker:ProgressTracker = None):
             if 'Installing collected packages' in mess:
                 logger.info(t2t('Please wait, pip is copying the file.'))
                 # progress_tracker.set_info(t2t('Please wait, pip is copying the file.'))
-                if progress_tracker is not None: progress_tracker.console_output = t2t('Please wait, pip is copying the file.')
+                if progress_tracker is not None: progress_tracker.console_output = t2t('Please wait, pip is copying the file.') + '\n' + progress_tracker.console_output
             
         else:
             pass
@@ -278,14 +278,17 @@ class Command():
         else:
             self.progress_tracker.inp(message, progress)
     
-    def info(self, x:str):
+    def info(self, x:str, mode='r', end='\n'):
         """output info to console and UI.
 
         Args:
             x (str): message.
         """
         logger.info(x)
-        self.progress_tracker.set_info(x)
+        if mode == 'r':
+            self.progress_tracker.set_info(x+end)
+        elif mode == 'a':
+            self.progress_tracker.set_info(self.progress_tracker.info+x)
     
     def execute(self, command, allow_failure=False, output=True, is_format=True): #, systematic_retry=False, systematic_execute=False):
         """
