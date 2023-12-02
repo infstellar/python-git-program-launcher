@@ -176,6 +176,7 @@ class MainPage(AdvancePage, Command):
         
         try:
             global PROGRAM_PYTHON_PATH
+            # MiniCondaManager(CONFIG_TEMPLATE).activate_env()
             PROGRAM_PYTHON_PATH = PythonManager(launching_config, self.pt).run()
             output.set_processbar(sp.PROCESSBAR_STAGE, 1 / 3)
             logger.info(launching_config)

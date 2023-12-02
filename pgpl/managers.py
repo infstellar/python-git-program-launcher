@@ -170,7 +170,6 @@ class PipManager(Command):
         self.execute(f'{self.pip()} install --upgrade pip{self.pip_arg}')
         self.execute(f'{self.pip()} install setuptools{self.pip_arg}')
         self.execute(f'{self.pip()} install wheel{self.pip_arg}')
-        self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{self.pip_arg}')
     
     def pip_install(self, check_pip = True, check_reqs = True):
         self.info(t2t('Update Dependencies'))
@@ -187,8 +186,7 @@ class PipManager(Command):
         try:
             self.logger_hr(t2t('Update Dependencies'), 1, progress=0.3)
             if check_pip:
-                self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "lowest_requirements.txt")}"{self.pip_arg}')
-                self.execute(f'{self.pip()} install -r "{os.path.join(ROOT_PATH, "toolkit", "basic_requirements.txt")}"{self.pip_arg}')
+                pass
             if check_reqs:
                 self.execute(f'{self.pip()} install -r {self.requirements_file()}{self.pip_arg}')
         except ExecutionError as e:
@@ -207,7 +205,7 @@ class PythonManager(Command):
         super().__init__(progress_tracker=progress_tracker)
         self.python_version = installer_config['PythonVersion']
         n = installer_config['Repository'].split('/')[-1]
-        self.python_folder = os.path.join(ROOT_PATH, 'toolkit', f'python', f"{self.python_version}_{n}")
+        self.python_folder = os.path.join(ROOT_PATH, f'installed_python', f"{self.python_version}_{n}")
         self.python_path = os.path.join(self.python_folder, "python.exe")
         self.python_mirror = installer_config['PythonMirror']
         if self.python_mirror == "AUTO" or self.python_mirror == "":
@@ -221,7 +219,7 @@ class PythonManager(Command):
                 "zh_CN": "https://pypi.tuna.tsinghua.edu.cn/simple",
                 "en_US": "https://pypi.org/simple"
             }[PROXY_LANG]
-        
+        self.miniconda_path = r"M:/ProgramData/ptu/python-git-program-launcher/toolkit/miniconda"
         # https://registry.npmmirror.com/-/binary/python/3.10.1/python-3.10.1-amd64.exe
         # paths = ''
         # for i in os.environ['PATH'].split(';'):
@@ -240,8 +238,8 @@ class PythonManager(Command):
         add_environ(os.path.join(self.python_folder, "Lib"))
         add_environ(os.path.join(self.python_folder, "Scripts"))
         add_environ(self.python_folder)
-        site_packages_path = os.path.join(ROOT_PATH, "toolkit", "python_site_packages")
-        sys.path.insert(0, site_packages_path)
+        # site_packages_path = os.path.join(ROOT_PATH, "toolkit", "python_site_packages")
+        # sys.path.insert(0, site_packages_path)
         # logger.error(os.environ['PATH'])
         # DEBUG
         # self.execute('set path')
@@ -254,94 +252,24 @@ class PythonManager(Command):
         shutil.rmtree(py_folder)
     
     def download_python_zip(self):
-        import zipfile
+        # import zipfile
         self.progress_tracker.inp(t2t('download python'), 0.1)
-        ver = self.python_version
-        ver2 = ver.split(".")[0]+ver.split(".")[1]
-        url = fr"{self.python_mirror}/{ver}/python-{ver}-embed-amd64.zip"
-        self.info(f'url: {url}')
-        file_name = os.path.join(self.python_folder, f'python-{ver}-amd64.zip')
-        download_url(url, file_name)
-        self.logger_hr(t2t("Download python successfully, extract zip"), progress=0.5)
-        with zipfile.ZipFile(file_name, 'r') as zip_ref:
-            zip_ref.extractall(self.python_folder)
-        # with zipfile.ZipFile(file_name.replace(f'python-{ver}-amd64.zip', f'python{ver2}.zip'), 'r') as zip_ref:
-        #     zip_ref.extractall(self.python_folder)
-        # install pip
-        self.logger_hr("Installing pip", progress=0.8)
-        pip_path = os.path.join(ROOT_PATH, "toolkit", "Lib\\site-packages\\pip", "__main__.py")
-        self.execute(f'"{LAUNCHER_PYTHON_PATH}" "{pip_path}" config set global.index-url {self.PypiMirror}')
-        self.execute(f'"{self.python_path}" "{os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}" --no-setuptools --no-wheel')
-        # self.execute(f'"{self.python_path}" -m pip install setuptools ')
+        CONDARC_NOT_FOUND_flag = False
+        if PROXY_LANG == 'zh_CN':
+            CONDARC_FILE_PATH = rf'{os.environ["USERPROFILE"]}/.condarc'
+            if not os.path.exists(CONDARC_FILE_PATH):
+                CONDARC_NOT_FOUND_flag = True
+                import shutil
+                self.info(t2t('The .condarc not found, create one'))
+                shutil.copyfile(rf'{ROOT_PATH}/toolkit/.condarc', CONDARC_FILE_PATH)
+            else:
+                self.info(t2t('The .condarc already exists, you may have install anaconda/miniconda, the original configuration file will be used'))
         
-        # https://blog.csdn.net/liangma/article/details/120022530
-        with open(os.path.join(self.python_folder, fr"python{ver2}._pth"), 'r+') as f:
-            f.seek(0)
-            file_str = f.read()
-            file_str = file_str.replace('# import site', 'import site')
-            file_str = file_str.replace('#import site', 'import site')
-            f.seek(0)
-            f.write(file_str)
+        self.execute(fr'"{ROOT_PATH}/toolkit/Scripts/activate.bat" && conda create -p "{self.python_folder}" python={self.python_version} -y', progress_tracker=self.progress_tracker)
         
-        generate_pgplpth(self.python_folder)
-        
-        
-        
-        # self.execute(f'pip')
-    
-    def download_python_installer(self):
-        # 这个没bug，但是要安装，因此暂时弃用
-        logger.warning("确认python版本：")
-        logger.warning("你的电脑每种大版本的python只能安装过一种。如果你已预先安装了，必须先手动卸载。")
-        logger.warning("例1：目标版本3.7.6，而你的电脑安装了3.7.8，则必须先卸载3.7.8版本的python再使用。")
-        logger.warning("例2：目标版本3.10.10，而你的电脑安装了3.10.10，则必须先卸载3.10.10版本的python再使用。")
-        logger.warning("Anaconda等独立包管理器不受此影响。")
-        logger.warning("python-git-program-launcher不会添加python到环境变量；不会添加到所有用户；不会添加python launcher程序。但放弃使用时，仍需到控制面板卸载python。")
-        input("按下回车以确认。")
-        # self.download_python_installer()
-        ver = self.python_version
-        url = fr"{self.python_mirror}/{ver}/python-{ver}-amd64.exe"
-        # url = fr"https://www.python.org/ftp/python/{ver}/python-{ver}-amd64.exe"
-        # url = fr"https://www.python.org/ftp/python/{ver}/python-{ver}-embed-amd64.zip"
-        self.info(f'url: {url}')
-        file_name = os.path.join(ROOT_PATH, 'toolkit', 'python', str(self.python_version), f'python-{ver}-amd64.exe')
-        file_name2 = os.path.join(ROOT_PATH, 'toolkit', 'python', str(self.python_version), f'python_{ver}.exe')
-
-        if not os.path.exists(file_name2):
-            if os.path.exists(file_name):
-                os.remove(file_name)
-            download_url(url, file_name)
-            os.rename(file_name, file_name2)
-
-        self.logger_hr(t2t("Download Successfully"))
-
-        # with zipfile.ZipFile(file_name, 'r') as zip_ref:
-        #     zip_ref.extractall(self.python_folder)
-
-
-        file_name = file_name2
-
-        os.chdir(self.python_folder)
-        self.execute(
-            f'python_{ver}.exe Include_launcher=0 InstallAllUsers=0 Include_test=0 SimpleInstall=1 /passive TargetDir={self.python_folder}',
-            is_format=False)
-        os.chdir(ROOT_PATH)
-        self.logger_hr(t2t("Please waiting, python is installing. It may cost a few minutes."))
-
-        while 1:
-            time.sleep(1)
-            if os.path.exists(self.python_path):
-                break
-        self.logger_hr(t2t("Python installed successfully. Cleaning."))
-        time.sleep(1)
-        self.logger_hr(t2t("Python is installed."))
-
-    def install_pip(self):
-        pass
-        # self.execute(f'curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py')
-        # self.execute(f'"set PATH=%path%;{os.path.join(self.python_folder, "Scripts")}"')
-        # self.execute(f'"{self.python_path}" "{os.path.join(ROOT_PATH, "toolkit", "get-pip.py")}"')
-        # self.execute(f'"{self.python_path}" {os.path.join(ROOT_PATH, "toolkit", "get-pip.py --force-reinstall")}')
+        if CONDARC_NOT_FOUND_flag:
+            if DEBUG_MODE: logger.info('remove .condarc file')
+            os.remove(CONDARC_FILE_PATH)
 
     def run(self):
         verify_path(self.python_folder)
@@ -369,3 +297,6 @@ class PythonManager(Command):
         self.logger_hr(t2t('python installed'), progress=1)
         return self.python_path
         # self.execute(f'{self.python_path} -m pip')
+        
+# if __name__ == '__main__':
+    #MiniCondaManager(CONFIG_TEMPLATE).create_python()
