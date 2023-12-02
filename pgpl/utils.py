@@ -177,11 +177,11 @@ class ProgressTracker():
     def set_percentage(self, x):
         self.percentage = x
     
-    def set_info(self, x):
-        self.info = x
+    def set_info(self, x, end='\n'):
+        self.info = x+end
 
-    def inp(self, info, percentage):
-        self.info = info
+    def inp(self, info, percentage, end='\n'):
+        self.info = info + end
         self.percentage = percentage
 
     def add_monitor(self, text:str):
