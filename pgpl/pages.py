@@ -340,6 +340,8 @@ class MainPage(AdvancePage, Command):
     }
     
     def _onclick_upd(self):
+        output.toast(t2t('PGPL-2.3 will soon be unsupported, please visit https://github.com/infstellar/python-git-program-launcher/releases for the latest version.'), duration=10)
+        return
         os.chdir(ROOT_PATH)
         sp = ShowProcess(self.pt)
         self.pt.reset()
