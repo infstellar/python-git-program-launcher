@@ -219,7 +219,6 @@ class PythonManager(Command):
                 "zh_CN": "https://pypi.tuna.tsinghua.edu.cn/simple",
                 "en_US": "https://pypi.org/simple"
             }[PROXY_LANG]
-        self.miniconda_path = r"M:/ProgramData/ptu/python-git-program-launcher/toolkit/miniconda"
         # https://registry.npmmirror.com/-/binary/python/3.10.1/python-3.10.1-amd64.exe
         # paths = ''
         # for i in os.environ['PATH'].split(';'):
@@ -254,22 +253,24 @@ class PythonManager(Command):
     def download_python_zip(self):
         # import zipfile
         self.progress_tracker.inp(t2t('download python'), 0.1)
-        CONDARC_NOT_FOUND_flag = False
         if PROXY_LANG == 'zh_CN':
             CONDARC_FILE_PATH = rf'{os.environ["USERPROFILE"]}/.condarc'
+            CONDARC_MARK_PATH = rf'{os.environ["USERPROFILE"]}/.condarc_flag'
             if not os.path.exists(CONDARC_FILE_PATH):
                 CONDARC_NOT_FOUND_flag = True
                 import shutil
                 self.info(t2t('The .condarc not found, create one'), mode='a')
                 shutil.copyfile(rf'{ROOT_PATH}/toolkit/.condarc', CONDARC_FILE_PATH)
+                shutil.copyfile(rf'{ROOT_PATH}/toolkit/.condarc', CONDARC_MARK_PATH)
             else:
                 self.info(t2t('The .condarc already exists, you may have install anaconda/miniconda, the original configuration file will be used'), mode='a')
         
         self.execute(fr'"{ROOT_PATH}/toolkit/Scripts/activate.bat" && conda create -p "{self.python_folder}" python={self.python_version} -y')
         
-        if CONDARC_NOT_FOUND_flag:
-            if DEBUG_MODE: logger.info('remove .condarc file')
+        if os.path.exists(CONDARC_MARK_PATH):
+            if DEBUG_MODE: self.info('remove .condarc file')
             os.remove(CONDARC_FILE_PATH)
+            os.remove(CONDARC_MARK_PATH)
 
     def run(self):
         verify_path(self.python_folder)
