@@ -370,13 +370,24 @@ def select_fastest_url(urls:typing.List[str]):
     requests.packages.urllib3.disable_warnings()
     for url in urls:
         total_time = 0
-        domain = url[:url.replace("http://", '').replace("https://", "").find('/') + url.find('://') + 3]
+        domain = url[:url.replace("http://", '').replace("https://", "").rfind('/') + url.find('://') + 3]
         for i in range(4):
             pt = time.time()
             try:
                 r = requests.get(domain, verify=False, proxies=None, timeout=3)
-                use_time = time.time()-pt
-                logger.info(f'get {domain} code: {r.status_code} time: {use_time}')
+                if r.status_code == 200:
+                    try_download_url = f"{domain}/packages/00/00/0188b746eefaea75d665b450c9165451a66aae541e5f73db4456eebc0289/loginhelper-0.0.5-py3-none-any.whl"
+                    r2 = requests.get(try_download_url, verify=False, proxies=None, timeout=300)
+                    if r2.status_code == 200:
+                        use_time = time.time()-pt
+                        logger.info(f'get {domain} code: {r.status_code} time: {use_time}')
+                    else:
+                        total_time = 9999999999999.999999999
+                        logger.info(f'get {domain} error: 被风控/无法下载 code_1:{r.status_code} code_1:{r2.status_code} time: {total_time}')
+                        break
+                else:
+                    use_time = time.time() - pt
+                    logger.info(f'get {domain} code: {r.status_code} time: {use_time}')
                 if r.status_code > 210:
                     total_time += 4
                 else:
