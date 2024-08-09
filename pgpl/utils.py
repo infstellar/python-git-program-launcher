@@ -408,7 +408,8 @@ def select_fastest_url(urls:typing.List[str]):
     logger.info(f'Fastest url: {fastest_url}; average cost {fastest_time/4}')
 
     output_result = fastest_url
-    x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")[input_str] = output_result
+    x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")
+    x[input_str] = output_result
     save_json(x, json_name=f"{ROOT_PATH}\\cache\\url_speed_test.json")
 
     return fastest_url
