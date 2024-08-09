@@ -114,9 +114,6 @@ def save_json(x, json_name):
     Args:
         x (_type_): dict/list对象
         json_name (str, optional): 同load_json. Defaults to 'General.json'.
-        default_path (str, optional): 同load_json. Defaults to 'config\\settings'.
-        sort_keys (bool, optional): 是否自动格式化. Defaults to True.
-        auto_create (bool, optional): _description_. Defaults to False.
     """
     if '.json' not in json_name:
         json_name += '.json'
@@ -365,6 +362,12 @@ def isProtectedByGreatWall():
         return True
 
 def select_fastest_url(urls:typing.List[str]):
+
+    input_str = str(urls)
+    x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")
+    if input_str in x.keys():
+        logger.info(f'Fastest url: {x[input_str]} (use cache)')
+        return x[input_str]
     fastest_time = 999
     fastest_url = urls[0]
     requests.packages.urllib3.disable_warnings()
@@ -399,6 +402,11 @@ def select_fastest_url(urls:typing.List[str]):
             fastest_time = total_time
             fastest_url = url
     logger.info(f'Fastest url: {fastest_url}; average cost {fastest_time/4}')
+
+    output_result = fastest_url
+    x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")[input_str] = output_result
+    save_json(x, json_name=f"{ROOT_PATH}\\cache\\url_speed_test.json")
+
     return fastest_url
 
 def proxy_info():
