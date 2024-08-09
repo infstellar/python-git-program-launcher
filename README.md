@@ -18,18 +18,16 @@
 ## 直接运行
 下载最新的Release。
 
-运行Launcher.bat或Launcher.exe。
-
-你可能需要使用管理员权限运行。
+运行Launcher.exe。
 
 ***不要打开除了Watt Toolkit之外的所有可能干扰网络连接的软件，包括Clash/部分游戏加速器/网络连接管理/下载加速器等，它们会干扰SSL验证。***
 
 ## 源代码运行
-克隆仓库。
+下载最新的Release。
 
-运行`git submodule init; git submodule update`
+运行Launcher.exe，等待完成。
 
-运行Launcher.bat或Launcher.exe。
+完成后，Launcher.exe的同级文件夹会有python-git-program_launcher的文件夹，打开后，运行gui.py即可。
 
 # 添加配置
 
