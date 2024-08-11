@@ -364,14 +364,14 @@ def isProtectedByGreatWall():
 def select_fastest_url(urls:typing.List[str]):
 
     input_str = str(urls)
-    if not os.path.exists(f"{ROOT_PATH}\\cache\\url_speed_test.json"):
-        verify_path(f"{ROOT_PATH}\\cache")
-        with open(f"{ROOT_PATH}\\cache\\url_speed_test.json", 'w', encoding='utf-8') as f:
-            f.write('{}')
-    x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")
-    if input_str in x.keys():
-        logger.info(f'Fastest url: {x[input_str]} (use cache)')
-        return x[input_str]
+    # if not os.path.exists(f"{ROOT_PATH}\\cache\\url_speed_test.json"):
+    #     verify_path(f"{ROOT_PATH}\\cache")
+    #     with open(f"{ROOT_PATH}\\cache\\url_speed_test.json", 'w', encoding='utf-8') as f:
+    #         f.write('{}')
+    # x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")
+    # if input_str in x.keys():
+    #     logger.info(f'Fastest url: {x[input_str]} (use cache)')
+    #     return x[input_str]
     fastest_time = 999
     fastest_url = urls[0]
     requests.packages.urllib3.disable_warnings()
@@ -407,10 +407,10 @@ def select_fastest_url(urls:typing.List[str]):
             fastest_url = url
     logger.info(f'Fastest url: {fastest_url}; average cost {fastest_time/4}')
 
-    output_result = fastest_url
-    x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")
-    x[input_str] = output_result
-    save_json(x, json_name=f"{ROOT_PATH}\\cache\\url_speed_test.json")
+    # output_result = fastest_url
+    # x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")
+    # x[input_str] = output_result
+    # save_json(x, json_name=f"{ROOT_PATH}\\cache\\url_speed_test.json")
 
     return fastest_url
 
