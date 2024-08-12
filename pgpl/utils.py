@@ -361,17 +361,19 @@ def isProtectedByGreatWall():
         logger.info(f'get x.com error: {e}')
         return True
 
-def select_fastest_url(urls:typing.List[str]):
+def select_fastest_url(urls:typing.List[str], is_pypi = False, use_cache = True) -> str:
 
     input_str = str(urls)
-    # if not os.path.exists(f"{ROOT_PATH}\\cache\\url_speed_test.json"):
-    #     verify_path(f"{ROOT_PATH}\\cache")
-    #     with open(f"{ROOT_PATH}\\cache\\url_speed_test.json", 'w', encoding='utf-8') as f:
-    #         f.write('{}')
-    # x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")
-    # if input_str in x.keys():
-    #     logger.info(f'Fastest url: {x[input_str]} (use cache)')
-    #     return x[input_str]
+
+    if not os.path.exists(f"{ROOT_PATH}\\cache\\url_speed_test.json"):
+        verify_path(f"{ROOT_PATH}\\cache")
+        with open(f"{ROOT_PATH}\\cache\\url_speed_test.json", 'w', encoding='utf-8') as f:
+            f.write('{}')
+    if use_cache:
+        x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")
+        if input_str in x.keys():
+            logger.info(f'Fastest url: {x[input_str]} (use cache)')
+            return x[input_str]
     fastest_time = 999
     fastest_url = urls[0]
     requests.packages.urllib3.disable_warnings()
@@ -381,17 +383,19 @@ def select_fastest_url(urls:typing.List[str]):
         for i in range(4):
             pt = time.time()
             try:
-                r = requests.get(domain, verify=False, proxies=None, timeout=3)
+                r = requests.get(domain, verify=False, proxies=None, timeout=(3.05,1))
                 if r.status_code == 200:
-                    try_download_url = f"{domain}/packages/00/00/0188b746eefaea75d665b450c9165451a66aae541e5f73db4456eebc0289/loginhelper-0.0.5-py3-none-any.whl"
-                    r2 = requests.get(try_download_url, verify=False, proxies=None, timeout=300)
-                    if r2.status_code == 200:
-                        use_time = time.time()-pt
-                        logger.info(f'get {domain} code: {r.status_code} time: {use_time}')
-                    else:
-                        total_time = 9999999999999.999999999
-                        logger.info(f'get {domain} error: 被风控/无法下载 code_1:{r.status_code} code_1:{r2.status_code} time: {total_time}')
-                        break
+                    if is_pypi:
+                        pt = time.time()
+                        try_download_url = f"{domain}/packages/00/00/0188b746eefaea75d665b450c9165451a66aae541e5f73db4456eebc0289/loginhelper-0.0.5-py3-none-any.whl"
+                        r2 = requests.get(try_download_url, verify=False, proxies=None, timeout=(3.05,1))
+                        if r2.status_code == 200:
+                            logger.info(f'get {domain} code: {r.status_code} time: {time.time()-pt}')
+                        else:
+                            total_time = 9999999999999.999999999
+                            logger.info(f'get {domain} error: 被风控/无法下载 code_1:{r.status_code} code_1:{r2.status_code} time: {total_time}')
+                            break
+                    use_time = time.time() - pt
                 else:
                     use_time = time.time() - pt
                     logger.info(f'get {domain} code: {r.status_code} time: {use_time}')
@@ -407,10 +411,10 @@ def select_fastest_url(urls:typing.List[str]):
             fastest_url = url
     logger.info(f'Fastest url: {fastest_url}; average cost {fastest_time/4}')
 
-    # output_result = fastest_url
-    # x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")
-    # x[input_str] = output_result
-    # save_json(x, json_name=f"{ROOT_PATH}\\cache\\url_speed_test.json")
+    output_result = fastest_url
+    x = load_json(f"{ROOT_PATH}\\cache\\url_speed_test.json")
+    x[input_str] = output_result
+    save_json(x, json_name=f"{ROOT_PATH}\\cache\\url_speed_test.json")
 
     return fastest_url
 
