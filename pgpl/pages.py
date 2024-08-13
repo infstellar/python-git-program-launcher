@@ -173,7 +173,11 @@ class MainPage(AdvancePage, Command):
                     f.write(self.last_config)
                     f.close()
 
-    def _start(self):
+    def _direct_start(self):
+        output.toast(t2t(f"you are using direct startup. if fail, please click Install and Start Program."))
+        self._start(skip_install=True)
+
+    def _start(self, skip_install=False):
         is_proxy, proxy_server = proxy_info()
         # 检测代理
         if is_proxy:
@@ -206,14 +210,14 @@ class MainPage(AdvancePage, Command):
             verify_path(REPO_PATH)
             os.chdir(REPO_PATH)
             logger.hr(t2t("Launching..."))
-
-            GitManager(launching_config, self.pt).git_install(allow_failure=("APR" in pin.pin[self.CHECKBOX_PIP]))
-            output.set_processbar(sp.PROCESSBAR_STAGE, 2 / 3)
-            cp = pin.pin[self.CHECKBOX_PIP]
-            check_pip = 'DCPU' not in cp
-            check_reqs = 'DCRU' not in cp
-            # print(cp, check_pip, check_reqs)
-            PipManager(launching_config, self.pt).pip_install(check_pip=check_pip, check_reqs=check_reqs)
+            if not skip_install:
+                GitManager(launching_config, self.pt).git_install(allow_failure=("APR" in pin.pin[self.CHECKBOX_PIP]))
+                output.set_processbar(sp.PROCESSBAR_STAGE, 2 / 3)
+                cp = pin.pin[self.CHECKBOX_PIP]
+                check_pip = 'DCPU' not in cp
+                check_reqs = 'DCRU' not in cp
+                # print(cp, check_pip, check_reqs)
+                PipManager(launching_config, self.pt).pip_install(check_pip=check_pip, check_reqs=check_reqs)
             output.set_processbar(sp.PROCESSBAR_STAGE, 3 / 3)
             self.pt.end_flag = True
 
@@ -224,13 +228,13 @@ class MainPage(AdvancePage, Command):
             # os.system("color 07")
             # self.execute(f"title {PROGRAM_NAME} Console")
             # self.execute("")
-            start_cmd = f'@echo off\nset "PATH={os.environ["PATH"]};%PATH%"\ncd /d "{REPO_PATH}"\n"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}'
+            start_cmd = f'@echo off\nset "PATH={os.environ["PATH"]};%PATH%"\ncd /d "{REPO_PATH}"\n"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}\npause'
             if launching_config['UAC']:
                 start_cmd = requesting_administrative_privileges + '\n' + start_cmd  # f'{requesting_administrative_privileges}\nset "PATH={os.environ["PATH"]};%PATH%"\ncd /d "{REPO_PATH}"\n"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}'
             run_path = os.path.join(ROOT_PATH, 'cache', 'run.bat')
             with open(run_path, 'w') as f:
                 f.write(start_cmd)
-            execute_cmd = f'start /min "{run_path}"'
+            execute_cmd = f'C:\\Windows\\explorer.exe "{run_path}"'
             self.progress_tracker.cmd = execute_cmd
             self.progress_tracker.console_output = ""
             os.system(execute_cmd)
@@ -304,7 +308,12 @@ class MainPage(AdvancePage, Command):
                     # 当前配置
                     output.put_scope(self.SCOPE_CONFIG_NAME),
                     # 启动按钮
-                    output.put_button(label=t2t("Start Program"), onclick=self._start),
+                    output.put_row([
+                        output.put_button(label=t2t("Install and Start Program"), onclick=self._start),
+                        output.put_button(label=t2t("Direct Start"), onclick=self._direct_start),
+                    ]
+                        , size='auto'),
+
                     # 其他配置
                     output.put_column([
                         output.put_markdown(t2t('## Startup Options')),
@@ -425,7 +434,7 @@ class MainPage(AdvancePage, Command):
             return
         output.toast(t2t('Testing speed...'), duration=20)
         r1 = select_fastest_url(["https://pypi.org/simple", "http://pypi.tuna.tsinghua.edu.cn/simple",
-                            "http://mirrors.aliyun.com/pypi/simple", "https://mirrors.bfsu.edu.cn/pypi/web"],use_cache=False,
+                             "https://mirrors.bfsu.edu.cn/pypi/web"],use_cache=False,
                            is_pypi=True)
         output.toast(t2t('Pypi fastest url: ') + r1)
         r2 = select_fastest_url(["https://github.com/infstellar/python-git-program-launcher",
