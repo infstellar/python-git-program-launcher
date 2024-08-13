@@ -174,7 +174,7 @@ class MainPage(AdvancePage, Command):
                     f.close()
 
     def _direct_start(self):
-        output.toast(t2t(f"you are using direct startup. if fail, please click Install and Start Program."))
+        output.toast(t2t("you are using direct startup. if fail, please click Install and Start Program."), duration=10)
         self._start(skip_install=True)
 
     def _start(self, skip_install=False):
