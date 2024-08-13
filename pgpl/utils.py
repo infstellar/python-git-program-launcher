@@ -420,11 +420,20 @@ def select_fastest_url(urls:typing.List[str], is_pypi = False, use_cache = True)
 
 def proxy_info():
     key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\Microsoft\Windows\CurrentVersion\Internet Settings")
-    is_proxy_enabled = bool(winreg.QueryValueEx(key, "ProxyEnable")[0])
-    proxy_server = str(winreg.QueryValueEx(key, "ProxyServer")[0])
+    try:
+        is_proxy_enabled = bool(winreg.QueryValueEx(key, "ProxyEnable")[0])
+    except Exception as e:
+        logger.exception(e)
+        is_proxy_enabled = False
+    try:
+        proxy_server = str(winreg.QueryValueEx(key, "ProxyServer")[0])
+    except Exception as e:
+        logger.exception(e)
+        proxy_server = "0.0.0.0"
     winreg.CloseKey(key)
     logger.debug(f'proxy: {proxy_server}; enabled:{is_proxy_enabled}')
     return is_proxy_enabled, proxy_server
+
 
 
 
