@@ -203,16 +203,17 @@ class MainPage(AdvancePage, Command):
             #     run_command(f'{ROOT_PATH}\\..\\toolkit\\fastgithub_win-x64\\fastgithub.exe start')
             global PROGRAM_PYTHON_PATH
             # MiniCondaManager(CONFIG_TEMPLATE).activate_env()
-            PROGRAM_PYTHON_PATH = PythonManager(launching_config, self.pt).run()
+            PROGRAM_PYTHON_PATH = PythonManager(launching_config, self.pt).run(check_install=not skip_install)
             output.set_processbar(sp.PROCESSBAR_STAGE, 1 / 3)
             logger.info(launching_config)
             REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
             verify_path(REPO_PATH)
             os.chdir(REPO_PATH)
             logger.hr(t2t("Launching..."))
+
+            GitManager(launching_config, self.pt).git_install(allow_failure=("APR" in pin.pin[self.CHECKBOX_PIP]))
+            output.set_processbar(sp.PROCESSBAR_STAGE, 2 / 3)
             if not skip_install:
-                GitManager(launching_config, self.pt).git_install(allow_failure=("APR" in pin.pin[self.CHECKBOX_PIP]))
-                output.set_processbar(sp.PROCESSBAR_STAGE, 2 / 3)
                 cp = pin.pin[self.CHECKBOX_PIP]
                 check_pip = 'DCPU' not in cp
                 check_reqs = 'DCRU' not in cp

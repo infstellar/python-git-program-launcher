@@ -267,7 +267,7 @@ class PythonManager(Command):
             os.remove(CONDARC_FILE_PATH)
             os.remove(CONDARC_MARK_PATH)
 
-    def run(self):
+    def run(self,check_install=True):
         verify_path(self.python_folder)
         
         if not os.path.exists(self.python_path):
@@ -275,14 +275,15 @@ class PythonManager(Command):
             # logger.warning(t2t("Please do not exit the program while python is being downloaded. If you accidentally quit or the installation fails, empty the . /toolkit/python folder in the corresponding folder and try again."))
             self.download_python_zip()
         else:
-            try:
-                self.progress_tracker.inp(t2t('Verify pip installation'), 0.05)
-                self.execute(f'"{self.python_path}" "{self.python_folder}/Lib/site-packages/pip/__main__.py" --version')
-            except ExecutionError as e:
-                logger.warning(t2t("pip fail, reinstall python"))
-                self.clean_py(self.python_folder)
-                verify_path(self.python_folder)
-                self.download_python_zip()
+            if check_install:
+                try:
+                    self.progress_tracker.inp(t2t('Verify pip installation'), 0.05)
+                    self.execute(f'"{self.python_path}" "{self.python_folder}/Lib/site-packages/pip/__main__.py" --version')
+                except ExecutionError as e:
+                    logger.warning(t2t("pip fail, reinstall python"))
+                    self.clean_py(self.python_folder)
+                    verify_path(self.python_folder)
+                    self.download_python_zip()
         
         
         # if not os.path.exists(os.path.join(self.python_folder, "Lib")):
