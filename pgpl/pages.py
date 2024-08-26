@@ -218,7 +218,7 @@ class MainPage(AdvancePage, Command, ConfigPage):
 
             # Download Python
 
-            os.chdir(ROOT_PATH)
+
             PROGRAM_PYTHON_PATH = PythonManager(launching_config, self.pt).run(check_install=not skip_install)
             output.set_processbar(sp.PROCESSBAR_STAGE, 2 / 3)
             if not skip_install:
