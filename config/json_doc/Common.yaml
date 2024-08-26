@@ -1,0 +1,27 @@
+AutoUpdate:
+  rank: 2
+Branch:
+  rank: 1
+  special_index: $LOCAL_BRANCH$
+GitProxy:
+  rank: 6
+InstallDependencies:
+  rank: 5
+KeepLocalChanges:
+  rank: 4
+Main:
+  rank: 8
+PypiMirror:
+  rank: 40
+PythonMirror:
+  rank: 50
+PythonVersion:
+  rank: 60
+Repository:
+  rank: 3
+RequirementsFile:
+  rank: 4
+Tag:
+  rank: 4
+UAC:
+  rank: 5

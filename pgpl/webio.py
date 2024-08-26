@@ -3,7 +3,7 @@ from pywebio import *
 from pgpl.logger import add_logger_to_GUI
 from pgpl import log_handler
 from pgpl.page_manager import manager
-from pgpl.pages import MainPage, ConfigPage
+from pgpl.pages import MainPage
 status = True
 global first_run
 first_run = False
@@ -25,7 +25,6 @@ def main():
     # pywebio.session.set_env(output_max_width='80%', title=f"PGPL {1.0} {get_branch_commit_id()[1]}")
     # session.run_js(f'document.querySelector("body > footer").innerHTML+="| PGPL: {"-".join(get_branch_commit_id())}"')
     manager.reg_page('MainPage', MainPage())
-    manager.reg_page('SettingPage', ConfigPage())
     manager.load_page('MainPage')
     if not first_run:
         add_logger_to_GUI(log_handler.webio_poster)
