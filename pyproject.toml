@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pgpl"
+version = "0.0.1"
+authors = [
+  { name="Infstellar" },
+]
+dependencies=[
+"loguru",
+"tqdm",
+"requests",
+"inputimeout",
+"pywebio",
+"pywebview",
+"qtpy",
+"PyQtWebEngine",
+"PyYAML"
+]
+
+
+description = "description"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+    ]
+
+[tool.hatch.build]
+include = [
+  "*"
+]

@@ -54,10 +54,11 @@ logger.remove(handler_id=None)
 logger.warning_once = types.MethodType(warning_once, logger)
 logger.demo = types.MethodType(demo, logger)
 logger.add(os.path.join(ROOT_PATH, os.path.join(ROOT_PATH, 'Logs', "{time:YYYY-MM-DD}/{time:YYYY-MM-DD}.log")), level="TRACE", backtrace=True)
+STDOUT_HANDEL_ID = None
 if DEBUG_MODE:
-    logger.add(sys.stdout, level="TRACE", backtrace=True)
+    STDOUT_HANDEL_ID = logger.add(sys.stdout, level="TRACE", backtrace=True)
 else:
-    logger.add(sys.stdout, level="INFO", backtrace=True)
+    STDOUT_HANDEL_ID = logger.add(sys.stdout, level="INFO", backtrace=True)
 
 def hr(title, level=3):
     title = str(title).upper()

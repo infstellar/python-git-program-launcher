@@ -55,6 +55,9 @@ class ConfigPage():
             for f in files:
                 if f[f.index('.') + 1:] == "json":
                     self.config_files.append({"label": f, "value": os.path.join(root, f)})
+        default_path = f'{ROOT_PATH}\\..\\default_config.json'
+        if os.path.exists(default_path):
+            self.config_files.append({"label": t2t("Default.json"), "value": default_path, "selected": True})
         return self.config_files
 
     def _create_new_config(self):

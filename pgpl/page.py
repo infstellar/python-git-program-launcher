@@ -12,9 +12,9 @@ class Page:
 
     def load(self):
         if not self.loaded:
-            self.loaded = True
             output.put_scope(self.main_scope)  # 创建主scope
             self._on_load()
+            self.loaded = True
 
     def unload(self):
         if self.loaded:
@@ -37,12 +37,9 @@ class Page:
             self._event_thread()
         except SessionClosedException as e:
             print("SessionClosed, exit.")
-            os._exit(0)
-            sys.exit()
         except SessionNotFoundException as e:
             print("SessionNotFound, exit.")
-            os._exit(0)
-            sys.exit()
+
     
     def _event_thread(self):
         while self.loaded:

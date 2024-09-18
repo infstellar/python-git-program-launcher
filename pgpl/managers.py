@@ -267,6 +267,26 @@ class PythonManager(Command):
             os.remove(CONDARC_FILE_PATH)
             os.remove(CONDARC_MARK_PATH)
 
+    def _verify_pip(self):
+        try:
+            self.progress_tracker.inp(t2t('Verify pip installation'), 0.05)
+            self.execute(f'"{self.python_path}" "{self.python_folder}/Lib/site-packages/pip/__main__.py" --version')
+            return True
+        except ExecutionError as e:
+            logger.exception(e)
+            return False
+
+    def _reinstall_python(self):
+        logger.warning(t2t("pip fail, reinstall python"))
+        self.clean_py(self.python_folder)
+        verify_path(self.python_folder)
+        self.download_python_zip()
+
+    def _reinstall_pip(self):
+        logger.warning(t2t("pip fail, reinstall pip"))
+        self.execute(f'"{self.python_path}" "{self.python_folder}/Lib/site-packages/pip/__main__.py" install --upgrade pip')
+        
+
     def run(self,check_install=True):
         verify_path(self.python_folder)
         
@@ -276,14 +296,13 @@ class PythonManager(Command):
             self.download_python_zip()
         else:
             if check_install:
-                try:
-                    self.progress_tracker.inp(t2t('Verify pip installation'), 0.05)
-                    self.execute(f'"{self.python_path}" "{self.python_folder}/Lib/site-packages/pip/__main__.py" --version')
-                except ExecutionError as e:
-                    logger.warning(t2t("pip fail, reinstall python"))
-                    self.clean_py(self.python_folder)
-                    verify_path(self.python_folder)
-                    self.download_python_zip()
+                if not self._verify_pip():
+                    if not self._verify_pip():
+                        self._reinstall_pip()
+                        if not self._verify_pip():
+                            self._reinstall_python()
+
+
         
         
         # if not os.path.exists(os.path.join(self.python_folder, "Lib")):

@@ -20,12 +20,17 @@ first_run = False
 #     branch = res.stdout.read().decode('utf8').replace('\n', '')
 #     return branch,commit_id
 
+def exit_handler():
+    os._exit(0)
+    sys.exit()
+
 def main():
     global first_run
     # pywebio.session.set_env(output_max_width='80%', title=f"PGPL {1.0} {get_branch_commit_id()[1]}")
     # session.run_js(f'document.querySelector("body > footer").innerHTML+="| PGPL: {"-".join(get_branch_commit_id())}"')
     manager.reg_page('MainPage', MainPage())
     manager.load_page('MainPage')
+    session.defer_call(exit_handler)
     if not first_run:
         add_logger_to_GUI(log_handler.webio_poster)
         first_run = True

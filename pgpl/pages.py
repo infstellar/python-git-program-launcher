@@ -169,16 +169,20 @@ class MainPage(AdvancePage, Command, ConfigPage):
         output.toast(t2t("you are using direct startup. if fail, please click Install and Start Program."), duration=10)
         self._start(skip_install=True)
 
-    def _start(self, skip_install=False):
+    def _start(self, skip_install=False, delay=0):
+        while not self.loaded:
+            print('waiting for loading')
+            time.sleep(0.1)
         is_proxy, proxy_server = proxy_info()
         # 检测代理
-        if is_proxy:
+        while is_proxy:
+            is_proxy, proxy_server = proxy_info()
             tip = t2t("Please disable proxy servers to prevent download failures.")
             output.toast(tip, color='red', duration=5)
             if '7890' in proxy_server:
                 output.toast("请关闭Clash代理软件", color='red', duration=5)
-            if isProtectedByGreatWall():
-                return
+
+            time.sleep(1)
 
         sp = ShowProcess(self.pt)
 
@@ -237,7 +241,18 @@ class MainPage(AdvancePage, Command, ConfigPage):
             # os.system("color 07")
             # self.execute(f"title {PROGRAM_NAME} Console")
             # self.execute("")
-            start_cmd = f'@echo off\nset "PATH={os.environ["PATH"]};%PATH%"\ncd /d "{REPO_PATH}"\n"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}\npause'
+
+            # set start cmd
+
+
+            start_cmd_1 = f'@echo off\nset "PATH={os.environ["PATH"]};%PATH%"\ncd /d "{REPO_PATH}"'
+            if ("DEBUG" in pin.pin[self.CHECKBOX_PIP]):
+                start_cmd_2 = f'"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}\npause'
+            else:
+                start_cmd_2 = (f'%1(start /min cmd.exe /c %0 :& exit )\n'
+                               f'"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}>bat_run_log.txt')
+
+            start_cmd = f'{start_cmd_1}\n{start_cmd_2}'
             if launching_config['UAC']:
                 start_cmd = requesting_administrative_privileges + '\n' + start_cmd  # f'{requesting_administrative_privileges}\nset "PATH={os.environ["PATH"]};%PATH%"\ncd /d "{REPO_PATH}"\n"{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}'
             run_path = os.path.join(ROOT_PATH, 'cache', 'run.bat')
@@ -281,14 +296,16 @@ class MainPage(AdvancePage, Command, ConfigPage):
         self.last_config = ""
         self._load_config_files()
         show_config = self.config_files
-        self._load_config_files()
         self.last_file = None
-        if os.path.exists(f'{ROOT_PATH}\\default_config.json'):
+        default_path = f'{ROOT_PATH}\\..\\default_config.json'
+        if os.path.exists(default_path):
             with open(f'{ROOT_PATH}\\launcher_config_name.txt', 'w', encoding='utf-8') as f:
-                f.write(f'{ROOT_PATH}\\default_config.json')
-            output.toast(
-                t2t('The default startup configuration has been detected, please click the "Startup" button directly.'),
-                duration=30)
+                f.write(default_path)
+            output.toast(t2t('The default startup configuration has been detected'),duration=30)
+            output.toast(t2t('If you want to manually startup, please delete default_config.json file.'), duration=5)
+            autostart_thread = threading.Thread(target=lambda: self._start(skip_install=False), daemon=True)
+            session.register_thread(autostart_thread)
+            autostart_thread.start()
         with open(os.path.join(ROOT_PATH, 'launcher_config_name.txt'), 'r') as f:
             launching_config = str(f.read())
         for i in show_config:
@@ -325,10 +342,15 @@ class MainPage(AdvancePage, Command, ConfigPage):
                         output.put_markdown(
                             t2t("Setting the startup options, which may speed up the startup of the programme, but may cause the programme to fail to start. Make sure you use them when you understand what they do.")),
                         pin.put_checkbox(name=self.CHECKBOX_PIP, options=[
+                            # {
+                            #     "label": t2t("Use FastGithub to accelerate access"),
+                            #     "value": "FastGithub",
+                            #     "selected": self.sos.get_options_status('FastGithub'),
+                            # },
                             {
-                                "label": t2t("Use FastGithub to accelerate access"),
-                                "value": "FastGithub",
-                                "selected": self.sos.get_options_status('FastGithub'),
+                                "label": t2t("DEBUG MODE"),
+                                "value": "DEBUG",
+                                "selected": self.sos.get_options_status('DEBUG'),
                             },
                             {
                                 "label": t2t("Disable checking pip update"),
