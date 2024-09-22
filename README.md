@@ -1,9 +1,13 @@
 # python-git-program-launcher
 自动安装并启动基于git管理的python程序。
 
-![demo](docs/PGPL-demo_zh-cn.gif)
-
 # 特点
+- **可以作为pypi包下载安装，并打包自己的python程序**:
+  - **体积小**，打包后不携带依赖项，在安装时才下载，最小打包后体积5MB； 
+  - 不易出错，与pyinstaller相比，不直接打包dll，避免打包缺失；
+  - 下载速度快，自动检测多个代理源，GFW内外均可顺利使用；
+  - 启动器与打包的项目均有自动更新功能，一键更新，无需重装；
+  - 运行简单直观，打包后仅有Launcher.exe和极少文件暴露在外，傻瓜用户也不易点错。
 - 一键启动python程序，~~终极傻瓜包~~
 - 使用git自动更新仓库
 - 基于pywebio, webview和pyqt的GUI界面
@@ -21,6 +25,25 @@
 运行Launcher.exe。
 
 ***不要打开除了Watt Toolkit之外的所有可能干扰网络连接的软件，包括Clash/部分游戏加速器/网络连接管理/下载加速器等，它们会干扰SSL验证。***
+
+## 从pip安装并打包自己的程序（新功能）
+输入以下命令安装pgpl
+```commandline
+pip install pgpl
+```
+
+使用：
+```commandline
+python -m pgpl build --name your-project-name --target-dir your-project-folder-path --output-path the-folder-to-save-packed-file --main the-entry-python-file.py 
+
+--requirements-file(optional) the name of requirements file for pip, default to "requirements.txt" 
+--use-UAC(optional) set true if the-program should use UAC, default to false
+--python-version(optional) python-version, should be "3.xx.xx", default to "3.10.10"
+```
+All the file under the target folder will be included.
+
+打包后的文件会放在output-dir下，并会自动压缩为zip。
+
 
 ## 源代码运行
 下载最新的Release。
