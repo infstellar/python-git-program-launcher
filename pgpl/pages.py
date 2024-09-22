@@ -206,10 +206,10 @@ class MainPage(AdvancePage, Command, ConfigPage):
                 GitManager(launching_config, self.pt).git_install(allow_failure=("APR" in pin.pin[self.CHECKBOX_PIP]))
                 REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
                 verify_path(REPO_PATH)
-                os.chdir(REPO_PATH)
+
             else:
                 REPO_PATH = os.path.join(ROOT_PATH, '../', 'repositories', launching_config['Repository'].split('/')[-1])
-
+            os.chdir(REPO_PATH)
 
             output.set_processbar(sp.PROCESSBAR_STAGE, 1 / 3)
 
