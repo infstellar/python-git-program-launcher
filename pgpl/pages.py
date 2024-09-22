@@ -201,11 +201,15 @@ class MainPage(AdvancePage, Command, ConfigPage):
             logger.hr(t2t("Launching..."))
             logger.info(launching_config)
 
-            REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
-            verify_path(REPO_PATH)
-            os.chdir(REPO_PATH)
+
             if 'PGPLLOCALREPO' not in launching_config['Repository']:
                 GitManager(launching_config, self.pt).git_install(allow_failure=("APR" in pin.pin[self.CHECKBOX_PIP]))
+                REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
+                verify_path(REPO_PATH)
+                os.chdir(REPO_PATH)
+            else:
+                REPO_PATH = os.path.join(ROOT_PATH, '../', 'repositories', launching_config['Repository'].split('/')[-1])
+
 
             output.set_processbar(sp.PROCESSBAR_STAGE, 1 / 3)
 
