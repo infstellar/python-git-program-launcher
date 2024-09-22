@@ -286,6 +286,7 @@ class MainPage(AdvancePage, Command, ConfigPage):
             sp.show_exception(t2t("Please check your NETWORK ENVIROUMENT and re-open Launcher.exe"))
             logger.exception(e)
             self.pt.end_flag = True
+            sp.stop(False)
             raise e
         self.pt.end_flag = True
         sp.stop()
