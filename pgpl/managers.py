@@ -157,7 +157,7 @@ class PipManager(Command):
         # self.execute("set PATH=%_root%\\toolkit\\alias;%_root%\\toolkit\command;%_pyBin%;%_pyBin%\Scripts;%_GitBin%")
 
     def requirements_file(self):
-        return f"{REPO_PATH}\\{self.RequirementsFile}"
+        return f".\\{self.RequirementsFile}"
 
     def pip(self):
         return f'"{self.python}" -m pip'
