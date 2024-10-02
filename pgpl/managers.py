@@ -24,7 +24,7 @@ from pgpl.pgpl_pth import generate_pgplpth
     
 class GitManager(Command):
 
-    def __init__(self, installer_config, progress_tracker=None):
+    def __init__(self, installer_config, repo_path, progress_tracker=None):
         super().__init__(progress_tracker=progress_tracker)
         self.git = os.path.join(ROOT_PATH, "../toolkit/Git/bin/git.exe")
         self.Repository = installer_config["Repository"]
@@ -33,7 +33,7 @@ class GitManager(Command):
         self.KeepLocalChanges = installer_config["KeepLocalChanges"]
         self.AutoUpdate = installer_config["AutoUpdate"]
         self.tag = installer_config["Tag"]
-        self.folder_path = REPO_PATH
+        self.folder_path = repo_path
 
         os.environ['PATH'] += os.pathsep + self.git
         verify_path(self.folder_path)

@@ -206,7 +206,8 @@ class MainPage(AdvancePage, Command, ConfigPage):
                 global REPO_PATH
                 REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
                 verify_path(REPO_PATH)
-                GitManager(launching_config, self.pt).git_install(allow_failure=("APR" in pin.pin[self.CHECKBOX_PIP]))
+                os.chdir(REPO_PATH)
+                GitManager(launching_config,REPO_PATH, self.pt).git_install(allow_failure=("APR" in pin.pin[self.CHECKBOX_PIP]))
 
 
             else:
@@ -449,7 +450,7 @@ class MainPage(AdvancePage, Command, ConfigPage):
         self.pt.reset()
         self.pt.add_monitor('Already up to date.')
         sp.create_popup()
-        gm = GitManager(self.CONFIG_PGPL, self.pt)
+        gm = GitManager(self.CONFIG_PGPL,REPO_PATH, self.pt)
         try:
             gm.git_install()
             sp.stop(True)
