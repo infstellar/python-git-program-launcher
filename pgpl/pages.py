@@ -197,15 +197,17 @@ class MainPage(AdvancePage, Command, ConfigPage):
             # 开启fastgithub
             # if "FastGithub" in pin.pin[self.CHECKBOX_PIP]:
             #     run_command(f'{ROOT_PATH}\\..\\toolkit\\fastgithub_win-x64\\fastgithub.exe start')
-            global PROGRAM_PYTHON_PATH, REPO_PATH
+            global PROGRAM_PYTHON_PATH
             logger.hr(t2t("Launching..."))
             logger.info(launching_config)
 
 
             if 'PGPLLOCALREPO' not in launching_config['Repository']:
-                GitManager(launching_config, self.pt).git_install(allow_failure=("APR" in pin.pin[self.CHECKBOX_PIP]))
+                global REPO_PATH
                 REPO_PATH = os.path.join(ROOT_PATH, 'repositories', launching_config['Repository'].split('/')[-1])
                 verify_path(REPO_PATH)
+                GitManager(launching_config, self.pt).git_install(allow_failure=("APR" in pin.pin[self.CHECKBOX_PIP]))
+
 
             else:
                 REPO_PATH = os.path.abspath(os.path.join(ROOT_PATH, '../', 'repositories', launching_config['Repository'].split('/')[-1]))
