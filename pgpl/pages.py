@@ -275,6 +275,13 @@ class MainPage(AdvancePage, Command, ConfigPage):
             # t.start()
             os.chdir(ROOT_PATH)
 
+            if os.path.exists(f"{ROOT_PATH}\\..\\scripts.bat"):
+                target_script_path = f"{ROOT_PATH}\\..\\scripts.bat"
+                os.chdir(REPO_PATH)
+                logger.info(f"executing {target_script_path}")
+                os.system(target_script_path)
+                os.chdir(ROOT_PATH)
+
             logger.hr(f"Successfully install. Activating {PROGRAM_NAME}", 0)
             logger.info(f'execute: "{PROGRAM_PYTHON_PATH}" {launching_config["Main"]}')
             output.clear(sp.SCOPE_PROGRESS_INFO)
