@@ -279,7 +279,7 @@ class MainPage(AdvancePage, Command, ConfigPage):
                 target_script_path = f"{ROOT_PATH}\\..\\scripts.bat"
                 os.chdir(REPO_PATH)
                 logger.info(f"executing {target_script_path}")
-                os.system(target_script_path)
+                os.system(f'start {target_script_path}')
                 os.chdir(ROOT_PATH)
 
             logger.hr(f"Successfully install. Activating {PROGRAM_NAME}", 0)
